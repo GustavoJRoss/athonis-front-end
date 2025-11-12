@@ -1,0 +1,23 @@
+type ClientResponse = {
+  client_id: number;
+  name: string;
+  trade_name: string | undefined;
+  document: number;
+  state_registration: number | undefined;
+  email: string;
+  phone: number;
+  type: "PF" | "PJ";
+  birth_date: Date;
+  street: string;
+  neighborhood: string;
+  city: string;
+  state: string;
+  zip_code: number;
+  number: number;
+  complement: string | undefined;
+  notes: string | undefined;
+  created_at: Date;
+  created_by: string;
+  updated_at: Date;
+  updated_by: string;
+};
