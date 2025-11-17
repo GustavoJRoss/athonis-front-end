@@ -116,7 +116,7 @@ function DialogTitle({
   );
 }
 
-function DialogDescription({
+function DialogBody({
   className,
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Description>) {
@@ -133,7 +133,7 @@ export {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
+  DialogBody,
   DialogFooter,
   DialogHeader,
   DialogOverlay,

@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { login } from "@/src/lib/requests/login/requests";
 import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/useToast";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { login } from "@/src/lib/api/auth";
 
 type LoginFormProps = {
   username: string;

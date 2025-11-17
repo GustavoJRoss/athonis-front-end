@@ -9,21 +9,17 @@ export default async function ClientPage() {
     pageSize: 10,
   });
 
-  console.log(userResponse);
-
-  if (!userResponse.error) {
-    return (
-      <>
-        <HeaderPage
-          title="Clientes"
-          icon={UsersIcon}
-          backTo={{ link: "/home", title: "Voltar para página inicial." }}
-        />
-        <ClientsPage
-          initialData={userResponse?.items ?? []}
-          totalRows={userResponse.meta?.total ?? 0}
-        />
-      </>
-    );
-  }
+  return (
+    <>
+      <HeaderPage
+        title="Clientes"
+        icon={UsersIcon}
+        backTo={{ link: "/home", title: "Voltar para página inicial." }}
+      />
+      <ClientsPage
+        initialData={userResponse?.items || []}
+        totalRows={userResponse?.meta?.total || 0}
+      />
+    </>
+  );
 }

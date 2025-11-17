@@ -9,7 +9,6 @@ import {
   ToastTitle,
   ToastViewport,
 } from "./toast";
-import { randomUUID } from "crypto";
 
 export type ToastType = "default" | "success" | "error" | "warning" | "info";
 
@@ -39,12 +38,11 @@ export function ToasterProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = React.useState<ToastProps[]>([]);
 
   const addToast = React.useCallback((toast: Omit<ToastProps, "id">) => {
-    const id = randomUUID();
-    setToasts((prev) => [...prev, { ...toast, id }]);
+    setToasts((prev) => [...prev, { ...toast, id: `${prev.length + 1}` }]);
 
     // Auto remover após duration
     setTimeout(() => {
-      setToasts((prev) => prev.filter((t) => t.id !== id));
+      setToasts((prev) => prev.filter((t) => t.id !== "id"));
     }, toast.duration || 3000);
   }, []);
 

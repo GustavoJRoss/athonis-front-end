@@ -1,6 +1,13 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+} from "react";
 import { AgGridReact } from "ag-grid-react";
 import type { AgGridReactProps } from "ag-grid-react";
 import type { ColDef, GridOptions } from "ag-grid-community";
@@ -31,6 +38,7 @@ type DataTableProps = {
     params: GetMethodParams
   ) => Promise<{ data: any[]; total: number }>;
   gridOptions?: GridOptions;
+  headerActions?: React.ReactNode;
   height?: string | number;
   width?: string | number;
   defaultPageSize?: number;
@@ -39,18 +47,25 @@ type DataTableProps = {
   initialTotal?: number;
 } & Omit<AgGridReactProps, "rowData" | "columnDefs">;
 
-const DataTable: React.FC<DataTableProps> = ({
-  columnDefs,
-  getMethod,
-  gridOptions,
-  height = 500,
-  width = "100%",
-  defaultPageSize = 10,
-  pageSizeOptions = [10, 20, 50, 100],
-  initialData,
-  initialTotal,
-  ...rest
-}) => {
+export type DataTableRefProps = {
+  fetchData: () => void;
+};
+
+export const DataTable = forwardRef<any, DataTableProps>((props, ref) => {
+  const {
+    columnDefs,
+    getMethod,
+    gridOptions,
+    height = 500,
+    width = "100%",
+    defaultPageSize = 10,
+    pageSizeOptions = [10, 20, 50, 100],
+    initialData,
+    initialTotal,
+    headerActions,
+    ...rest
+  } = props;
+
   const [rowData, setRowData] = useState<any[]>(initialData ?? []);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
@@ -63,7 +78,6 @@ const DataTable: React.FC<DataTableProps> = ({
     setLoading(true);
     try {
       const res = await getMethod({ page, pageSize, filter });
-      console.log("Data fetched:", res);
       setRowData(res.data);
       setTotal(res.total);
     } catch (err) {
@@ -73,12 +87,21 @@ const DataTable: React.FC<DataTableProps> = ({
     }
   }, [page, pageSize, filter, getMethod]);
 
-  useEffect(() => {
-    // Só não chama na primeira renderização se houver dados iniciais
-    if (initialData && page === 1 && !filter) return;
+  const hasMounted = useRef<boolean>(false);
 
+  useEffect(() => {
+    if (!hasMounted.current && initialData && page === 1 && !filter) {
+      hasMounted.current = true;
+      return;
+    }
+
+    hasMounted.current = true;
     fetchData();
   }, [fetchData]);
+
+  useImperativeHandle(ref, () => ({
+    fetchData: () => fetchData(),
+  }));
 
   return (
     <div className="flex flex-col gap-4 w-full">
@@ -97,11 +120,7 @@ const DataTable: React.FC<DataTableProps> = ({
             }}
           />
         </div>
-
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <span>Total:</span>
-          <span className="font-medium">{total}</span>
-        </div>
+        {headerActions && <div>{headerActions}</div>}
       </div>
 
       {/* Grid */}
@@ -150,32 +169,37 @@ const DataTable: React.FC<DataTableProps> = ({
             </SelectContent>
           </Select>
         </div>
-
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={page === 1}
-            onClick={() => setPage((p) => (p > 1 ? p - 1 : 1))}
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          <span>
-            Página <strong onClick={() => fetchData()}>{page}</strong> de{" "}
-            {totalPages || 1}
-          </span>
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={page >= totalPages}
-            onClick={() => setPage((p) => p + 1)}
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
+        <div className="flex gap-4">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <span>Total:</span>
+            <span className="font-medium">{total}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={page === 1}
+              onClick={() => {
+                setPage((p) => (p > 1 ? p - 1 : 1));
+              }}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <span>
+              Página <strong onClick={() => fetchData()}>{page}</strong> de{" "}
+              {totalPages || 1}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={page >= totalPages}
+              onClick={() => setPage((p) => p + 1)}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </div>
     </div>
   );
-};
-
-export default DataTable;
+});

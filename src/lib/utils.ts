@@ -27,7 +27,7 @@ class ApiClient {
     body?: unknown,
     options?: RequestOptions
   ): Promise<ApiResponse<T>> {
-    const url = `${process.env.API_URL}${endpoint}`;
+    const url = `${process.env.NEXT_PUBLIC_API_URL}${endpoint}`;
     console.log({ url });
     const config: RequestInit = {
       method,
