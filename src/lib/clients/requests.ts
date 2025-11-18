@@ -33,12 +33,12 @@ export async function createClient({
   zip_code,
   number,
   complement,
-  observations,
+  notes,
 }: {
   name: string;
-  trade_name: string;
+  trade_name?: string;
   document: string;
-  state_registration: string;
+  state_registration?: string;
   email: string;
   phone: string;
   type: "F" | "J";
@@ -48,8 +48,8 @@ export async function createClient({
   state: string;
   zip_code: string;
   number: string;
-  complement: string;
-  observations: string;
+  complement?: string;
+  notes?: string;
 }) {
   const apiRequest = await api();
 
@@ -69,7 +69,7 @@ export async function createClient({
       zip_code,
       number,
       complement,
-      observations,
+      notes,
     });
 
     return responseData?.data as { success: boolean; data: any };

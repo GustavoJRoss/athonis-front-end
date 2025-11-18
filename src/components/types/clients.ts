@@ -1,0 +1,23 @@
+export type ClientType = {
+  client_id: number;
+  name: string;
+  trade_name: string;
+  document: string;
+  state_registration: number;
+  email: string;
+  phone: number;
+  type: "J" | "F";
+  birth_date: Date;
+  street: string;
+  neighborhood: string;
+  city: string;
+  state: string;
+  zip_code: number;
+  number: number;
+  complement: string;
+  notes: string;
+  created_at: Date;
+  created_by: string;
+  updated_at: Date;
+  updated_by: string;
+};

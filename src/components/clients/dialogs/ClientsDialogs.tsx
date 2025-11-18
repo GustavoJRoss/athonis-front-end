@@ -1,9 +1,8 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import {
   Dialog,
-  DialogTrigger,
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -22,13 +21,15 @@ import {
 import { createClient } from "@/src/lib/clients/requests";
 import { useToast } from "@/hooks/useToast";
 import { DialogFooter } from "../../utils/dialog/DialogFooter";
-import { useRef } from "react";
+import { forwardRef, useImperativeHandle, useRef, useState } from "react";
+import { DialogOpenRef, DialogOpenType } from "../../types/types";
+import { ClientType } from "../../types/clients";
 
 export type ClientFormData = {
   name: string;
-  trade_name?: string | null;
+  trade_name?: string;
   document: string;
-  state_registration?: string | null;
+  state_registration?: string;
   email: string;
   phone: string;
   type: "F" | "J";
@@ -38,22 +39,31 @@ export type ClientFormData = {
   state: string;
   zip_code: string;
   number: string;
-  complement?: string | null;
-  observations?: string | null;
+  complement?: string;
+  notes?: string;
 };
 
-export default function NewClientDialog({
-  onSubmitSuccess,
-}: {
+type ClientDialogProps = {
   onSubmitSuccess: () => void;
-}) {
-  const { register, handleSubmit, setValue } = useForm<ClientFormData>();
+};
+
+export const ClientDialog = forwardRef<
+  DialogOpenRef<ClientType>,
+  ClientDialogProps
+>((props, ref) => {
+  const { onSubmitSuccess } = props;
+
+  const [showDialog, setShowDialog] = useState<boolean>(false);
+  const [dialogType, setDialogType] = useState<DialogOpenType>("view");
+
+  const { register, handleSubmit, setValue, reset, control } =
+    useForm<ClientFormData>();
 
   const { successToast, errorToast } = useToast();
 
   const dialogFooterRef = useRef<any>(null);
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: ClientFormData) => {
     dialogFooterRef.current?.setLoading(true);
     const createResponse = await createClient(data);
     dialogFooterRef.current?.setLoading(false);
@@ -69,12 +79,53 @@ export default function NewClientDialog({
     console.error(createResponse);
   };
 
-  return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button>Criar Cliente</Button>
-      </DialogTrigger>
+  const setFormData = (data?: ClientType) => {
+    if (!data) return;
+    console.log(data);
+    setValue("name", data?.name);
+    setValue("city", data?.city);
+    setValue("complement", data?.complement);
+    setValue("document", data?.document);
+    setValue("email", data?.email);
+    setValue("neighborhood", data?.neighborhood);
+    setValue("number", data?.number.toString());
+    setValue("notes", data?.notes);
+    setValue("phone", data?.phone.toString());
+    setValue("state", data?.state);
+    setValue("state_registration", data?.state_registration.toString());
+    setValue("street", data?.street);
+    setValue("trade_name", data?.trade_name);
+    setValue("type", data?.type);
+    setValue("zip_code", data?.zip_code.toString());
+  };
 
+  const handleOpenDialog = (type: DialogOpenType, data?: ClientType) => {
+    switch (type) {
+      case "create":
+        reset();
+        setDialogType("create");
+        setShowDialog(true);
+        break;
+      case "edit":
+        reset();
+        setDialogType("edit");
+        setFormData(data);
+        setShowDialog(true);
+        break;
+      case "view":
+        setShowDialog(true);
+        break;
+      default:
+        break;
+    }
+  };
+
+  useImperativeHandle(ref, () => ({
+    open: handleOpenDialog,
+  }));
+
+  return (
+    <Dialog open={showDialog} onOpenChange={setShowDialog}>
       <DialogContent className="max-h-[90vh] overflow-y-auto">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <DialogHeader>
@@ -126,18 +177,25 @@ export default function NewClientDialog({
             {/* TYPE */}
             <div>
               <Label>Tipo</Label>
-              <Select
-                onValueChange={(value) => setValue("type", value as "F" | "J")}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecione o tipo" />
-                </SelectTrigger>
+              <Controller
+                control={control}
+                name="type"
+                render={({ field }) => (
+                  <Select
+                    value={field.value} // valor atual controlado pelo RHF
+                    onValueChange={field.onChange}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione o tipo" />
+                    </SelectTrigger>
 
-                <SelectContent>
-                  <SelectItem value="F">Pessoa Física</SelectItem>
-                  <SelectItem value="J">Pessoa Jurídica</SelectItem>
-                </SelectContent>
-              </Select>
+                    <SelectContent>
+                      <SelectItem value="F">Pessoa Física</SelectItem>
+                      <SelectItem value="J">Pessoa Jurídica</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
             </div>
           </div>
 
@@ -185,7 +243,7 @@ export default function NewClientDialog({
           <div>
             <Label>Observações</Label>
             <Textarea
-              {...register("observations")}
+              {...register("notes")}
               placeholder="Alguma observação do cliente..."
             />
           </div>
@@ -195,4 +253,4 @@ export default function NewClientDialog({
       </DialogContent>
     </Dialog>
   );
-}
+});

@@ -1,9 +1,14 @@
 "use client";
 
 import { getClients } from "@/src/lib/clients/requests";
-import NewClientDialog from "./dialogs/NewClientsDialogs";
 import { DataTable, DataTableRefProps } from "../datatables/Datatable";
 import { useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { ClientDialog } from "./dialogs/ClientsDialogs";
+import { DialogOpenRef } from "../types/types";
+import { IconAction } from "../utils/IconAction";
+import { PencilIcon, TrashIcon } from "lucide-react";
+import { ClientType } from "../types/clients";
 
 type ClientsPageProps = {
   initialData: any[];
@@ -15,50 +20,76 @@ export default function ClientsPage({
   totalRows,
 }: ClientsPageProps) {
   const dataTableRef = useRef<DataTableRefProps>(null);
+  const clientDialogRef = useRef<DialogOpenRef<ClientType>>(null);
 
   return (
-    <DataTable
-      ref={dataTableRef}
-      headerActions={
-        <NewClientDialog
-          onSubmitSuccess={() => dataTableRef?.current?.fetchData()}
-        />
-      }
-      columnDefs={[
-        { headerName: "Nome", field: "name" },
-        { headerName: "Nome Fantasia", field: "trade_name" },
-        { headerName: "Documento", field: "document" },
-        { headerName: "Inscrição Estadual", field: "state_registration" },
-        { headerName: "E-mail", field: "email" },
-        { headerName: "Telefone", field: "phone" },
-        { headerName: "Tipo", field: "type" },
-        { headerName: "Data de Nascimento", field: "birth_date" },
-        { headerName: "Rua", field: "street" },
-        { headerName: "Bairro", field: "neighborhood" },
-        { headerName: "Cidade", field: "city" },
-        { headerName: "Estado", field: "state" },
-        { headerName: "CEP", field: "zip_code" },
-        { headerName: "Número", field: "number" },
-        { headerName: "Complemento", field: "complement" },
-        { headerName: "Observações", field: "notes" },
-        { headerName: "Criado em", field: "created_at" },
-        { headerName: "Criado por", field: "created_by" },
-        { headerName: "Atualizado em", field: "updated_at" },
-        { headerName: "Atualizado por", field: "updated_by" },
-      ]}
-      getMethod={async (getProps) => {
-        const userResponse = await getClients({
-          page: getProps.page,
-          pageSize: getProps.pageSize,
-          filter: getProps.filter,
-        });
-        return {
-          data: userResponse?.items || [],
-          total: userResponse?.meta?.total || 0,
-        };
-      }}
-      initialData={initialData}
-      initialTotal={totalRows}
-    />
+    <>
+      <DataTable
+        ref={dataTableRef}
+        headerActions={
+          <Button onClick={() => clientDialogRef.current?.open("create")}>
+            Criar Cliente
+          </Button>
+        }
+        columnDefs={[
+          {
+            headerName: "Ações",
+            pinned: true,
+            maxWidth: 100,
+            cellRenderer: ({ data }: any) => {
+              return (
+                <div className="flex gap-4 h-full items-center justify-center">
+                  <IconAction
+                    icon={PencilIcon}
+                    text="Editar"
+                    onClick={() => {
+                      clientDialogRef.current?.open("edit", data);
+                    }}
+                  />
+                  <IconAction icon={TrashIcon} text="Deletar" />
+                </div>
+              );
+            },
+          },
+          { headerName: "Nome", field: "name" },
+          { headerName: "Nome Fantasia", field: "trade_name" },
+          { headerName: "Documento", field: "document" },
+          { headerName: "Inscrição Estadual", field: "state_registration" },
+          { headerName: "E-mail", field: "email" },
+          { headerName: "Telefone", field: "phone" },
+          { headerName: "Tipo", field: "type" },
+          { headerName: "Data de Nascimento", field: "birth_date" },
+          { headerName: "Rua", field: "street" },
+          { headerName: "Bairro", field: "neighborhood" },
+          { headerName: "Cidade", field: "city" },
+          { headerName: "Estado", field: "state" },
+          { headerName: "CEP", field: "zip_code" },
+          { headerName: "Número", field: "number" },
+          { headerName: "Complemento", field: "complement" },
+          { headerName: "Observações", field: "notes" },
+          { headerName: "Criado em", field: "created_at" },
+          { headerName: "Criado por", field: "created_by" },
+          { headerName: "Atualizado em", field: "updated_at" },
+          { headerName: "Atualizado por", field: "updated_by" },
+        ]}
+        getMethod={async (getProps) => {
+          const userResponse = await getClients({
+            page: getProps.page,
+            pageSize: getProps.pageSize,
+            filter: getProps.filter,
+          });
+          return {
+            data: userResponse?.items || [],
+            total: userResponse?.meta?.total || 0,
+          };
+        }}
+        initialData={initialData}
+        initialTotal={totalRows}
+      />
+      <ClientDialog
+        ref={clientDialogRef}
+        onSubmitSuccess={() => dataTableRef.current?.fetchData()}
+      />
+    </>
   );
 }

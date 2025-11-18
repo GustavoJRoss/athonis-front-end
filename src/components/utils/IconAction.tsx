@@ -25,7 +25,7 @@ export const IconAction = forwardRef<SVGSVGElement, IconActionProps>(
           }}
           className={twMerge(
             "icon-sm",
-            disabled ? "stroke-neutral-200" : "stroke-neutral-600",
+            disabled ? "stroke-neutral-200" : "stroke-neutral-400",
             disabled ? "" : "hover:stroke-neutral-900",
             "cursor-pointer",
             className
