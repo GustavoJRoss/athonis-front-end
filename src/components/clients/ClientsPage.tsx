@@ -9,6 +9,7 @@ import { DialogOpenRef } from "../types/types";
 import { IconAction } from "../utils/IconAction";
 import { PencilIcon, TrashIcon } from "lucide-react";
 import { ClientType } from "../types/clients";
+import { DeleteClientDialog } from "./dialogs/DeleteClientDialog";
 
 type ClientsPageProps = {
   initialData: any[];
@@ -21,6 +22,7 @@ export default function ClientsPage({
 }: ClientsPageProps) {
   const dataTableRef = useRef<DataTableRefProps>(null);
   const clientDialogRef = useRef<DialogOpenRef<ClientType>>(null);
+  const deleteClientRef = useRef<any>(null);
 
   return (
     <>
@@ -46,7 +48,11 @@ export default function ClientsPage({
                       clientDialogRef.current?.open("edit", data);
                     }}
                   />
-                  <IconAction icon={TrashIcon} text="Deletar" />
+                  <IconAction
+                    icon={TrashIcon}
+                    text="Deletar"
+                    onClick={() => deleteClientRef.current.open(data.client_id)}
+                  />
                 </div>
               );
             },
@@ -88,6 +94,10 @@ export default function ClientsPage({
       />
       <ClientDialog
         ref={clientDialogRef}
+        onSubmitSuccess={() => dataTableRef.current?.fetchData()}
+      />
+      <DeleteClientDialog
+        ref={deleteClientRef}
         onSubmitSuccess={() => dataTableRef.current?.fetchData()}
       />
     </>

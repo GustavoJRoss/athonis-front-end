@@ -18,7 +18,7 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
-import { createClient } from "@/src/lib/clients/requests";
+import { createClient, updateClient } from "@/src/lib/clients/requests";
 import { useToast } from "@/hooks/useToast";
 import { DialogFooter } from "../../utils/dialog/DialogFooter";
 import { forwardRef, useImperativeHandle, useRef, useState } from "react";
@@ -41,6 +41,7 @@ export type ClientFormData = {
   number: string;
   complement?: string;
   notes?: string;
+  clientId?: number;
 };
 
 type ClientDialogProps = {
@@ -65,18 +66,38 @@ export const ClientDialog = forwardRef<
 
   const onSubmit = async (data: ClientFormData) => {
     dialogFooterRef.current?.setLoading(true);
-    const createResponse = await createClient(data);
-    dialogFooterRef.current?.setLoading(false);
+    console.log({ dialogType });
+    if (dialogType === "create") {
+      const createResponse = await createClient(data);
+      dialogFooterRef.current?.setLoading(false);
 
-    if (createResponse?.success) {
-      dialogFooterRef.current?.close();
-      successToast("Cliente criado com sucesso!");
-      onSubmitSuccess();
-      return;
+      if (createResponse?.success) {
+        dialogFooterRef.current?.close();
+        successToast("Cliente criado com sucesso!");
+        onSubmitSuccess();
+        return;
+      }
+
+      errorToast(
+        createResponse?.message || "Erro ao criar cliente. Tente novamente."
+      );
+      console.error(createResponse);
+    } else if (dialogType === "edit") {
+      const updateResponse = await updateClient(data);
+      dialogFooterRef.current?.setLoading(false);
+
+      if (updateResponse?.success) {
+        dialogFooterRef.current?.close();
+        successToast("Cliente editado com sucesso!");
+        onSubmitSuccess();
+        return;
+      }
+
+      errorToast(
+        updateResponse.message || "Erro ao editar cliente. Tente novamente."
+      );
+      console.error(updateResponse);
     }
-
-    errorToast("Erro ao criar cliente. Tente novamente.");
-    console.error(createResponse);
   };
 
   const setFormData = (data?: ClientType) => {
@@ -97,6 +118,7 @@ export const ClientDialog = forwardRef<
     setValue("trade_name", data?.trade_name);
     setValue("type", data?.type);
     setValue("zip_code", data?.zip_code.toString());
+    setValue("clientId", data?.client_id);
   };
 
   const handleOpenDialog = (type: DialogOpenType, data?: ClientType) => {
@@ -113,6 +135,7 @@ export const ClientDialog = forwardRef<
         setShowDialog(true);
         break;
       case "view":
+        setDialogType("view");
         setShowDialog(true);
         break;
       default:
@@ -127,7 +150,11 @@ export const ClientDialog = forwardRef<
   return (
     <Dialog open={showDialog} onOpenChange={setShowDialog}>
       <DialogContent className="max-h-[90vh] overflow-y-auto">
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form
+          noValidate
+          onSubmit={handleSubmit(onSubmit)}
+          className="space-y-4"
+        >
           <DialogHeader>
             <DialogTitle>Criar Novo Cliente</DialogTitle>
           </DialogHeader>
@@ -136,7 +163,11 @@ export const ClientDialog = forwardRef<
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label>Nome</Label>
-              <Input {...register("name")} placeholder="João Silva" />
+              <Input
+                {...register("name")}
+                disabled={dialogType === "view"}
+                placeholder="João Silva"
+              />
             </div>
 
             <div>
@@ -144,12 +175,17 @@ export const ClientDialog = forwardRef<
               <Input
                 {...register("trade_name")}
                 placeholder="João Silva e Cia"
+                disabled={dialogType === "view"}
               />
             </div>
 
             <div>
               <Label>Documento</Label>
-              <Input {...register("document")} placeholder="123.456.789-00" />
+              <Input
+                {...register("document")}
+                placeholder="123.456.789-00"
+                disabled={dialogType === "view"}
+              />
             </div>
 
             <div>
@@ -157,6 +193,7 @@ export const ClientDialog = forwardRef<
               <Input
                 {...register("state_registration")}
                 placeholder="Inscrição estadual"
+                disabled={dialogType === "view"}
               />
             </div>
 
@@ -166,12 +203,17 @@ export const ClientDialog = forwardRef<
                 {...register("email")}
                 type="email"
                 placeholder="email@exemplo.com"
+                disabled={dialogType === "view"}
               />
             </div>
 
             <div>
               <Label>Telefone</Label>
-              <Input {...register("phone")} placeholder="(11) 99999-9999" />
+              <Input
+                {...register("phone")}
+                placeholder="(11) 99999-9999"
+                disabled={dialogType === "view"}
+              />
             </div>
 
             {/* TYPE */}
@@ -184,6 +226,7 @@ export const ClientDialog = forwardRef<
                   <Select
                     value={field.value} // valor atual controlado pelo RHF
                     onValueChange={field.onChange}
+                    disabled={dialogType === "view"}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione o tipo" />
@@ -205,37 +248,65 @@ export const ClientDialog = forwardRef<
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label>Rua</Label>
-              <Input {...register("street")} placeholder="Rua das Flores" />
+              <Input
+                {...register("street")}
+                disabled={dialogType === "view"}
+                placeholder="Rua das Flores"
+              />
             </div>
 
             <div>
               <Label>Bairro</Label>
-              <Input {...register("neighborhood")} placeholder="Centro" />
+              <Input
+                {...register("neighborhood")}
+                disabled={dialogType === "view"}
+                placeholder="Centro"
+              />
             </div>
 
             <div>
               <Label>Cidade</Label>
-              <Input {...register("city")} placeholder="São Paulo" />
+              <Input
+                {...register("city")}
+                disabled={dialogType === "view"}
+                placeholder="São Paulo"
+              />
             </div>
 
             <div>
               <Label>Estado</Label>
-              <Input {...register("state")} placeholder="SP" />
+              <Input
+                {...register("state")}
+                disabled={dialogType === "view"}
+                placeholder="SP"
+              />
             </div>
 
             <div>
               <Label>CEP</Label>
-              <Input {...register("zip_code")} placeholder="01234-567" />
+              <Input
+                {...register("zip_code")}
+                disabled={dialogType === "view"}
+                placeholder="01234-567"
+              />
             </div>
 
             <div>
               <Label>Número</Label>
-              <Input {...register("number")} placeholder="123" />
+              <Input
+                {...register("number")}
+                disabled={dialogType === "view"}
+                placeholder="123"
+              />
             </div>
 
             <div className="md:col-span-2">
               <Label>Complemento</Label>
-              <Input {...register("complement")} placeholder="Apto 45" />
+              <Input
+                {...register("complement")}
+                disabled={dialogType === "view"}
+                placeholder="Apto 45"
+              />
             </div>
           </div>
 
@@ -245,10 +316,10 @@ export const ClientDialog = forwardRef<
             <Textarea
               {...register("notes")}
               placeholder="Alguma observação do cliente..."
+              disabled={dialogType === "view"}
             />
           </div>
-
-          <DialogFooter ref={dialogFooterRef} />
+          {dialogType !== "view" && <DialogFooter ref={dialogFooterRef} />}
         </form>
       </DialogContent>
     </Dialog>
