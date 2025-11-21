@@ -135,7 +135,9 @@ export const ClientDialog = forwardRef<
         setShowDialog(true);
         break;
       case "view":
+        reset();
         setDialogType("view");
+        setFormData(data);
         setShowDialog(true);
         break;
       default:

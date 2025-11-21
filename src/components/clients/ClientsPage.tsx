@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { ClientDialog } from "./dialogs/ClientsDialogs";
 import { DialogOpenRef } from "../types/types";
 import { IconAction } from "../utils/IconAction";
-import { PencilIcon, TrashIcon } from "lucide-react";
+import { EyeIcon, PencilIcon, TrashIcon } from "lucide-react";
 import { ClientType } from "../types/clients";
 import { DeleteClientDialog } from "./dialogs/DeleteClientDialog";
 
@@ -37,10 +37,15 @@ export default function ClientsPage({
           {
             headerName: "Ações",
             pinned: true,
-            maxWidth: 100,
+            maxWidth: 130,
             cellRenderer: ({ data }: any) => {
               return (
                 <div className="flex gap-4 h-full items-center justify-center">
+                  <IconAction
+                    icon={TrashIcon}
+                    text="Deletar"
+                    onClick={() => deleteClientRef.current.open(data.client_id)}
+                  />
                   <IconAction
                     icon={PencilIcon}
                     text="Editar"
@@ -49,9 +54,9 @@ export default function ClientsPage({
                     }}
                   />
                   <IconAction
-                    icon={TrashIcon}
-                    text="Deletar"
-                    onClick={() => deleteClientRef.current.open(data.client_id)}
+                    icon={EyeIcon}
+                    text="Visualizar"
+                    onClick={() => clientDialogRef.current?.open("view", data)}
                   />
                 </div>
               );

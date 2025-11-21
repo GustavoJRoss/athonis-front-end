@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Tooltip } from "@/components/ui/tooltip";
-import { Undo2Icon } from "lucide-react";
+import { Redo2Icon, Undo2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface BackToButtonProps {
@@ -19,7 +19,9 @@ export function BackToButton({ link, title }: BackToButtonProps) {
         className="mb-1"
         variant="ghost"
         tabIndex={-1}
-      />
+      >
+        <Redo2Icon className="stroke-emerald-500 rotate-180" />
+      </Button>
     </Tooltip>
   );
 }
