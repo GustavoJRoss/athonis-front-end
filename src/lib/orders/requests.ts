@@ -13,9 +13,9 @@ export async function getOrders({
   const apiRequest = await api();
 
   const responseData = await apiRequest.get(
-    `/orders?page=${page}&limit=${pageSize}&title=${filter}&urgency=normal&sort_by=title&order=DESC`
+    `/orders?page=${page}&limit=${pageSize}&title=${filter}&sort_by=title&order=DESC`
   );
-  console.log({ responseData });
+
   if (responseData?.status === 200) {
     return {
       success: true,

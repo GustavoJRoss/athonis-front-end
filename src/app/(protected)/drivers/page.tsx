@@ -1,22 +1,22 @@
-import ClientsPage from "@/src/components/clients/ClientsPage";
+import DriversPage from "@/src/components/drivers/DriversPage";
 import HeaderPage from "@/src/components/utils/headerPage/HeaderPage";
-import { getClients } from "@/src/lib/clients/requests";
+import { getDrivers } from "@/src/lib/drivers/requests";
 import { UsersIcon } from "lucide-react";
 
 export default async function ClientPage() {
-  const userResponse = await getClients({
+  const userResponse = await getDrivers({
     page: 1,
     pageSize: 10,
   });
-
+  console.log(userResponse.data);
   return (
     <>
       <HeaderPage
-        title="Clientes"
+        title="Motoristas"
         icon={UsersIcon}
         backTo={{ link: "/home", title: "Voltar para página inicial." }}
       />
-      <ClientsPage
+      <DriversPage
         initialData={userResponse?.data?.items || []}
         totalRows={userResponse?.data?.meta?.total || 0}
       />

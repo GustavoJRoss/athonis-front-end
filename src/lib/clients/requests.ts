@@ -14,7 +14,7 @@ export async function getClients({
   const responseData = await apiRequest.get(
     `/clients?page=${page}&limit=${pageSize}&name=${filter}&sort_by=created_at&order=DESC`
   );
-  console.log({ responseData });
+
   if (responseData?.status === 200) {
     return {
       success: true,
