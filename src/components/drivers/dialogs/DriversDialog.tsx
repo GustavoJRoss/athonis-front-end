@@ -45,7 +45,7 @@ export const DriversDialog = forwardRef<
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [dialogType, setDialogType] = useState<DialogOpenType>("view");
 
-  const { register, handleSubmit, setValue, reset, control } =
+  const { register, handleSubmit, setValue, reset, control, formState } =
     useForm<DriverFormData>();
 
   const { successToast, errorToast } = useToast();
@@ -56,7 +56,6 @@ export const DriversDialog = forwardRef<
     dialogFooterRef.current?.setLoading(true);
 
     if (dialogType === "create") {
-      console.log({ data });
       const createResponse = await createDriver(data);
       dialogFooterRef.current?.setLoading(false);
 
@@ -91,7 +90,6 @@ export const DriversDialog = forwardRef<
 
   const setFormData = (data?: DriverType) => {
     if (!data) return;
-    console.log(data);
     setValue("name", data?.name);
     setValue("document", data?.document.toString());
     setValue("gender", data?.gender);
@@ -141,30 +139,42 @@ export const DriversDialog = forwardRef<
 
           {/* --- Dados Principais --- */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label>Nome</Label>
+            <Label
+              label="Nome"
+              status={formState.errors.name && "error"}
+              errorText={formState.errors.name?.message}
+            >
               <Input
-                {...register("name")}
+                {...register("name", { required: "Este campo é obrigatório." })}
                 disabled={dialogType === "view"}
+                status={formState.errors.name && "error"}
                 placeholder="João Silva"
               />
-            </div>
-
-            <div>
-              <Label>Documento</Label>
+            </Label>
+            <Label
+              label="Documento"
+              status={formState.errors.document && "error"}
+              errorText={formState.errors.document?.message}
+            >
               <Input
                 {...register("document")}
                 placeholder="123.456.789-00"
+                status={formState.errors.name && "error"}
                 disabled={dialogType === "view"}
               />
-            </div>
-            <div>
-              <Label>Data de Nascimento</Label>
+            </Label>
+            <Label
+              label="Data de Nascimento"
+              status={formState.errors.birth_date && "error"}
+              errorText={formState.errors.birth_date?.message}
+            >
               <DatePicker onSelect={(date) => setValue("birth_date", date)} />
-            </div>
-
-            <div>
-              <Label>Gênero</Label>
+            </Label>
+            <Label
+              label="Gênero"
+              status={formState.errors.gender && "error"}
+              errorText={formState.errors.gender?.message}
+            >
               <Controller
                 control={control}
                 name="gender"
@@ -174,7 +184,10 @@ export const DriversDialog = forwardRef<
                     onValueChange={field.onChange}
                     disabled={dialogType === "view"}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger
+                      status={formState.errors.name && "error"}
+                      className="w-full"
+                    >
                       <SelectValue placeholder="Selecione o tipo" />
                     </SelectTrigger>
 
@@ -185,9 +198,8 @@ export const DriversDialog = forwardRef<
                   </Select>
                 )}
               />
-            </div>
+            </Label>
           </div>
-
           {dialogType !== "view" && <DialogFooter ref={dialogFooterRef} />}
         </form>
       </DialogContent>

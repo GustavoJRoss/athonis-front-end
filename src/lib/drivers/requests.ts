@@ -20,7 +20,7 @@ export async function getDrivers({
       `/drivers?page=${page}&limit=${pageSize}&name=${filter}&sort_by=name&order=ASC`
     );
 
-    return {
+    dataResponse = {
       success: true,
       data: responseData?.data,
     };
@@ -52,7 +52,7 @@ export async function createDriver({
       birth_date,
     });
 
-    return {
+    dataResponse = {
       success: true,
       data: responseData?.data,
     };
@@ -84,7 +84,7 @@ export async function updateDriver({
       birth_date,
       gender,
     });
-    return {
+    dataResponse = {
       success: true,
       data: responseData?.data,
     };
@@ -105,7 +105,7 @@ export async function deleteDriver({ id }: { id: number }) {
     const apiRequest = await api();
     const responseData = await apiRequest.delete(`drivers/${id}`);
 
-    return {
+    dataResponse = {
       success: true,
       data: responseData?.data,
     };

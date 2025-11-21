@@ -189,15 +189,15 @@ export const OrderDialog = forwardRef<
 
             <Label
               label="Título"
-              status={formState.errors.client_id && "error"}
-              errorText={formState.errors.client_id?.message}
+              status={formState.errors.title && "error"}
+              errorText={formState.errors.title?.message}
             >
               <Input
                 {...register("title", {
                   required: "Este campo é obrigatório.",
                 })}
                 placeholder="Entrega de mercadorias"
-                status={formState.errors.client_id && "error"}
+                status={formState.errors.title && "error"}
                 disabled={dialogType === "view"}
               />
             </Label>
@@ -205,8 +205,8 @@ export const OrderDialog = forwardRef<
             <Label
               label="Urgência"
               className="w-full"
-              status={formState.errors.client_id && "error"}
-              errorText={formState.errors.client_id?.message}
+              status={formState.errors.urgency && "error"}
+              errorText={formState.errors.urgency?.message}
             >
               <Controller
                 control={control}
@@ -220,7 +220,7 @@ export const OrderDialog = forwardRef<
                   >
                     <SelectTrigger
                       className="w-full"
-                      status={formState.errors.client_id && "error"}
+                      status={formState.errors.urgency && "error"}
                     >
                       <SelectValue placeholder="Selecione..." />
                     </SelectTrigger>
@@ -235,8 +235,8 @@ export const OrderDialog = forwardRef<
             </Label>
             <Label
               label="Número NF"
-              status={formState.errors.client_id && "error"}
-              errorText={formState.errors.client_id?.message}
+              status={formState.errors.invoice_number && "error"}
+              errorText={formState.errors.invoice_number?.message}
             >
               <Input
                 {...register("invoice_number", {
@@ -244,14 +244,14 @@ export const OrderDialog = forwardRef<
                 })}
                 placeholder="NF-123456"
                 disabled={dialogType === "view"}
-                status={formState.errors.client_id && "error"}
+                status={formState.errors.invoice_number && "error"}
               />
             </Label>
             <Label
               label="Descrição"
               className="col-span-2"
-              status={formState.errors.client_id && "error"}
-              errorText={formState.errors.client_id?.message}
+              status={formState.errors.description && "error"}
+              errorText={formState.errors.description?.message}
             >
               <Textarea
                 {...register("description", {
@@ -259,13 +259,13 @@ export const OrderDialog = forwardRef<
                 })}
                 placeholder="Descrição do pedido..."
                 disabled={dialogType === "view"}
-                status={formState.errors.client_id && "error"}
+                status={formState.errors.description && "error"}
               />
             </Label>
             <Label
               label="Veículo ID"
-              status={formState.errors.client_id && "error"}
-              errorText={formState.errors.client_id?.message}
+              status={formState.errors.vehicle_id && "error"}
+              errorText={formState.errors.vehicle_id?.message}
             >
               <Input
                 type="number"
@@ -276,13 +276,13 @@ export const OrderDialog = forwardRef<
                 disabled={dialogType === "view"}
                 min={1}
                 placeholder="Id do veículo"
-                status={formState.errors.client_id && "error"}
+                status={formState.errors.vehicle_id && "error"}
               />
             </Label>
             <Label
               label="Motorista ID"
-              status={formState.errors.client_id && "error"}
-              errorText={formState.errors.client_id?.message}
+              status={formState.errors.driver_id && "error"}
+              errorText={formState.errors.driver_id?.message}
             >
               <Input
                 type="number"
@@ -293,13 +293,13 @@ export const OrderDialog = forwardRef<
                 disabled={dialogType === "view"}
                 min={1}
                 placeholder="Id do motorista"
-                status={formState.errors.client_id && "error"}
+                status={formState.errors.driver_id && "error"}
               />
             </Label>
             <Label
               label="Quantidade"
-              status={formState.errors.client_id && "error"}
-              errorText={formState.errors.client_id?.message}
+              status={formState.errors.quantity && "error"}
+              errorText={formState.errors.quantity?.message}
             >
               <Input
                 type="number"
@@ -310,13 +310,13 @@ export const OrderDialog = forwardRef<
                 disabled={dialogType === "view"}
                 min={1}
                 placeholder="Quantidade de items"
-                status={formState.errors.client_id && "error"}
+                status={formState.errors.quantity && "error"}
               />
             </Label>
             <Label
               label="Rua"
-              status={formState.errors.client_id && "error"}
-              errorText={formState.errors.client_id?.message}
+              status={formState.errors.delivery_street && "error"}
+              errorText={formState.errors.delivery_street?.message}
             >
               <Input
                 {...register("delivery_street", {
@@ -324,13 +324,13 @@ export const OrderDialog = forwardRef<
                 })}
                 disabled={dialogType === "view"}
                 placeholder="Rua das flores"
-                status={formState.errors.client_id && "error"}
+                status={formState.errors.delivery_street && "error"}
               />
             </Label>
             <Label
               label="Bairro"
-              status={formState.errors.client_id && "error"}
-              errorText={formState.errors.client_id?.message}
+              status={formState.errors.delivery_district && "error"}
+              errorText={formState.errors.delivery_district?.message}
             >
               <Input
                 {...register("delivery_district", {
@@ -338,13 +338,13 @@ export const OrderDialog = forwardRef<
                 })}
                 disabled={dialogType === "view"}
                 placeholder="Rio Branco"
-                status={formState.errors.client_id && "error"}
+                status={formState.errors.delivery_district && "error"}
               />
             </Label>
             <Label
               label="Cidade"
-              status={formState.errors.client_id && "error"}
-              errorText={formState.errors.client_id?.message}
+              status={formState.errors.delivery_city && "error"}
+              errorText={formState.errors.delivery_city?.message}
             >
               <Input
                 {...register("delivery_city", {
@@ -352,13 +352,13 @@ export const OrderDialog = forwardRef<
                 })}
                 disabled={dialogType === "view"}
                 placeholder="São Paulo"
-                status={formState.errors.client_id && "error"}
+                status={formState.errors.delivery_city && "error"}
               />
             </Label>
             <Label
               label="Estado"
-              status={formState.errors.client_id && "error"}
-              errorText={formState.errors.client_id?.message}
+              status={formState.errors.delivery_state && "error"}
+              errorText={formState.errors.delivery_state?.message}
             >
               <Input
                 {...register("delivery_state", {
@@ -366,14 +366,14 @@ export const OrderDialog = forwardRef<
                 })}
                 disabled={dialogType === "view"}
                 placeholder="SP"
-                status={formState.errors.client_id && "error"}
+                status={formState.errors.delivery_state && "error"}
               />
             </Label>
 
             <Label
               label="CEP"
-              status={formState.errors.client_id && "error"}
-              errorText={formState.errors.client_id?.message}
+              status={formState.errors.delivery_zipcode && "error"}
+              errorText={formState.errors.delivery_zipcode?.message}
             >
               <Input
                 {...register("delivery_zipcode", {
@@ -381,13 +381,13 @@ export const OrderDialog = forwardRef<
                 })}
                 disabled={dialogType === "view"}
                 placeholder="12345678"
-                status={formState.errors.client_id && "error"}
+                status={formState.errors.delivery_zipcode && "error"}
               />
             </Label>
             <Label
               label="Número"
-              status={formState.errors.client_id && "error"}
-              errorText={formState.errors.client_id?.message}
+              status={formState.errors.delivery_number && "error"}
+              errorText={formState.errors.delivery_number?.message}
             >
               <Input
                 {...register("delivery_number", {
@@ -395,19 +395,19 @@ export const OrderDialog = forwardRef<
                 })}
                 disabled={dialogType === "view"}
                 placeholder="Número do pedido"
-                status={formState.errors.client_id && "error"}
+                status={formState.errors.delivery_number && "error"}
               />
             </Label>
             <Label
               label="Complemento"
-              status={formState.errors.client_id && "error"}
-              errorText={formState.errors.client_id?.message}
+              status={formState.errors.delivery_complement && "error"}
+              errorText={formState.errors.delivery_complement?.message}
             >
               <Input
                 {...register("delivery_complement")}
                 disabled={dialogType === "view"}
                 placeholder="Complemento do endereço"
-                status={formState.errors.client_id && "error"}
+                status={formState.errors.delivery_complement && "error"}
               />
             </Label>
           </div>
