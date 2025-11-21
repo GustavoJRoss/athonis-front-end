@@ -3,7 +3,7 @@ import HeaderPage from "@/src/components/utils/headerPage/HeaderPage";
 import { getDrivers } from "@/src/lib/drivers/requests";
 import { UsersIcon } from "lucide-react";
 
-export default async function ClientPage() {
+export default async function PageDrivers() {
   const userResponse = await getDrivers({
     page: 1,
     pageSize: 10,

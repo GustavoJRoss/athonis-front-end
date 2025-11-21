@@ -3,7 +3,7 @@ import HeaderPage from "@/src/components/utils/headerPage/HeaderPage";
 import { getClients } from "@/src/lib/clients/requests";
 import { UsersIcon } from "lucide-react";
 
-export default async function ClientPage() {
+export default async function PageClients() {
   const userResponse = await getClients({
     page: 1,
     pageSize: 10,

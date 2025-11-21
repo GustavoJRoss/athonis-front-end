@@ -1,4 +1,3 @@
-import ClientsPage from "@/src/components/clients/ClientsPage";
 import OrdersPage from "@/src/components/orders/OrdersPage";
 import HeaderPage from "@/src/components/utils/headerPage/HeaderPage";
 import { getOrders } from "@/src/lib/orders/requests";
