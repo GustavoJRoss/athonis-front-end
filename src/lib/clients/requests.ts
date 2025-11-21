@@ -11,11 +11,21 @@ export async function getClients({
 }) {
   const apiRequest = await api();
 
-  const { data } = await apiRequest.get(
+  const responseData = await apiRequest.get(
     `/clients?page=${page}&limit=${pageSize}&name=${filter}&sort_by=created_at&order=DESC`
   );
-
-  return data;
+  console.log({ responseData });
+  if (responseData?.status === 200) {
+    return {
+      success: true,
+      data: responseData?.data,
+    };
+  } else {
+    return {
+      success: false,
+      message: responseData?.statusText,
+    };
+  }
 }
 
 export async function createClient({
@@ -71,7 +81,7 @@ export async function createClient({
     notes,
   });
 
-  if (responseData?.status === 200) {
+  if (responseData?.status === 200 || responseData?.status === 201) {
     return {
       success: true,
       data: responseData?.data,

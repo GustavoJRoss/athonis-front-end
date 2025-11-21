@@ -90,8 +90,8 @@ export default function ClientsPage({
             filter: getProps.filter,
           });
           return {
-            data: userResponse?.items || [],
-            total: userResponse?.meta?.total || 0,
+            data: userResponse?.data?.items || [],
+            total: userResponse?.data?.meta?.total || 0,
           };
         }}
         initialData={initialData}

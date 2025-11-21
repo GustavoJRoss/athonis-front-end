@@ -17,8 +17,8 @@ export default async function ClientPage() {
         backTo={{ link: "/home", title: "Voltar para página inicial." }}
       />
       <ClientsPage
-        initialData={userResponse?.items || []}
-        totalRows={userResponse?.meta?.total || 0}
+        initialData={userResponse?.data?.items || []}
+        totalRows={userResponse?.data?.meta?.total || 0}
       />
     </>
   );

@@ -8,8 +8,9 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const isProtectedRoute =
-    pathname.startsWith("/client") || pathname.startsWith("/home");
-
+    pathname.startsWith("/client") ||
+    pathname.startsWith("/home") ||
+    pathname.startsWith("/orders");
   // 🔒 Bloqueia se rota for protegida e não houver token
   if (isProtectedRoute) {
     if (!token) {

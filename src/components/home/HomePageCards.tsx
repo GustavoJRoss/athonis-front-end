@@ -31,7 +31,7 @@ export default function HomePageCards({
 
   return (
     <Card
-      className="cursor-pointer shadow-md hover:scale-[102%] transition-all duration-300 h-fit"
+      className="cursor-pointer shadow-md hover:scale-[102%] transition-all duration-300 h-full"
       onClick={() => router.push(route)}
     >
       <CardContent>
