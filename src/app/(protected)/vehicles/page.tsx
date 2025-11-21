@@ -17,7 +17,7 @@ export default async function PageVehicles() {
         backTo={{ link: "/home", title: "Voltar para página inicial." }}
       />
       <VehiclesPage
-        initialData={vehiclesResponse?.data.items || []}
+        initialData={vehiclesResponse?.data?.items || []}
         totalRows={vehiclesResponse?.data?.meta?.total || 0}
       />
     </>

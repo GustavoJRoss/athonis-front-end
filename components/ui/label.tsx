@@ -1,22 +1,35 @@
 "use client";
 
-import * as React from "react";
 import * as LabelPrimitive from "@radix-ui/react-label";
 import { cn } from "../utils";
+import { ComponentProps, ReactNode } from "react";
+
+type LabelProps = {
+  errorText?: string;
+  status?: "default" | "error";
+  children: ReactNode;
+  label?: ReactNode;
+  className?: string;
+};
 
 function Label({
   className,
+  children,
+  status,
+  errorText,
+  label,
   ...props
-}: React.ComponentProps<typeof LabelPrimitive.Root>) {
+}: LabelProps) {
   return (
-    <LabelPrimitive.Root
-      data-slot="label"
-      className={cn(
-        "flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50",
-        className
-      )}
-      {...props}
-    />
+    <div className={cn("flex flex-col gap-2", className)}>
+      {label && <span>{label}</span>}
+      <div className="flex flex-col gap-1">
+        {children}
+        {errorText && status === "error" && (
+          <span className="text-xs text-red-400">{errorText}</span>
+        )}
+      </div>
+    </div>
   );
 }
 

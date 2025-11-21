@@ -1,4 +1,5 @@
 import { api } from "../api/axios";
+import { RequestResponseData } from "../types";
 
 export async function getClients({
   page = 1,
@@ -9,23 +10,27 @@ export async function getClients({
   pageSize: number;
   filter?: string;
 }) {
-  const apiRequest = await api();
+  let dataResponse: RequestResponseData;
 
-  const responseData = await apiRequest.get(
-    `/clients?page=${page}&limit=${pageSize}&name=${filter}&sort_by=created_at&order=DESC`
-  );
+  try {
+    const apiRequest = await api();
 
-  if (responseData?.status === 200) {
+    const responseData = await apiRequest.get(
+      `/clients?page=${page}&limit=${pageSize}&name=${filter}&sort_by=created_at&order=DESC`
+    );
+
     return {
       success: true,
       data: responseData?.data,
     };
-  } else {
-    return {
+  } catch (error: any) {
+    dataResponse = {
       success: false,
-      message: responseData?.statusText,
+      message: error?.message,
     };
   }
+
+  return dataResponse;
 }
 
 export async function createClient({
@@ -61,37 +66,41 @@ export async function createClient({
   complement?: string;
   notes?: string;
 }) {
-  const apiRequest = await api();
+  let dataResponse: RequestResponseData;
 
-  const responseData = await apiRequest.post(`/clients`, {
-    name,
-    trade_name,
-    document,
-    state_registration,
-    email,
-    phone,
-    type,
-    street,
-    neighborhood,
-    city,
-    state,
-    zip_code,
-    number,
-    complement,
-    notes,
-  });
+  try {
+    const apiRequest = await api();
 
-  if (responseData?.status === 200 || responseData?.status === 201) {
+    const responseData = await apiRequest.post(`/clients`, {
+      name,
+      trade_name,
+      document,
+      state_registration,
+      email,
+      phone,
+      type,
+      street,
+      neighborhood,
+      city,
+      state,
+      zip_code,
+      number,
+      complement,
+      notes,
+    });
+
     return {
       success: true,
       data: responseData?.data,
     };
-  } else {
-    return {
+  } catch (error: any) {
+    dataResponse = {
       success: false,
-      message: responseData?.statusText,
+      message: error?.message,
     };
   }
+
+  return dataResponse;
 }
 
 export async function updateClient({
@@ -129,51 +138,59 @@ export async function updateClient({
   complement?: string;
   notes?: string;
 }) {
-  const apiRequest = await api();
+  let dataResponse: RequestResponseData;
 
-  const responseData = await apiRequest.patch(`/clients/${clientId}`, {
-    name,
-    trade_name,
-    document,
-    state_registration,
-    email,
-    phone,
-    type,
-    street,
-    neighborhood,
-    city,
-    state,
-    zip_code,
-    number,
-    complement,
-    observations: notes,
-  });
-  if (responseData?.status === 200) {
+  try {
+    const apiRequest = await api();
+
+    const responseData = await apiRequest.patch(`/clients/${clientId}`, {
+      name,
+      trade_name,
+      document,
+      state_registration,
+      email,
+      phone,
+      type,
+      street,
+      neighborhood,
+      city,
+      state,
+      zip_code,
+      number,
+      complement,
+      observations: notes,
+    });
     return {
       success: true,
       data: responseData?.data,
     };
-  } else {
-    return {
+  } catch (error: any) {
+    dataResponse = {
       success: false,
-      message: responseData?.statusText,
+      message: error?.message,
     };
   }
+
+  return dataResponse;
 }
 
 export async function deleteClient({ id }: { id: number }) {
-  const apiRequest = await api();
-  const responseData = await apiRequest.delete(`clients/${id}`);
+  let dataResponse: RequestResponseData;
 
-  if (responseData?.status === 200) {
-    return {
+  try {
+    const apiRequest = await api();
+    const responseData = await apiRequest.delete(`clients/${id}`);
+
+    dataResponse = {
       success: true,
       data: responseData?.data,
     };
-  } else {
-    return {
+  } catch (error: any) {
+    dataResponse = {
       success: false,
-      message: responseData?.statusText,
+      message: error?.message,
     };
   }
+
+  return dataResponse;
 }

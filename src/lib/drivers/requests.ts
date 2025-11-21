@@ -1,5 +1,6 @@
 import { DriverFormData } from "@/src/components/drivers/dialogs/DriversDialog";
 import { api } from "../api/axios";
+import { RequestResponseData } from "../types";
 
 export async function getDrivers({
   page = 1,
@@ -10,23 +11,27 @@ export async function getDrivers({
   pageSize: number;
   filter?: string;
 }) {
-  const apiRequest = await api();
+  let dataResponse: RequestResponseData;
 
-  const responseData = await apiRequest.get(
-    `/drivers?page=${page}&limit=${pageSize}&name=${filter}&sort_by=name&order=ASC`
-  );
+  try {
+    const apiRequest = await api();
 
-  if (responseData?.status === 200) {
+    const responseData = await apiRequest.get(
+      `/drivers?page=${page}&limit=${pageSize}&name=${filter}&sort_by=name&order=ASC`
+    );
+
     return {
       success: true,
       data: responseData?.data,
     };
-  } else {
-    return {
+  } catch (error: any) {
+    dataResponse = {
       success: false,
-      message: responseData?.statusText,
+      message: error?.message,
     };
   }
+
+  return dataResponse;
 }
 
 export async function createDriver({
@@ -35,26 +40,30 @@ export async function createDriver({
   birth_date,
   gender,
 }: DriverFormData) {
-  const apiRequest = await api();
+  let dataResponse: RequestResponseData;
 
-  const responseData = await apiRequest.post(`/drivers`, {
-    name,
-    document,
-    gender,
-    birth_date,
-  });
+  try {
+    const apiRequest = await api();
 
-  if (responseData?.status === 200 || responseData?.status === 201) {
+    const responseData = await apiRequest.post(`/drivers`, {
+      name,
+      document,
+      gender,
+      birth_date,
+    });
+
     return {
       success: true,
       data: responseData?.data,
     };
-  } else {
-    return {
+  } catch (error: any) {
+    dataResponse = {
       success: false,
-      message: responseData?.statusText,
+      message: error?.message,
     };
   }
+
+  return dataResponse;
 }
 
 export async function updateDriver({
@@ -64,40 +73,48 @@ export async function updateDriver({
   gender,
   driver_id,
 }: DriverFormData) {
-  const apiRequest = await api();
+  let dataResponse: RequestResponseData;
 
-  const responseData = await apiRequest.patch(`/drivers/${driver_id}`, {
-    name,
-    document,
-    birth_date,
-    gender,
-  });
-  if (responseData?.status === 200) {
+  try {
+    const apiRequest = await api();
+
+    const responseData = await apiRequest.patch(`/drivers/${driver_id}`, {
+      name,
+      document,
+      birth_date,
+      gender,
+    });
     return {
       success: true,
       data: responseData?.data,
     };
-  } else {
-    return {
+  } catch (error: any) {
+    dataResponse = {
       success: false,
-      message: responseData?.statusText,
+      message: error?.message,
     };
   }
+
+  return dataResponse;
 }
 
 export async function deleteDriver({ id }: { id: number }) {
-  const apiRequest = await api();
-  const responseData = await apiRequest.delete(`drivers/${id}`);
+  let dataResponse: RequestResponseData;
 
-  if (responseData?.status === 200) {
+  try {
+    const apiRequest = await api();
+    const responseData = await apiRequest.delete(`drivers/${id}`);
+
     return {
       success: true,
       data: responseData?.data,
     };
-  } else {
-    return {
+  } catch (error: any) {
+    dataResponse = {
       success: false,
-      message: responseData?.statusText,
+      message: error?.message,
     };
   }
+
+  return dataResponse;
 }

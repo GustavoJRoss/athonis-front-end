@@ -45,7 +45,7 @@ export const VehiclesDialog = forwardRef<
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [dialogType, setDialogType] = useState<DialogOpenType>("view");
 
-  const { register, handleSubmit, setValue, reset, control } =
+  const { register, handleSubmit, setValue, reset, formState } =
     useForm<VehicleFormData>();
 
   const { successToast, errorToast } = useToast();
@@ -91,7 +91,6 @@ export const VehiclesDialog = forwardRef<
 
   const setFormData = (data?: VehicleType) => {
     if (!data) return;
-    console.log(data);
     setValue("name", data?.name);
     setValue("brand", data?.brand);
     setValue("year", data?.year);
@@ -141,40 +140,57 @@ export const VehiclesDialog = forwardRef<
 
           {/* --- Dados Principais --- */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label>Nome</Label>
+            <Label
+              label="Nome"
+              status={formState.errors.name && "error"}
+              errorText={formState.errors.name?.message}
+            >
               <Input
-                {...register("name")}
+                {...register("name", { required: "Este campo é obrigatório" })}
                 disabled={dialogType === "view"}
                 placeholder="João Silva"
+                status={formState.errors.name && "error"}
               />
-            </div>
+            </Label>
 
-            <div>
-              <Label>Modelo</Label>
+            <Label
+              label="Modelo"
+              status={formState.errors.model && "error"}
+              errorText={formState.errors.model?.message}
+            >
               <Input
-                {...register("model")}
+                {...register("model", { required: "Este campo é obrigatório" })}
                 placeholder="Fiat Fiorino"
                 disabled={dialogType === "view"}
+                status={formState.errors.year && "error"}
               />
-            </div>
-            <div>
-              <Label>Marca</Label>
+            </Label>
+
+            <Label
+              label="Marca"
+              status={formState.errors.brand && "error"}
+              errorText={formState.errors.brand?.message}
+            >
               <Input
-                {...register("brand")}
+                {...register("brand", { required: "Este campo é obrigatório" })}
                 placeholder="Fiat"
                 disabled={dialogType === "view"}
+                status={formState.errors.year && "error"}
               />
-            </div>
+            </Label>
 
-            <div>
-              <Label>Ano de Fabricação</Label>
+            <Label
+              label="Ano de Fabricação"
+              status={formState.errors.year && "error"}
+              errorText={formState.errors.year?.message}
+            >
               <Input
-                {...register("year")}
+                {...register("year", { required: "Este campo é obrigatório" })}
                 placeholder="2014"
                 disabled={dialogType === "view"}
+                status={formState.errors.year && "error"}
               />
-            </div>
+            </Label>
           </div>
 
           {dialogType !== "view" && <DialogFooter ref={dialogFooterRef} />}

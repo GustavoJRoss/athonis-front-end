@@ -17,8 +17,8 @@ export default function PrivateHeader() {
           className="stroke-white hover:scale-[102%] transition-all duration-200 cursor-pointer"
           onClick={() => router.push("/home")}
         />
+        <h1 className="text-lg text-white">Fort Acessórios para móveis</h1>
       </div>
-      <Input className="max-w-md" placeholder="Pesquisar pedido, cliente...." />
       <IconAction
         icon={UserIcon}
         text="Perfil"

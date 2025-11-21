@@ -1,8 +1,8 @@
-// middleware.ts
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { validateToken } from "./src/lib/auth/utils";
+import { validateToken } from "./lib/auth/utils";
 
+// Remova o 'default' aqui
 export async function middleware(request: NextRequest) {
   const token = request.cookies.get("auth_token")?.value;
   const { pathname } = request.nextUrl;
@@ -10,8 +10,10 @@ export async function middleware(request: NextRequest) {
   const isProtectedRoute =
     pathname.startsWith("/client") ||
     pathname.startsWith("/home") ||
-    pathname.startsWith("/orders");
-  // 🔒 Bloqueia se rota for protegida e não houver token
+    pathname.startsWith("/orders") ||
+    pathname.startsWith("/drivers") ||
+    pathname.startsWith("/vehicles");
+
   if (isProtectedRoute) {
     if (!token) {
       return NextResponse.redirect(new URL("/login", request.url));
@@ -20,14 +22,12 @@ export async function middleware(request: NextRequest) {
     const { valid } = await validateToken(token);
 
     if (!valid) {
-      // token expirado ou inválido
       const response = NextResponse.redirect(new URL("/login", request.url));
       response.cookies.delete("auth_token");
       return response;
     }
   }
 
-  // 🔁 Se tentar acessar /login mas já estiver logado, redireciona pra /home
   if (pathname === "/login" && token) {
     const { valid } = await validateToken(token);
     if (valid) {
@@ -35,10 +35,16 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // ✅ prossegue normalmente
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/client/:path*", "/home/:path*", "/login"],
+  matcher: [
+    "/client/:path*",
+    "/home/:path*",
+    "/login",
+    "/drivers/:path*",
+    "/vehicles/:path*",
+    "/orders/:path*",
+  ],
 };

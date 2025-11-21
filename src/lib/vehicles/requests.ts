@@ -1,5 +1,6 @@
 import { VehicleFormData } from "@/src/components/vehicles/dialogs/VehiclesDialog";
 import { api } from "../api/axios";
+import { RequestResponseData } from "../types";
 
 export async function getVehicles({
   page = 1,
@@ -10,23 +11,27 @@ export async function getVehicles({
   pageSize: number;
   filter?: string;
 }) {
-  const apiRequest = await api();
+  let dataResponse: RequestResponseData;
 
-  const responseData = await apiRequest.get(
-    `/vehicles?page=${page}&limit=${pageSize}&name=${filter}`
-  );
+  try {
+    const apiRequest = await api();
 
-  if (responseData?.status === 200) {
-    return {
+    const responseData = await apiRequest.get(
+      `/vehicles?page=${page}&limit=${pageSize}&name=${filter}`
+    );
+
+    dataResponse = {
       success: true,
       data: responseData?.data,
     };
-  } else {
-    return {
+  } catch (error: any) {
+    dataResponse = {
       success: false,
-      message: responseData?.statusText,
+      message: error?.message,
     };
   }
+
+  return dataResponse;
 }
 
 export async function createVehicle({
@@ -37,24 +42,28 @@ export async function createVehicle({
 }: VehicleFormData) {
   const apiRequest = await api();
 
-  const responseData = await apiRequest.post(`/vehicles`, {
-    brand,
-    model,
-    name,
-    year,
-  });
+  let dataResponse: RequestResponseData;
 
-  if (responseData?.status === 200 || responseData?.status === 201) {
-    return {
+  try {
+    const responseData = await apiRequest.post(`/vehicles`, {
+      brand,
+      model,
+      name,
+      year,
+    });
+
+    dataResponse = {
       success: true,
       data: responseData?.data,
     };
-  } else {
-    return {
+  } catch (error: any) {
+    dataResponse = {
       success: false,
-      message: responseData?.statusText,
+      message: error?.message,
     };
   }
+
+  return dataResponse;
 }
 
 export async function updateVehicle({
@@ -64,40 +73,48 @@ export async function updateVehicle({
   vehicle_id,
   year,
 }: VehicleFormData) {
-  const apiRequest = await api();
+  let dataResponse: RequestResponseData;
 
-  const responseData = await apiRequest.patch(`/vehicles/${vehicle_id}`, {
-    brand,
-    model,
-    name,
-    year,
-  });
-  if (responseData?.status === 200) {
+  try {
+    const apiRequest = await api();
+
+    const responseData = await apiRequest.patch(`/vehicles/${vehicle_id}`, {
+      brand,
+      model,
+      name,
+      year,
+    });
     return {
       success: true,
       data: responseData?.data,
     };
-  } else {
-    return {
+  } catch (error: any) {
+    dataResponse = {
       success: false,
-      message: responseData?.statusText,
+      message: error?.message,
     };
   }
+
+  return dataResponse;
 }
 
 export async function deleteVehicle({ id }: { id: number }) {
-  const apiRequest = await api();
-  const responseData = await apiRequest.delete(`vehicles/${id}`);
+  let dataResponse: RequestResponseData;
 
-  if (responseData?.status === 200) {
+  try {
+    const apiRequest = await api();
+    const responseData = await apiRequest.delete(`vehicles/${id}`);
+
     return {
       success: true,
       data: responseData?.data,
     };
-  } else {
-    return {
+  } catch (error: any) {
+    dataResponse = {
       success: false,
-      message: responseData?.statusText,
+      message: error?.message,
     };
   }
+
+  return dataResponse;
 }

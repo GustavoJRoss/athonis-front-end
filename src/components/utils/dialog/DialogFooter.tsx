@@ -15,14 +15,9 @@ export const DialogFooter = forwardRef<any, any>((_, ref) => {
     setLoading: (value: boolean) => setLoading(value),
   }));
   return (
-    // <div className="flex justify-end">
-    //   <div>
-    //     <Button type="submit">Salvar</Button>
-    //   </div>
-    // </div>
     <ShadFooter className="flex justify-end gap-2">
       <DialogClose ref={closeRef} asChild>
-        <Button>Cancelar</Button>
+        <Button variant="outline">Cancelar</Button>
       </DialogClose>
       <Button type="submit" loading={loading}>
         Salvar

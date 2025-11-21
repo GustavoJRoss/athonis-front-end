@@ -23,3 +23,14 @@ export type ApiResponse<T> = {
   success?: boolean;
   statusCode?: number;
 };
+
+export type RequestResponseData = {
+  success: boolean;
+  data?: {
+    items: any[];
+    meta: {
+      total: number;
+    };
+  };
+  message?: string;
+};
