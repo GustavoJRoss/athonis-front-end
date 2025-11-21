@@ -19,7 +19,7 @@ export async function getClients({
       `/clients?page=${page}&limit=${pageSize}&name=${filter}&sort_by=created_at&order=DESC`
     );
 
-    return {
+    dataResponse = {
       success: true,
       data: responseData?.data,
     };
@@ -89,7 +89,7 @@ export async function createClient({
       notes,
     });
 
-    return {
+    dataResponse = {
       success: true,
       data: responseData?.data,
     };
@@ -160,7 +160,7 @@ export async function updateClient({
       complement,
       observations: notes,
     });
-    return {
+    dataResponse = {
       success: true,
       data: responseData?.data,
     };

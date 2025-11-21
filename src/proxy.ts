@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 import { validateToken } from "./lib/auth/utils";
 
 // Remova o 'default' aqui
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const token = request.cookies.get("auth_token")?.value;
   const { pathname } = request.nextUrl;
 
@@ -20,7 +20,7 @@ export async function middleware(request: NextRequest) {
     }
 
     const { valid } = await validateToken(token);
-
+    console.log({ valid });
     if (!valid) {
       const response = NextResponse.redirect(new URL("/login", request.url));
       response.cookies.delete("auth_token");

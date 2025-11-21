@@ -57,7 +57,7 @@ export const ClientDialog = forwardRef<
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [dialogType, setDialogType] = useState<DialogOpenType>("view");
 
-  const { register, handleSubmit, setValue, reset, control } =
+  const { register, handleSubmit, setValue, reset, control, formState } =
     useForm<ClientFormData>();
 
   const { successToast, errorToast } = useToast();
@@ -102,7 +102,6 @@ export const ClientDialog = forwardRef<
 
   const setFormData = (data?: ClientType) => {
     if (!data) return;
-    console.log(data);
     setValue("name", data?.name);
     setValue("city", data?.city);
     setValue("complement", data?.complement);
@@ -161,76 +160,104 @@ export const ClientDialog = forwardRef<
             <DialogTitle>Criar Novo Cliente</DialogTitle>
           </DialogHeader>
 
-          {/* --- Dados Principais --- */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label>Nome</Label>
+            <Label
+              label="Nome"
+              status={formState.errors.name && "error"}
+              errorText={formState.errors.name?.message}
+            >
               <Input
-                {...register("name")}
+                {...register("name", { required: "Este campo é obrigatório" })}
                 disabled={dialogType === "view"}
                 placeholder="João Silva"
+                status={formState.errors.name && "error"}
               />
-            </div>
+            </Label>
 
-            <div>
-              <Label>Nome Fantasia</Label>
+            <Label
+              label="Nome Fantasia"
+              status={formState.errors.trade_name && "error"}
+              errorText={formState.errors.trade_name?.message}
+            >
               <Input
-                {...register("trade_name")}
+                {...register("trade_name", {
+                  required: "Este campo é obrigatório",
+                })}
                 placeholder="João Silva e Cia"
                 disabled={dialogType === "view"}
+                status={formState.errors.notes && "error"}
               />
-            </div>
+            </Label>
 
-            <div>
-              <Label>Documento</Label>
+            <Label
+              label="Documento"
+              status={formState.errors.document && "error"}
+              errorText={formState.errors.document?.message}
+            >
               <Input
-                {...register("document")}
+                {...register("document", {
+                  required: "Este campo é obrigatório",
+                })}
                 placeholder="123.456.789-00"
                 disabled={dialogType === "view"}
+                status={formState.errors.notes && "error"}
               />
-            </div>
-
-            <div>
-              <Label>Inscrição Estadual</Label>
+            </Label>
+            <Label
+              label="Inscrição Estadual"
+              status={formState.errors.state_registration && "error"}
+              errorText={formState.errors.state_registration?.message}
+            >
               <Input
-                {...register("state_registration")}
+                {...register("state_registration", {
+                  required: "Este campo é obrigatório",
+                })}
                 placeholder="Inscrição estadual"
                 disabled={dialogType === "view"}
+                status={formState.errors.notes && "error"}
               />
-            </div>
-
-            <div>
-              <Label>Email</Label>
+            </Label>
+            <Label
+              label="Email"
+              status={formState.errors.email && "error"}
+              errorText={formState.errors.email?.message}
+            >
               <Input
-                {...register("email")}
+                {...register("email", { required: "Este campo é obrigatório" })}
                 type="email"
                 placeholder="email@exemplo.com"
                 disabled={dialogType === "view"}
+                status={formState.errors.notes && "error"}
               />
-            </div>
-
-            <div>
-              <Label>Telefone</Label>
+            </Label>
+            <Label
+              label="Telefone"
+              status={formState.errors.phone && "error"}
+              errorText={formState.errors.phone?.message}
+            >
               <Input
-                {...register("phone")}
+                {...register("phone", { required: "Este campo é obrigatório" })}
                 placeholder="(11) 99999-9999"
                 disabled={dialogType === "view"}
+                status={formState.errors.notes && "error"}
               />
-            </div>
-
-            {/* TYPE */}
-            <div>
-              <Label>Tipo</Label>
+            </Label>
+            <Label
+              label="Tipo"
+              status={formState.errors.type && "error"}
+              errorText={formState.errors.type?.message}
+            >
               <Controller
                 control={control}
                 name="type"
+                rules={{ required: "Este campo é obrigatório" }}
                 render={({ field }) => (
                   <Select
                     value={field.value} // valor atual controlado pelo RHF
                     onValueChange={field.onChange}
                     disabled={dialogType === "view"}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger status={formState.errors.notes && "error"}>
                       <SelectValue placeholder="Selecione o tipo" />
                     </SelectTrigger>
 
@@ -241,86 +268,120 @@ export const ClientDialog = forwardRef<
                   </Select>
                 )}
               />
-            </div>
-          </div>
+            </Label>
 
-          {/* --- Endereço --- */}
-          <h3 className="text-lg font-medium mt-4">Endereço</h3>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label>Rua</Label>
+            <Label
+              label="Rua"
+              status={formState.errors.street && "error"}
+              errorText={formState.errors.street?.message}
+            >
               <Input
-                {...register("street")}
+                {...register("street", {
+                  required: "Este campo é obrigatório",
+                })}
                 disabled={dialogType === "view"}
                 placeholder="Rua das Flores"
+                status={formState.errors.notes && "error"}
               />
-            </div>
+            </Label>
 
-            <div>
-              <Label>Bairro</Label>
+            <Label
+              label="Bairro"
+              status={formState.errors.neighborhood && "error"}
+              errorText={formState.errors.neighborhood?.message}
+            >
               <Input
-                {...register("neighborhood")}
+                {...register("neighborhood", {
+                  required: "Este campo é obrigatório",
+                })}
                 disabled={dialogType === "view"}
                 placeholder="Centro"
+                status={formState.errors.notes && "error"}
               />
-            </div>
+            </Label>
 
-            <div>
-              <Label>Cidade</Label>
+            <Label
+              label="Cidade"
+              status={formState.errors.city && "error"}
+              errorText={formState.errors.city?.message}
+            >
               <Input
-                {...register("city")}
+                {...register("city", { required: "Este campo é obrigatório" })}
                 disabled={dialogType === "view"}
                 placeholder="São Paulo"
+                status={formState.errors.notes && "error"}
               />
-            </div>
-
-            <div>
-              <Label>Estado</Label>
+            </Label>
+            <Label
+              label="Estado"
+              status={formState.errors.state && "error"}
+              errorText={formState.errors.state?.message}
+            >
               <Input
-                {...register("state")}
+                {...register("state", { required: "Este campo é obrigatório" })}
                 disabled={dialogType === "view"}
                 placeholder="SP"
+                status={formState.errors.notes && "error"}
               />
-            </div>
-
-            <div>
-              <Label>CEP</Label>
+            </Label>
+            <Label
+              label="CEP"
+              status={formState.errors.zip_code && "error"}
+              errorText={formState.errors.zip_code?.message}
+            >
               <Input
-                {...register("zip_code")}
+                {...register("zip_code", {
+                  required: "Este campo é obrigatório",
+                })}
                 disabled={dialogType === "view"}
                 placeholder="01234-567"
+                status={formState.errors.notes && "error"}
               />
-            </div>
-
-            <div>
-              <Label>Número</Label>
+            </Label>
+            <Label
+              label="Número"
+              status={formState.errors.number && "error"}
+              errorText={formState.errors.number?.message}
+            >
               <Input
-                {...register("number")}
+                {...register("number", {
+                  required: "Este campo é obrigatório",
+                })}
                 disabled={dialogType === "view"}
                 placeholder="123"
+                status={formState.errors.notes && "error"}
               />
-            </div>
+            </Label>
 
-            <div className="md:col-span-2">
-              <Label>Complemento</Label>
+            <Label
+              label="Complemento"
+              status={formState.errors.complement && "error"}
+              errorText={formState.errors.complement?.message}
+            >
               <Input
-                {...register("complement")}
+                {...register("complement", {
+                  required: "Este campo é obrigatório",
+                })}
                 disabled={dialogType === "view"}
                 placeholder="Apto 45"
+                status={formState.errors.notes && "error"}
               />
-            </div>
+            </Label>
           </div>
 
-          {/* Observações */}
-          <div>
-            <Label>Observações</Label>
+          <Label
+            label="Observações"
+            status={formState.errors.notes && "error"}
+            errorText={formState.errors.notes?.message}
+          >
             <Textarea
-              {...register("notes")}
+              {...register("notes", { required: "Este campo é obrigatório" })}
               placeholder="Alguma observação do cliente..."
               disabled={dialogType === "view"}
+              status={formState.errors.notes && "error"}
             />
-          </div>
+          </Label>
+
           {dialogType !== "view" && <DialogFooter ref={dialogFooterRef} />}
         </form>
       </DialogContent>
