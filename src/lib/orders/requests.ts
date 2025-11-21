@@ -20,7 +20,7 @@ export async function getOrders({
       `/orders?page=${page}&limit=${pageSize}&title=${filter}&sort_by=title&order=DESC`
     );
 
-    return {
+    dataResponse = {
       success: true,
       data: responseData?.data,
     };
@@ -74,7 +74,7 @@ export async function createOrder({
       invoice_number,
     });
 
-    return {
+    dataResponse = {
       success: true,
       data: responseData?.data,
     };
@@ -128,7 +128,7 @@ export async function updateOrder({
       description,
       invoice_number,
     });
-    return {
+    dataResponse = {
       success: true,
       data: responseData?.data,
     };
@@ -149,7 +149,7 @@ export async function deleteOrder({ id }: { id: number }) {
     const apiRequest = await api();
     const responseData = await apiRequest.delete(`orders/${id}`);
 
-    return {
+    dataResponse = {
       success: true,
       data: responseData?.data,
     };

@@ -29,6 +29,7 @@ const textAreaVariants = cva(
     "focus-visible:ring-[3px]",
     "disabled:cursor-not-allowed",
     "disabled:opacity-50 md:text-sm",
+    "selection:bg-emerald-100",
   ],
   {
     variants: {
