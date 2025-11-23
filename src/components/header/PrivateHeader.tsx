@@ -1,9 +1,8 @@
 "use client";
 
-import { HomeIcon, MenuIcon, UserIcon } from "lucide-react";
+import { HomeIcon, UserIcon } from "lucide-react";
 import { IconAction } from "../utils/IconAction";
 import MenuList from "./MenuList";
-import { Input } from "../../../components/ui/input";
 import { useRouter } from "next/navigation";
 
 export default function PrivateHeader() {

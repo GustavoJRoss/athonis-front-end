@@ -17,7 +17,7 @@ export default async function PageOrders() {
         backTo={{ link: "/home", title: "Voltar para página inicial." }}
       />
       <OrdersPage
-        initialData={ordersResponse?.data.items || []}
+        initialData={ordersResponse?.data?.items || []}
         totalRows={ordersResponse?.data?.meta?.total || 0}
       />
     </>

@@ -3,10 +3,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { motion } from "framer-motion";
 import { useToast } from "@/hooks/useToast";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { login } from "@/src/lib/api/auth";
+import { Label } from "@/components/ui/label";
+import { ArrowLeftIcon } from "lucide-react";
 
 type LoginFormProps = {
   username: string;
@@ -44,47 +48,76 @@ export default function LoginPage() {
   }
 
   return (
-    <div
-      style={{
-        maxWidth: "400px",
-        margin: "100px auto",
-        padding: "20px",
-      }}
-    >
-      <h1>Login</h1>
-      <form noValidate onSubmit={handleSubmit(onLoginButtonClick)}>
-        <div style={{ marginBottom: "15px" }}>
-          <label>
-            Usuário:
-            <Input
-              {...register("username", { required: "Field is required" })}
-              placeholder="Digite o seu usuário"
-            />
-            {formState.errors.username && (
-              <span style={{ color: "red", fontSize: "12px" }}>
-                {formState.errors.username.message}
-              </span>
-            )}
-          </label>
-        </div>
+    <div className="min-h-screen flex flex-col justify-center items-center bg-gray-50">
+      <div className="fixed top-0 left-0 w-full h-40 bg-gradient-to-r from-blue-900 to-green-600 -z-10" />
 
-        <div style={{ marginBottom: "15px" }}>
-          <label>
-            Senha:
-            <Input
-              {...register("password", { required: "Field is required" })}
-              placeholder="Digite a sua senha"
-            />
-            {formState.errors.password && (
-              <span style={{ color: "red", fontSize: "12px" }}>
-                {formState.errors.password.message}
-              </span>
-            )}
-          </label>
-        </div>
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="w-full max-w-md"
+      >
+        <Card className="shadow-lg border border-gray-200">
+          <CardHeader className="text-center py-6">
+            <CardTitle className="text-2xl font-semibold tracking-tight">
+              Bem-vindo de volta
+            </CardTitle>
+            <p className="text-sm text-muted-foreground mt-1">
+              Faça login para acessar o sistema Athonis.
+            </p>
+          </CardHeader>
 
-        <Button type="submit">Login</Button>
-      </form>
+          <CardContent>
+            <form
+              noValidate
+              onSubmit={handleSubmit(onLoginButtonClick)}
+              className="space-y-4"
+            >
+              <Label
+                label="Usuário"
+                status={formState.errors.username && "error"}
+                errorText={formState.errors.username?.message}
+              >
+                <Input
+                  {...register("username", { required: "Campo obrigatório" })}
+                  placeholder="Digite seu usuário"
+                  status={formState.errors.username && "error"}
+                />
+              </Label>
+              <Label
+                label="Senha"
+                status={formState.errors.password && "error"}
+                errorText={formState.errors.password?.message}
+              >
+                <Input
+                  type="password"
+                  {...register("password", { required: "Campo obrigatório" })}
+                  placeholder="Digite sua senha"
+                  status={formState.errors.password && "error"}
+                />
+              </Label>
+
+              <Button
+                type="submit"
+                disabled={loading}
+                className="w-full h-11 text-base"
+              >
+                {loading ? "Entrando..." : "Entrar"}
+              </Button>
+            </form>
+
+            <div className="text-center mt-4">
+              <button
+                className="text-sm text-muted-foreground hover:text-primary transition flex items-center gap-4 justify-center w-full"
+                onClick={() => router.push("/")}
+              >
+                <ArrowLeftIcon />
+                Voltar para a página inicial
+              </button>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
     </div>
   );
 }

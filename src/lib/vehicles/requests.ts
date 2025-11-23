@@ -84,7 +84,7 @@ export async function updateVehicle({
       name,
       year,
     });
-    return {
+    dataResponse = {
       success: true,
       data: responseData?.data,
     };
@@ -105,7 +105,7 @@ export async function deleteVehicle({ id }: { id: number }) {
     const apiRequest = await api();
     const responseData = await apiRequest.delete(`vehicles/${id}`);
 
-    return {
+    dataResponse = {
       success: true,
       data: responseData?.data,
     };

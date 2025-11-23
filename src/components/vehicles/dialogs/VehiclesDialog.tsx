@@ -1,6 +1,6 @@
 "use client";
 
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import {
   Dialog,
   DialogContent,
@@ -9,18 +9,10 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectTrigger,
-  SelectContent,
-  SelectItem,
-  SelectValue,
-} from "@/components/ui/select";
 import { useToast } from "@/hooks/useToast";
 import { DialogFooter } from "../../utils/dialog/DialogFooter";
 import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import { DialogOpenRef, DialogOpenType } from "../../types/types";
-import { DatePicker } from "@/components/ui/date-picker";
 import { VehicleType } from "../../types/vehicle";
 import { createVehicle, updateVehicle } from "@/src/lib/vehicles/requests";
 
@@ -137,8 +129,6 @@ export const VehiclesDialog = forwardRef<
           <DialogHeader>
             <DialogTitle>Criar Novo Motorista</DialogTitle>
           </DialogHeader>
-
-          {/* --- Dados Principais --- */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Label
               label="Nome"

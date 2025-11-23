@@ -12,7 +12,7 @@ export default async function ProtectedLayout({
       <header>
         <PrivateHeader />
       </header>
-      <main className="p-6 flex flex-col gap-6 h-[calc(100vh-68px)]">
+      <main className="p-6 flex flex-col gap-6 h-[calc(100vh-68px)] overflow-y-auto">
         {children}
       </main>
     </div>

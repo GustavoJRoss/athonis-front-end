@@ -7,6 +7,7 @@ import React, {
   forwardRef,
   useImperativeHandle,
   useRef,
+  Ref,
 } from "react";
 import { AgGridReact } from "ag-grid-react";
 import type { AgGridReactProps } from "ag-grid-react";
@@ -45,6 +46,7 @@ type DataTableProps = {
   pageSizeOptions?: number[];
   initialData?: any[];
   initialTotal?: number;
+  gridRef?: Ref<AgGridReact>;
 } & Omit<AgGridReactProps, "rowData" | "columnDefs">;
 
 export type DataTableRefProps = {
@@ -63,6 +65,7 @@ export const DataTable = forwardRef<any, DataTableProps>((props, ref) => {
     initialData,
     initialTotal,
     headerActions,
+    gridRef,
     ...rest
   } = props;
 
@@ -136,6 +139,7 @@ export const DataTable = forwardRef<any, DataTableProps>((props, ref) => {
           </div>
         ) : (
           <AgGridReact
+            ref={gridRef}
             columnDefs={columnDefs}
             rowData={rowData}
             gridOptions={gridOptions}

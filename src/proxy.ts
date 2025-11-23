@@ -12,7 +12,8 @@ export async function proxy(request: NextRequest) {
     pathname.startsWith("/home") ||
     pathname.startsWith("/orders") ||
     pathname.startsWith("/drivers") ||
-    pathname.startsWith("/vehicles");
+    pathname.startsWith("/vehicles") ||
+    pathname.startsWith("/routes");
 
   if (isProtectedRoute) {
     if (!token) {
@@ -46,5 +47,6 @@ export const config = {
     "/drivers/:path*",
     "/vehicles/:path*",
     "/orders/:path*",
+    "/routes/:path*",
   ],
 };
