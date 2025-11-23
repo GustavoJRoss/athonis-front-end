@@ -51,16 +51,18 @@ export default function HomePage() {
   ];
 
   return (
-    <div className="w-full grid grid-cols-4 justify-center gap-6 ">
-      {cardContent.map((card, index) => (
-        <HomePageCards
-          key={index}
-          description={card.description}
-          icon={card.icon}
-          route={card.route}
-          title={card.title}
-        />
-      ))}
+    <div className="h-full w-full flex justify-center items-center">
+      <div className="w-[60vw] grid grid-cols-3 gap-6">
+        {cardContent.map((card, index) => (
+          <HomePageCards
+            key={index}
+            description={card.description}
+            icon={card.icon}
+            route={card.route}
+            title={card.title}
+          />
+        ))}
+      </div>
     </div>
   );
 }
