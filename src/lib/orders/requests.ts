@@ -162,3 +162,26 @@ export async function deleteOrder({ id }: { id: number }) {
 
   return dataResponse;
 }
+
+export async function importOrders({ file }: { file: File }) {
+  let dataResponse: RequestResponseData;
+
+  try {
+    const apiRequest = await api("multipart/form-data");
+    const responseData = await apiRequest.post(`/order-imports/upload`, {
+      file,
+    });
+
+    dataResponse = {
+      success: true,
+      data: responseData?.data,
+    };
+  } catch (error: any) {
+    dataResponse = {
+      success: false,
+      message: error?.message,
+    };
+  }
+
+  return dataResponse;
+}

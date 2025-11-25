@@ -61,8 +61,17 @@ function Button({
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
     >
-      {Icon && <Icon className="stroke-background" size={22} />}
-      {loading ? "Carregando..." : children}
+      <>
+        {Icon && (
+          <Icon
+            className={
+              variant === "default" ? "stroke-background" : "stroke-foreground"
+            }
+            size={22}
+          />
+        )}
+        {loading ? "Carregando..." : children}
+      </>
     </Comp>
   );
 }
