@@ -62,6 +62,7 @@ export default function ClientsPage({
               );
             },
           },
+          { headerName: "Código", field: "client_id" },
           { headerName: "Nome", field: "name" },
           { headerName: "Nome Fantasia", field: "trade_name" },
           { headerName: "Documento", field: "document" },

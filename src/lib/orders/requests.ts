@@ -185,3 +185,55 @@ export async function importOrders({ file }: { file: File }) {
 
   return dataResponse;
 }
+
+export async function getRejectedFiles({
+  dataInicio,
+  dataFim,
+}: {
+  dataInicio: string;
+  dataFim: string;
+}) {
+  let dataResponse: RequestResponseData;
+
+  try {
+    const apiRequest = await api();
+    const responseData = await apiRequest.get(
+      `/order-imports/rejected-files?dataInicio=${dataInicio}&dataFim=${dataFim}`
+    );
+
+    dataResponse = {
+      success: true,
+      data: responseData?.data,
+    };
+  } catch (error: any) {
+    dataResponse = {
+      success: false,
+      message: error?.message,
+    };
+  }
+
+  return dataResponse;
+}
+
+export async function downloadRejectedFile({ filename }: { filename: string }) {
+  let dataResponse: RequestResponseData;
+
+  try {
+    const apiRequest = await api("text/csv");
+    const responseData = await apiRequest.get(
+      `/order-imports/download-rejected/${filename}`
+    );
+
+    dataResponse = {
+      success: true,
+      data: responseData?.data,
+    };
+  } catch (error: any) {
+    dataResponse = {
+      success: false,
+      message: error?.message,
+    };
+  }
+
+  return dataResponse;
+}

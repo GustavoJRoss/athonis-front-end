@@ -65,7 +65,7 @@ function Button({
         {Icon && (
           <Icon
             className={
-              variant === "default" ? "stroke-background" : "stroke-foreground"
+              variant === "default" ? "stroke-foreground" : "stroke-background"
             }
             size={22}
           />

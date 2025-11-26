@@ -12,14 +12,14 @@ export async function getVehicles({
   filter?: string;
 }) {
   let dataResponse: RequestResponseData;
-
+  console.log({ page, pageSize });
   try {
     const apiRequest = await api();
 
     const responseData = await apiRequest.get(
       `/vehicles?page=${page}&limit=${pageSize}&name=${filter}`
     );
-
+    console.log({responseData})
     dataResponse = {
       success: true,
       data: responseData?.data,
