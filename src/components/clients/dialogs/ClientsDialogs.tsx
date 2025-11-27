@@ -148,6 +148,36 @@ export const ClientDialog = forwardRef<
     open: handleOpenDialog,
   }));
 
+  const statesOptions = [
+    "AC",
+    "AL",
+    "AP",
+    "AM",
+    "BA",
+    "CE",
+    "DF",
+    "ES",
+    "GO",
+    "MA",
+    "MT",
+    "MS",
+    "MG",
+    "PA",
+    "PB",
+    "PR",
+    "PE",
+    "PI",
+    "RJ",
+    "RN",
+    "RS",
+    "RO",
+    "RR",
+    "SC",
+    "SP",
+    "SE",
+    "TO",
+  ];
+
   return (
     <Dialog open={showDialog} onOpenChange={setShowDialog}>
       <DialogContent className="max-h-[90vh] overflow-y-auto">
@@ -257,7 +287,10 @@ export const ClientDialog = forwardRef<
                     onValueChange={field.onChange}
                     disabled={dialogType === "view"}
                   >
-                    <SelectTrigger status={formState.errors.notes && "error"}>
+                    <SelectTrigger
+                      status={formState.errors.type && "error"}
+                      className="w-full"
+                    >
                       <SelectValue placeholder="Selecione o tipo" />
                     </SelectTrigger>
 
@@ -317,11 +350,35 @@ export const ClientDialog = forwardRef<
               status={formState.errors.state && "error"}
               errorText={formState.errors.state?.message}
             >
-              <Input
-                {...register("state", { required: "Este campo é obrigatório" })}
-                disabled={dialogType === "view"}
-                placeholder="SP"
-                status={formState.errors.notes && "error"}
+              <Controller
+                control={control}
+                name="state"
+                rules={{ required: "Este campo é obrigatório" }}
+                render={({ field }) => (
+                  <Select
+                    value={field.value} // valor atual controlado pelo RHF
+                    onValueChange={field.onChange}
+                    disabled={dialogType === "view"}
+                  >
+                    <SelectTrigger
+                      status={formState.errors.state && "error"}
+                      className="w-full"
+                    >
+                      <SelectValue placeholder="Selecione o tipo" />
+                    </SelectTrigger>
+
+                    <SelectContent
+                      tw="h-[200px] overflow-y-auto"
+                      className="h-[200px] overflow-y-auto"
+                    >
+                      {statesOptions.map((item) => (
+                        <SelectItem key={item} value={item}>
+                          {item}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
               />
             </Label>
             <Label

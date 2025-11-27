@@ -54,3 +54,33 @@ export async function generateRoute({ orderIds }: { orderIds: number[] }) {
 
   return dataResponse;
 }
+
+export async function getRoutes({
+  page = 1,
+  pageSize = 10,
+  filter = "",
+}: {
+  page: number;
+  pageSize: number;
+  filter?: string;
+}) {
+  let dataResponse: RequestResponseData;
+
+  try {
+    const apiRequest = await api();
+
+    const responseData = await apiRequest.get(`/optimized-routes-history`);
+
+    dataResponse = {
+      success: true,
+      data: responseData?.data,
+    };
+  } catch (error: any) {
+    dataResponse = {
+      success: false,
+      message: error?.message,
+    };
+  }
+
+  return dataResponse;
+}

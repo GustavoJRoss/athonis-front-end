@@ -38,6 +38,7 @@ export default function ClientsPage({
             headerName: "Ações",
             pinned: true,
             maxWidth: 130,
+            headerClass: "*:*:*:justify-center",
             cellRenderer: ({ data }: any) => {
               return (
                 <div className="flex gap-4 h-full items-center justify-center">
@@ -62,7 +63,7 @@ export default function ClientsPage({
               );
             },
           },
-          { headerName: "Código", field: "client_id" },
+          { headerName: "Código", field: "client_id", maxWidth: 80 },
           { headerName: "Nome", field: "name" },
           { headerName: "Nome Fantasia", field: "trade_name" },
           { headerName: "Documento", field: "document" },
