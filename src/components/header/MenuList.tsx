@@ -1,4 +1,5 @@
-import { MenuIcon, UsersIcon } from "lucide-react";
+"use client";
+
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -6,26 +7,70 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-} from "../../../components/ui/navigation-menu";
+} from "@/components/ui/navigation-menu";
+import {
+  CarIcon,
+  List,
+  PackageIcon,
+  RouteIcon,
+  UploadIcon,
+  UsersIcon,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 
-export default function MenuList() {
+export function MenuList() {
   const router = useRouter();
+
+  const items = [
+    { label: "Pedidos", route: "/orders", icon: PackageIcon },
+    { label: "Rotas", route: "/routes", icon: RouteIcon },
+    { label: "Clientes", route: "/clients", icon: UsersIcon },
+    { label: "Motoristas", route: "/drivers", icon: UsersIcon },
+    { label: "Veículos", route: "/vehicles", icon: CarIcon },
+    {
+      label: "Importação de Pedidos",
+      route: "/orders/import",
+      icon: UploadIcon,
+    },
+  ];
 
   return (
     <NavigationMenu>
       <NavigationMenuList>
         <NavigationMenuItem>
-          <NavigationMenuTrigger className="bg-emerald-600 hover:bg-emerald-600">
-            <MenuIcon className="stroke-white hover:stroke-emerald-600" />
+          {/* Trigger com fundo transparente e hover emerald escuro */}
+          <NavigationMenuTrigger
+            className="
+              bg-transparent 
+              text-white 
+              hover:bg-emerald-700 
+              data-[state=open]:bg-emerald-700
+            "
+          >
+            <List className="h-5 w-5 text-white hover:stroke-emerald-600" />
           </NavigationMenuTrigger>
+
+          {/* Conteúdo com fundo verde */}
           <NavigationMenuContent>
-            <NavigationMenuLink onClick={() => router.push("/clients")}>
-              <div className="flex space-x-2 items-center">
-                <UsersIcon />
-                <span>Clientes</span>
-              </div>
-            </NavigationMenuLink>
+            <ul className="grid gap-1 p-2 w-48">
+              {items.map((item) => {
+                const Icon = item?.icon;
+                return (
+                  <li key={item.route} className="flex gap-1 items-center">
+                    <Icon className="stroke-emerald-700" />
+                    <NavigationMenuLink
+                      onClick={() => router.push(item.route)}
+                      className="
+                      block 
+                      cursor-pointer 
+                    "
+                    >
+                      {item.label}
+                    </NavigationMenuLink>
+                  </li>
+                );
+              })}
+            </ul>
           </NavigationMenuContent>
         </NavigationMenuItem>
       </NavigationMenuList>

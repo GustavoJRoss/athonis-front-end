@@ -32,6 +32,8 @@ import { Button } from "@/components/ui/button";
 import { LookupClient } from "../../lookups/LookupClient";
 import { getClientById } from "@/src/lib/clients/requests";
 import { Tooltip } from "@/components/ui/tooltip";
+import { LookupDriver } from "../../lookups/LookupDriver";
+import { LookupVehicle } from "../../lookups/LookupVehicle";
 
 export type OrderFormData = {
   client_id: number;
@@ -41,6 +43,8 @@ export type OrderFormData = {
   invoice_number?: string;
   urgency: string;
   vehicle_id: number;
+  vehicle_name: number;
+  driver_name: number;
   driver_id: number;
   quantity: number;
 
@@ -79,8 +83,11 @@ export const OrderDialog = forwardRef<
   } = useForm<OrderFormData>();
 
   const { successToast, errorToast } = useToast();
+
   const dialogFooterRef = useRef<any>(null);
   const lookClientRef = useRef<any>(null);
+  const lookDriverRef = useRef<any>(null);
+  const lookVehicleRef = useRef<any>(null);
 
   const onSubmit = async (data: OrderFormData) => {
     dialogFooterRef.current?.setLoading(true);
@@ -221,7 +228,13 @@ export const OrderDialog = forwardRef<
   return (
     <>
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
-        <DialogContent className="max-h-[90vh] overflow-y-auto ">
+        <DialogContent
+          className="
+    [&]:max-w-none
+    [&]:w-[40vw]
+    [&]:max-h-none
+  "
+        >
           <form
             noValidate
             onSubmit={handleSubmit(onSubmit)}
@@ -357,11 +370,30 @@ export const OrderDialog = forwardRef<
                   />
                 </Label>
                 <Label
-                  label="Veículo ID"
+                  label="Veículo"
                   status={formState.errors.vehicle_id && "error"}
                   errorText={formState.errors.vehicle_id?.message}
                 >
-                  <Input
+                  <div className="flex gap-3 items-center">
+                    <Input
+                      {...register("vehicle_name")}
+                      placeholder="O nome do cliente"
+                      readOnly
+                      status={formState.errors.vehicle_id && "error"}
+                    />
+
+                    <Tooltip text="Selecione seu Veículo">
+                      <Button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          e.preventDefault();
+                          lookVehicleRef.current.open();
+                        }}
+                        icon={ListCheckIcon}
+                      />
+                    </Tooltip>
+                  </div>
+                  {/* <Input
                     type="number"
                     {...register("vehicle_id", {
                       valueAsNumber: true,
@@ -370,15 +402,33 @@ export const OrderDialog = forwardRef<
                     disabled={dialogType === "view"}
                     min={1}
                     placeholder="Id do veículo"
-                    status={formState.errors.vehicle_id && "error"}
-                  />
+                  /> */}
                 </Label>
                 <Label
                   label="Motorista ID"
                   status={formState.errors.driver_id && "error"}
                   errorText={formState.errors.driver_id?.message}
                 >
-                  <Input
+                  <div className="flex gap-3 items-center">
+                    <Input
+                      {...register("driver_name")}
+                      placeholder="O nome do motorista"
+                      readOnly
+                      status={formState.errors.driver_id && "error"}
+                    />
+
+                    <Tooltip text="Selecione seu Motorista">
+                      <Button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          e.preventDefault();
+                          lookDriverRef.current.open();
+                        }}
+                        icon={ListCheckIcon}
+                      />
+                    </Tooltip>
+                  </div>
+                  {/* <Input
                     type="number"
                     {...register("driver_id", {
                       valueAsNumber: true,
@@ -388,7 +438,7 @@ export const OrderDialog = forwardRef<
                     min={1}
                     placeholder="Id do motorista"
                     status={formState.errors.driver_id && "error"}
-                  />
+                  /> */}
                 </Label>
                 <Label
                   label="Quantidade"
@@ -546,6 +596,22 @@ export const OrderDialog = forwardRef<
           setValue("delivery_state", data?.state);
           setValue("delivery_street", data?.street);
           setValue("delivery_zipcode", data?.zip_code);
+          clearErrors();
+        }}
+      />
+      <LookupDriver
+        ref={lookDriverRef}
+        onSelect={(data) => {
+          setValue("driver_id", data?.driver_id);
+          setValue("driver_name", data?.name);
+          clearErrors();
+        }}
+      />
+      <LookupVehicle
+        ref={lookVehicleRef}
+        onSelect={(data) => {
+          setValue("vehicle_id", data?.vehicle_id);
+          setValue("vehicle_name", data?.name);
           clearErrors();
         }}
       />

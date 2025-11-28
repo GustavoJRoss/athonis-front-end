@@ -180,7 +180,7 @@ export async function updateClient({
       zip_code,
       number,
       complement,
-      observations: notes,
+      notes,
     });
     dataResponse = {
       success: true,

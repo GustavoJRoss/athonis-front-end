@@ -31,6 +31,7 @@ export const DeleteClientDialog = forwardRef<any, DeleteClientDialogProps>(
       setLoading(true);
 
       const deleteResponse = await deleteClient({ id: clientIdRef.current });
+      console.log({ deleteResponse, clientIdRef: clientIdRef.current });
       setLoading(false);
       if (deleteResponse?.success) {
         dialogButtonRef.current?.click();

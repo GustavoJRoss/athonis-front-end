@@ -71,7 +71,7 @@ export const LookupClient = forwardRef<any, LookupClientProps>(
                   width: 50,
                   pinned: true,
                 },
-                { headerName: "Código", field: "client_id", maxWidth: 80 },
+                { headerName: "Client Id", field: "client_id", maxWidth: 100 },
                 { headerName: "Nome", field: "name" },
                 { headerName: "Nome Fantasia", field: "trade_name" },
                 { headerName: "Documento", field: "document" },

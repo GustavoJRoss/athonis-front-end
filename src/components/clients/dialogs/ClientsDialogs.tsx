@@ -215,7 +215,7 @@ export const ClientDialog = forwardRef<
                 })}
                 placeholder="João Silva e Cia"
                 disabled={dialogType === "view"}
-                status={formState.errors.notes && "error"}
+                status={formState.errors.trade_name && "error"}
               />
             </Label>
 
@@ -227,10 +227,12 @@ export const ClientDialog = forwardRef<
               <Input
                 {...register("document", {
                   required: "Este campo é obrigatório",
+                  valueAsNumber: true,
                 })}
-                placeholder="123.456.789-00"
+                type="number"
+                placeholder="12345678900"
                 disabled={dialogType === "view"}
-                status={formState.errors.notes && "error"}
+                status={formState.errors.document && "error"}
               />
             </Label>
             <Label
@@ -244,7 +246,7 @@ export const ClientDialog = forwardRef<
                 })}
                 placeholder="Inscrição estadual"
                 disabled={dialogType === "view"}
-                status={formState.errors.notes && "error"}
+                status={formState.errors.state_registration && "error"}
               />
             </Label>
             <Label
@@ -257,7 +259,7 @@ export const ClientDialog = forwardRef<
                 type="email"
                 placeholder="email@exemplo.com"
                 disabled={dialogType === "view"}
-                status={formState.errors.notes && "error"}
+                status={formState.errors.email && "error"}
               />
             </Label>
             <Label
@@ -269,7 +271,7 @@ export const ClientDialog = forwardRef<
                 {...register("phone", { required: "Este campo é obrigatório" })}
                 placeholder="(11) 99999-9999"
                 disabled={dialogType === "view"}
-                status={formState.errors.notes && "error"}
+                status={formState.errors.phone && "error"}
               />
             </Label>
             <Label
@@ -314,7 +316,7 @@ export const ClientDialog = forwardRef<
                 })}
                 disabled={dialogType === "view"}
                 placeholder="Rua das Flores"
-                status={formState.errors.notes && "error"}
+                status={formState.errors.street && "error"}
               />
             </Label>
 
@@ -329,7 +331,7 @@ export const ClientDialog = forwardRef<
                 })}
                 disabled={dialogType === "view"}
                 placeholder="Centro"
-                status={formState.errors.notes && "error"}
+                status={formState.errors.neighborhood && "error"}
               />
             </Label>
 
@@ -342,7 +344,7 @@ export const ClientDialog = forwardRef<
                 {...register("city", { required: "Este campo é obrigatório" })}
                 disabled={dialogType === "view"}
                 placeholder="São Paulo"
-                status={formState.errors.notes && "error"}
+                status={formState.errors.city && "error"}
               />
             </Label>
             <Label
@@ -392,7 +394,7 @@ export const ClientDialog = forwardRef<
                 })}
                 disabled={dialogType === "view"}
                 placeholder="01234-567"
-                status={formState.errors.notes && "error"}
+                status={formState.errors.zip_code && "error"}
               />
             </Label>
             <Label
@@ -403,10 +405,12 @@ export const ClientDialog = forwardRef<
               <Input
                 {...register("number", {
                   required: "Este campo é obrigatório",
+                  valueAsNumber: true,
                 })}
+                type="number"
                 disabled={dialogType === "view"}
                 placeholder="123"
-                status={formState.errors.notes && "error"}
+                status={formState.errors.number && "error"}
               />
             </Label>
 
@@ -421,7 +425,7 @@ export const ClientDialog = forwardRef<
                 })}
                 disabled={dialogType === "view"}
                 placeholder="Apto 45"
-                status={formState.errors.notes && "error"}
+                status={formState.errors.complement && "error"}
               />
             </Label>
           </div>
