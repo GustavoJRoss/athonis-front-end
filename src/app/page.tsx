@@ -4,12 +4,15 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function LandingPage() {
+  const router = useRouter();
+
   return (
     <div className="flex flex-col w-full min-h-screen bg-gray-50 text-gray-900">
       {/* HEADER */}
-      <header className="w-full py-6 bg-gradient-to-r from-blue-700 via-blue-600 to-green-600 text-white shadow-md">
+      <header className="w-full py-6 bg-gradient-to-r from-emerald-600 to-green-600 text-white shadow-md">
         <div className="max-w-6xl mx-auto flex items-center justify-between px-6">
           <div className="flex items-center gap-2 text-xl font-semibold">
             <span>Athonis</span>
@@ -28,12 +31,11 @@ export default function LandingPage() {
           </nav>
         </div>
       </header>
-
       {/* HERO */}
       <section className="max-w-6xl w-full mx-auto mt-16 px-6 text-center">
         <motion.h1
           className="text-4xl md:text-5xl font-bold mb-4"
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, y: -80 }}
           animate={{ opacity: 1, y: 0 }}
         >
           Impulsionando sua logística com o software de gestão da Athonis.
@@ -55,24 +57,34 @@ export default function LandingPage() {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
         >
-          <Button className="px-6 py-5 text-lg rounded-2xl shadow-lg" asChild>
-            <a href="/login" className="flex items-center gap-2">
-              Acessar Plataforma
-              <ArrowRight size={18} />
-            </a>
+          <Button
+            className="px-6 py-5 text-lg rounded-2xl shadow-lg"
+            onClick={() => router.push("/login")}
+          >
+            Acessar Plataforma
           </Button>
         </motion.div>
       </section>
-
-      {/* MOCKUP */}
-      <section className="mt-20 flex justify-center w-full px-6">
-        <Card className="max-w-4xl w-full shadow-xl rounded-2xl">
-          <CardContent className="p-6">
-            <div className="h-64 bg-gray-200 rounded-xl" />
-          </CardContent>
-        </Card>
-      </section>
-
+      {/* MOCKUP */}\
+      <motion.div
+        className="mt-8"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.3 }}
+      >
+        <section className="mt-20 flex justify-center w-full px-6">
+          <Card className="max-w-4xl w-full shadow-xl rounded-2xl p-0">
+            <CardContent className="p-4 m-0">
+              <img
+                src={"./entregas-imagem.jpg"}
+                height={500}
+                width={1000}
+                className="rounded-md"
+              />
+            </CardContent>
+          </Card>
+        </section>
+      </motion.div>
       {/* FERRAMENTAS */}
       <section id="ferramentas" className="max-w-6xl w-full mx-auto mt-24 px-6">
         <h2 className="text-3xl font-bold mb-6">Nossas Ferramentas</h2>
@@ -117,7 +129,6 @@ export default function LandingPage() {
           ))}
         </div>
       </section>
-
       {/* FOOTER */}
       <footer id="contato" className="mt-32 py-12 bg-gray-900 text-gray-300">
         <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-10">

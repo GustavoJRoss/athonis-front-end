@@ -48,11 +48,11 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center bg-gray-50">
+    <div className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-r from-emerald-100 to-emerald-400">
       <div className="fixed top-0 left-0 w-full h-40 bg-gradient-to-r from-blue-900 to-green-600 -z-10" />
 
       <motion.div
-        initial={{ opacity: 0, y: 30 }}
+        initial={{ opacity: 0, y: 60 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         className="w-full max-w-md"
