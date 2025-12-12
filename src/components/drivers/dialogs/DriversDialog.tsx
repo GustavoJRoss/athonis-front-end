@@ -168,7 +168,11 @@ export const DriversDialog = forwardRef<
               status={formState.errors.birth_date && "error"}
               errorText={formState.errors.birth_date?.message}
             >
-              <DatePicker onSelect={(date) => setValue("birth_date", date)} />
+              <Input
+                type="date"
+                status={formState.errors.birth_date && "error"}
+                {...register("birth_date", { required: "Campo obrigatório." })}
+              />
             </Label>
             <Label
               label="Gênero"

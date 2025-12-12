@@ -79,12 +79,9 @@ export default function RouteValidation({
     <div className="flex flex-col gap-8">
       <div className="flex justify-end items-center gap-4">
         {isValidated && (
-          <>
-            <Button onClick={handleClickGenerateRoute} icon={MapPinnedIcon}>
-              Criar Rota Otimizada
-            </Button>
-            <Button onClick={() => console.log({ routes })}>etee</Button>
-          </>
+          <Button onClick={handleClickGenerateRoute} icon={MapPinnedIcon}>
+            Criar Rota Otimizada
+          </Button>
         )}
         <Button onClick={handleClickValidateOrders} icon={ListCheckIcon}>
           Verificar pedidos

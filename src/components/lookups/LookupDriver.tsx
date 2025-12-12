@@ -94,7 +94,7 @@ export const LookupDriver = forwardRef<any, LookupDriverProps>(
               <Button variant={"outline"}>Fechar</Button>
             </DialogClose>
             <Button icon={CheckIcon} onClick={handleSelect}>
-              Selecionar Cliente
+              Selecionar Motorista
             </Button>
           </DialogFooter>
         </DialogContent>
