@@ -187,7 +187,14 @@ export const ClientDialog = forwardRef<
           className="space-y-4"
         >
           <DialogHeader>
-            <DialogTitle>Criar Novo Cliente</DialogTitle>
+            <DialogTitle>
+              {dialogType === "create"
+                ? "Criar"
+                : dialogType === "edit"
+                ? "Editar"
+                : "Visualizar"}{" "}
+              Cliente
+            </DialogTitle>
           </DialogHeader>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

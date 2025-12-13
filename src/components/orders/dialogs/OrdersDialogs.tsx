@@ -377,7 +377,7 @@ export const OrderDialog = forwardRef<
                   <div className="flex gap-3 items-center">
                     <Input
                       {...register("vehicle_name")}
-                      placeholder="O nome do cliente"
+                      placeholder="O nome do veículo"
                       readOnly
                       status={formState.errors.vehicle_id && "error"}
                     />

@@ -134,7 +134,14 @@ export const DriversDialog = forwardRef<
           className="space-y-4"
         >
           <DialogHeader>
-            <DialogTitle>Criar Novo Motorista</DialogTitle>
+            <DialogTitle>
+              {dialogType === "create"
+                ? "Criar"
+                : dialogType === "edit"
+                ? "Editar"
+                : "Visualizar"}{" "}
+              Motorista
+            </DialogTitle>
           </DialogHeader>
 
           {/* --- Dados Principais --- */}
