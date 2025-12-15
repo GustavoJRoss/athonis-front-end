@@ -12,6 +12,17 @@ export function AntdProvider({ children }: { children: React.ReactNode }) {
             colorPrimary: "#10b981",
             borderRadius: 8,
           },
+          components: {
+            Menu: {
+              itemBg: "#059669",
+              itemHoverBg: "#047857",
+              itemSelectedBg: "#047857",
+              itemColor: "#ffffff",
+              itemHoverColor: "#ffffff",
+              itemSelectedColor: "#022c22",
+              iconSize: 18,
+            },
+          },
         }}
       >
         {children}

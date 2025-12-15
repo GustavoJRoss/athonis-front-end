@@ -4,6 +4,7 @@ import { ToasterProvider } from "@/components/ui/toaster";
 import "antd/dist/reset.css";
 import "./globals.css";
 import { AntdProvider } from "../components/providers/AntdProvider";
+import { LayoutRootPage } from "../components/layout/LayoutRootPage";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
