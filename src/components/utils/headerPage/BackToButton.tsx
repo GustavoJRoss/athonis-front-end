@@ -1,8 +1,7 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Tooltip } from "@/components/ui/tooltip";
-import { Redo2Icon, Undo2Icon } from "lucide-react";
+import { Button, Tooltip } from "antd";
+import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 
 interface BackToButtonProps {
@@ -13,15 +12,15 @@ interface BackToButtonProps {
 export function BackToButton({ link, title }: BackToButtonProps) {
   const router = useRouter();
   return (
-    <Tooltip text={title || ""}>
+    <Tooltip title={title || ""}>
       <Button
         onClick={() => router.push(link)}
         className="mb-1"
-        variant="ghost"
+        size="large"
+        type="link"
         tabIndex={-1}
-      >
-        <Redo2Icon className="stroke-emerald-500 rotate-180" />
-      </Button>
+        icon={<ArrowLeftOutlined className="!text-emerald-600" />}
+      />
     </Tooltip>
   );
 }

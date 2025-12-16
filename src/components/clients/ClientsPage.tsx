@@ -3,13 +3,13 @@
 import { getClients } from "@/src/lib/clients/requests";
 import { DataTable, DataTableRefProps } from "../datatables/Datatable";
 import { useRef } from "react";
-import { Button } from "@/components/ui/button";
 import { ClientDialog } from "./dialogs/ClientsDialogs";
 import { DialogOpenRef } from "../types/types";
 import { IconAction } from "../utils/IconAction";
 import { EyeIcon, PencilIcon, TrashIcon } from "lucide-react";
 import { ClientType } from "../types/clients";
 import { DeleteClientDialog } from "./dialogs/DeleteClientDialog";
+import { Button } from "antd";
 
 type ClientsPageProps = {
   initialData: any[];
@@ -29,7 +29,10 @@ export default function ClientsPage({
       <DataTable
         ref={dataTableRef}
         headerActions={
-          <Button onClick={() => clientDialogRef.current?.open("create")}>
+          <Button
+            type="primary"
+            onClick={() => clientDialogRef.current?.open("create")}
+          >
             Criar Cliente
           </Button>
         }

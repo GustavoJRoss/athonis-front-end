@@ -1,6 +1,7 @@
 import ClientsPage from "@/src/components/clients/ClientsPage";
 import HeaderPage from "@/src/components/utils/headerPage/HeaderPage";
 import { getClients } from "@/src/lib/clients/requests";
+import { Flex } from "antd";
 import { UsersIcon } from "lucide-react";
 
 export default async function PageClients() {

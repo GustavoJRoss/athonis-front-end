@@ -13,17 +13,9 @@ import { AgGridReact } from "ag-grid-react";
 import type { AgGridReactProps } from "ag-grid-react";
 import type { ColDef, GridOptions } from "ag-grid-community";
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { ChevronLeft, ChevronRight, Search } from "lucide-react";
+
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Button, Input, Select } from "antd";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -111,7 +103,6 @@ export const DataTable = forwardRef<any, DataTableProps>((props, ref) => {
       {/* Top bar com busca */}
       <div className="flex items-center justify-between gap-3">
         <div className="relative w-64">
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Buscar..."
             className="pl-8"
@@ -131,23 +122,16 @@ export const DataTable = forwardRef<any, DataTableProps>((props, ref) => {
         className="ag-theme-alpine border rounded-lg shadow-sm"
         style={{ height, width }}
       >
-        {loading ? (
-          <div className="flex flex-col justify-center items-center h-full gap-2">
-            <Skeleton className="w-3/4 h-6" />
-            <Skeleton className="w-2/3 h-6" />
-            <Skeleton className="w-1/2 h-6" />
-          </div>
-        ) : (
-          <AgGridReact
-            ref={gridRef}
-            columnDefs={columnDefs}
-            rowData={rowData}
-            gridOptions={gridOptions}
-            pagination={false}
-            suppressPaginationPanel
-            {...rest}
-          />
-        )}
+        <AgGridReact
+          ref={gridRef}
+          columnDefs={columnDefs}
+          rowData={rowData}
+          gridOptions={gridOptions}
+          pagination={false}
+          suppressPaginationPanel
+          loading={loading}
+          {...rest}
+        />
       </div>
 
       {/* Paginação */}
@@ -156,22 +140,14 @@ export const DataTable = forwardRef<any, DataTableProps>((props, ref) => {
           <span>Itens por página:</span>
           <Select
             value={String(pageSize)}
-            onValueChange={(val: string) => {
+            onChange={(val: string) => {
               setPage(1);
               setPageSize(Number(val));
             }}
-          >
-            <SelectTrigger className="w-20 h-8 text-sm">
-              <SelectValue placeholder={pageSize.toString()} />
-            </SelectTrigger>
-            <SelectContent>
-              {pageSizeOptions.map((opt) => (
-                <SelectItem key={opt} value={String(opt)}>
-                  {opt}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            options={pageSizeOptions.map((opt, index) => {
+              return { label: String(opt), value: String(opt) };
+            })}
+          />
         </div>
         <div className="flex gap-4">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -180,8 +156,8 @@ export const DataTable = forwardRef<any, DataTableProps>((props, ref) => {
           </div>
           <div className="flex items-center gap-2">
             <Button
-              variant="outline"
-              size="sm"
+              type="default"
+              size="small"
               disabled={page === 1}
               onClick={() => {
                 setPage((p) => (p > 1 ? p - 1 : 1));
@@ -194,8 +170,7 @@ export const DataTable = forwardRef<any, DataTableProps>((props, ref) => {
               {totalPages || 1}
             </span>
             <Button
-              variant="outline"
-              size="sm"
+              size="small"
               disabled={page >= totalPages}
               onClick={() => setPage((p) => p + 1)}
             >
