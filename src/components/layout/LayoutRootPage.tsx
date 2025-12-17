@@ -3,10 +3,14 @@
 import { Button, Layout, Menu, theme, Tooltip, Typography } from "antd";
 import Sider from "antd/es/layout/Sider";
 import {
+  AimOutlined,
+  CarOutlined,
   HomeFilled,
   HomeOutlined,
+  IdcardOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
+  OrderedListOutlined,
   UploadOutlined,
   UserOutlined,
   VideoCameraOutlined,
@@ -15,6 +19,7 @@ import { Content, Header } from "antd/es/layout/layout";
 import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { MapIcon } from "lucide-react";
 
 export const LayoutRootPage = ({
   children,
@@ -45,30 +50,52 @@ export const LayoutRootPage = ({
           </div>
           <Menu
             className="!bg-emerald-800 *:!text-white "
-            mode="inline"
-            defaultSelectedKeys={["1"]}
+            mode="vertical"
+            defaultSelectedKeys={["2"]}
             items={[
-              {
-                key: "1",
-                icon: <HomeOutlined />,
-                label: "Clientes",
-              },
               {
                 key: "2",
                 icon: <UserOutlined />,
                 label: "Clientes",
+                onClick: () => router.push("/clients"),
               },
               {
                 key: "3",
+                icon: <OrderedListOutlined />,
+                label: "Pedidos",
+                onClick: () => router.push("/orders"),
+              },
+              {
+                key: "4",
                 icon: <UploadOutlined />,
                 label: "Importação Pedidos",
+                onClick: () => router.push("/orders/imports"),
+              },
+              {
+                key: "5",
+                icon: <IdcardOutlined />,
+                label: "Motoristas",
+                onClick: () => router.push("/drivers"),
+              },
+              {
+                key: "6",
+                icon: <CarOutlined />,
+                label: "Veículos",
+                onClick: () => router.push("/vehicles"),
+              },
+
+              {
+                key: "7",
+                icon: <AimOutlined />,
+                label: "Rotas",
+                onClick: () => router.push("/routes"),
               },
             ]}
           />
         </div>
       </Sider>
       <Layout>
-        <Header className="!p-2 !m-0 flex flex-nowrap justify-between h-full items-center text-emerald-800 !bg-white shadow-md">
+        <Header className="!p-2 !m-0 flex flex-nowrap justify-between !max-h-64 items-center text-emerald-800 !bg-white shadow-md">
           <Tooltip title={collapsed ? "Expandir menu" : "Recolher menu"}>
             <Button
               type="text"
@@ -92,7 +119,7 @@ export const LayoutRootPage = ({
             </Tooltip>
           </div>
         </Header>
-        <Content className="h-[calc(100vh-64px)] flex flex-col flex-nowrap p-4 gap-8">
+        <Content className="h-[calc(100vh-64px)] flex flex-col flex-nowrap p-4 gap-8 overflow-y-auto">
           {children}
         </Content>
       </Layout>
