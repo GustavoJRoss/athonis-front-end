@@ -45,7 +45,7 @@ export default function ClientsDetailsLayout({
   return (
     <>
       <HeaderPage
-        title="Clientes"
+        title="Cliente"
         icon={UsersIcon}
         backTo={{ link: "/clients", title: "Voltar para página de clientes." }}
       />

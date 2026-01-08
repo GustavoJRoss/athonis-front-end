@@ -6,9 +6,10 @@ import { getOrders } from "@/src/lib/orders/requests";
 import { AgGridReact } from "ag-grid-react";
 import RouteValidation from "./RouteValidation";
 import { OrderType } from "../types/orders";
-import { Button } from "@/components/ui/button";
 import { HistoryIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { Button } from "antd";
+import { HistoryOutlined } from "@ant-design/icons";
 
 type RoutesPageProps = {
   initialData: any[];
@@ -27,10 +28,12 @@ export default function RoutesPage({
       <DataTable
         ref={dataTableRef}
         gridRef={gridRef}
+        className="h-[calc(100vh-400px)]"
         rowSelection="multiple"
         headerActions={
           <Button
-            icon={HistoryIcon}
+            icon={<HistoryOutlined />}
+            type="primary"
             onClick={() => router.push("/routes/history")}
           >
             Visualizar Histórico de Rotas
@@ -47,8 +50,8 @@ export default function RoutesPage({
           {
             headerName: "Código",
             field: "order_id",
-            maxWidth: 80,
-            filter: "agNumberColumnFilter",
+            maxWidth: 100,
+            sortable: false,
           },
           {
             headerName: "Cliente",

@@ -1,5 +1,5 @@
 import { api } from "../api/axios";
-import { RequestResponseData } from "../types";
+import { RequestResponseClientData, RequestResponseData } from "../types";
 
 export async function getClients({
   page = 1,
@@ -33,8 +33,12 @@ export async function getClients({
   return dataResponse;
 }
 
-export async function getClientById({ client_id }: { client_id: number }) {
-  let dataResponse: RequestResponseData;
+export async function getClientById({
+  client_id,
+}: {
+  client_id: number | string;
+}) {
+  let dataResponse: RequestResponseClientData;
 
   try {
     const apiRequest = await api();

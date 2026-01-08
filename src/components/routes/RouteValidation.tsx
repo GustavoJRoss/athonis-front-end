@@ -2,9 +2,8 @@ import { useState } from "react";
 import { OrderType } from "../types/orders";
 import { useToast } from "@/hooks/useToast";
 import { generateRoute, validateOrders } from "@/src/lib/routes/requests";
-import { Button } from "@/components/ui/button";
 import { ListCheckIcon, MapPinnedIcon } from "lucide-react";
-import { Card } from "@/components/ui/card";
+import { Button, Card } from "antd";
 
 type RouteValidationProps = {
   getSelectedRows: () => OrderType[];
@@ -79,11 +78,19 @@ export default function RouteValidation({
     <div className="flex flex-col gap-8">
       <div className="flex justify-end items-center gap-4">
         {isValidated && (
-          <Button onClick={handleClickGenerateRoute} icon={MapPinnedIcon}>
+          <Button
+            onClick={handleClickGenerateRoute}
+            type="primary"
+            icon={<MapPinnedIcon size={16} />}
+          >
             Criar Rota Otimizada
           </Button>
         )}
-        <Button onClick={handleClickValidateOrders} icon={ListCheckIcon}>
+        <Button
+          type="primary"
+          onClick={handleClickValidateOrders}
+          icon={<ListCheckIcon size={16} />}
+        >
           Verificar pedidos
         </Button>
       </div>

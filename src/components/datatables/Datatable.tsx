@@ -16,6 +16,7 @@ import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button, Input, Select } from "antd";
+import { cn } from "@/components/utils";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -57,6 +58,7 @@ export const DataTable = forwardRef<any, DataTableProps>((props, ref) => {
     initialData,
     initialTotal,
     headerActions,
+    className,
     gridRef,
     ...rest
   } = props;
@@ -119,8 +121,7 @@ export const DataTable = forwardRef<any, DataTableProps>((props, ref) => {
 
       {/* Grid */}
       <div
-        className="ag-theme-alpine border rounded-lg shadow-sm"
-        style={{ height, width }}
+        className={cn("ag-theme-alpine border rounded-lg shadow-sm", className)}
       >
         <AgGridReact
           ref={gridRef}

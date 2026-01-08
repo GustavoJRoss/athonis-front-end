@@ -1,9 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/useToast";
 import {
   downloadRejectedFile,
@@ -17,9 +13,11 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { DataTable } from "../datatables/Datatable";
 import { IconAction } from "../utils/IconAction";
 import ImportDetails from "./ImportDetails";
+import { Button, Card, Input } from "antd";
+import { Label } from "@/components/ui/label";
+import { SearchOutlined } from "@ant-design/icons";
 
 type ImportsPageSearchForm = {
   dataInicio: string;
@@ -73,7 +71,7 @@ export default function ImportsPage() {
 
   return (
     <>
-      <Card className="p-4">
+      <Card>
         <form
           noValidate
           className="flex gap-6 items-end"
@@ -101,14 +99,11 @@ export default function ImportsPage() {
               {...register("dataFim", { required: "Campo obrigatório." })}
             />
           </Label>
-          <Button type="submit" icon={SearchIcon}>
+          <Button htmlType="submit" type="primary" icon={<SearchOutlined />}>
             Pesquisar
           </Button>
         </form>
-        <div
-          className="flex flex-col gap-2"
-          onClick={() => console.log({ rejectedFiles })}
-        >
+        <div className="flex flex-col gap-2">
           <h1 className="font-semibold text-xl">
             Arquivos com erros: {rejectedFiles?.length}
           </h1>

@@ -34,6 +34,40 @@ export async function getOrders({
   return dataResponse;
 }
 
+export async function getOrdersByClientId({
+  page = 1,
+  pageSize = 10,
+  filter = "",
+  client_id,
+}: {
+  page: number;
+  pageSize: number;
+  filter?: string;
+  client_id: number | string;
+}) {
+  let dataResponse: RequestResponseData;
+
+  try {
+    const apiRequest = await api();
+
+    const responseData = await apiRequest.get(
+      `/orders?page=${page}&limit=${pageSize}&title=${filter}&sort_by=title&order=DESC&client_id=${client_id}`
+    );
+
+    dataResponse = {
+      success: true,
+      data: responseData?.data,
+    };
+  } catch (error: any) {
+    dataResponse = {
+      success: false,
+      message: error?.message,
+    };
+  }
+
+  return dataResponse;
+}
+
 export async function createOrder({
   client_id,
   delivery_city,

@@ -1,7 +1,7 @@
+import { Tooltip } from "antd";
 import { LucideIcon } from "lucide-react";
 import { forwardRef, type MouseEvent, ReactNode } from "react";
 import { twMerge } from "tailwind-merge";
-import { Tooltip } from "../../../components/ui/tooltip";
 
 type IconActionProps = {
   icon: LucideIcon;
@@ -14,7 +14,7 @@ type IconActionProps = {
 export const IconAction = forwardRef<SVGSVGElement, IconActionProps>(
   ({ icon: Icon, text, onClick, className, disabled }, ref) => {
     return (
-      <Tooltip text={text}>
+      <Tooltip title={text}>
         <Icon
           ref={ref}
           onClick={(e) => {

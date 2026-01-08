@@ -1,3 +1,5 @@
+import { ClientType } from "../components/clients/ClientDetails";
+
 export type MetaRequest = {
   limit: number;
   page: number;
@@ -32,5 +34,11 @@ export type RequestResponseData = {
       total: number;
     };
   };
+  message?: string;
+};
+
+export type RequestResponseClientData = {
+  success: boolean;
+  data?: ClientType;
   message?: string;
 };

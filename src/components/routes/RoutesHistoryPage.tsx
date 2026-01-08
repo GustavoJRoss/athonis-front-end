@@ -2,16 +2,11 @@
 
 import { DataTable, DataTableRefProps } from "../datatables/Datatable";
 import { useEffect, useRef, useState } from "react";
-import { getOrders } from "@/src/lib/orders/requests";
 import { AgGridReact } from "ag-grid-react";
-import RouteValidation from "./RouteValidation";
-import { OrderType } from "../types/orders";
-import { Button } from "@/components/ui/button";
-import { HistoryIcon, MapIcon, TextSelectIcon, TvIcon } from "lucide-react";
+import { MapIcon } from "lucide-react";
 import { getRoutes, getStreetViewData } from "@/src/lib/routes/requests";
-import { Card } from "@/components/ui/card";
 import { IconAction } from "../utils/IconAction";
-import { useStreetView } from "../hooks/useStreetView";
+import { Card } from "antd";
 
 type RoutesHistoryPageProps = {
   initialData: any[];
@@ -58,7 +53,7 @@ export default function RoutesHistoryPage({
   return (
     <>
       <DataTable
-        height={300}
+        className="h-[calc(100vh-472px)]"
         ref={dataTableRef}
         gridRef={gridRef}
         rowSelection="multiple"
@@ -66,7 +61,8 @@ export default function RoutesHistoryPage({
           {
             headerName: "Ações",
             pinned: true,
-            maxWidth: 120,
+            maxWidth: 80,
+            resizable: false,
             cellRenderer: ({ data }: any) => (
               <div className="h-full flex gap-4 items-center justify-center">
                 <IconAction
@@ -135,7 +131,7 @@ export default function RoutesHistoryPage({
           </h1>
 
           {route.stops.map((stop: any) => {
-            const sv = streetViewMap[stop.orderId]; // 👈 pega o dado do Street View
+            const sv = streetViewMap[stop.orderId];
 
             return (
               <div key={stop.orderId} className="border-t pt-4 space-y-2">
@@ -165,28 +161,30 @@ export default function RoutesHistoryPage({
                 </div>
 
                 <div className="flex">
-                  {/* MAPA */}
-                  <iframe
-                    width="100%"
-                    height="250"
-                    className="rounded-md"
-                    style={{ border: 0 }}
-                    loading="lazy"
-                    allowFullScreen
-                    src={`https://maps.google.com/maps?q=${stop.coordinates.latitude},${stop.coordinates.longitude}&z=15&output=embed`}
-                  />
-
-                  {/* STREET VIEW */}
-                  {sv ? (
+                  <Card className="shadow-md *:!p-2">
                     <iframe
                       width="100%"
                       height="250"
                       className="rounded-md"
-                      style={{ border: 0 }}
+                      style={{ border: 0, borderRadius: "8px" }}
                       loading="lazy"
                       allowFullScreen
-                      src={`https://www.google.com/maps/embed?pb=!4v0!6m8!1m7!1s${sv.panoId}!2m2!1d${sv.coordinates.latitude}!2d${sv.coordinates.longitude}!3f0!4f0!5f0.7820865974627469`}
+                      src={`https://maps.google.com/maps?q=${stop.coordinates.latitude},${stop.coordinates.longitude}&z=15&output=embed`}
                     />
+                  </Card>
+
+                  {sv ? (
+                    <Card className="shadow-md *:!p-2">
+                      <iframe
+                        width="100%"
+                        height="250"
+                        className="rounded-md"
+                        style={{ border: 0, borderRadius: "8px" }}
+                        loading="lazy"
+                        allowFullScreen
+                        src={`https://www.google.com/maps/embed?pb=!4v0!6m8!1m7!1s${sv.panoId}!2m2!1d${sv.coordinates.latitude}!2d${sv.coordinates.longitude}!3f0!4f0!5f0.7820865974627469`}
+                      />
+                    </Card>
                   ) : (
                     <div className="w-full h-[250px] flex items-center justify-center rounded-md bg-gray-100">
                       Carregando Street View...

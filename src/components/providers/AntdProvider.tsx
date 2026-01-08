@@ -10,6 +10,9 @@ export function AntdProvider({ children }: { children: React.ReactNode }) {
         theme={{
           token: {
             colorPrimary: "#10b981",
+            colorError: "#ef4444", // Cor vermelha para danger
+            colorWarning: "#f59e0b", // Cor amarela para warning
+            colorInfo: "#3b82f6", // Cor azul para info
             borderRadius: 8,
           },
           components: {
@@ -21,6 +24,10 @@ export function AntdProvider({ children }: { children: React.ReactNode }) {
               itemHoverColor: "#ffffff",
               itemSelectedColor: "#022c22",
               iconSize: 18,
+            },
+            Button: {
+              colorErrorHover: "#dc2626",
+              colorErrorActive: "#b91c1c",
             },
           },
         }}

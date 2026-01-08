@@ -162,24 +162,23 @@ export default function LandingPage() {
             ))}
           </div>
         </section>
-        {/* FOOTER */}
-        <footer id="contato" className="mt-32 py-12 bg-gray-900 text-gray-300">
-          <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-10">
-            <div className="flex flex-col gap-2">
-              <h4 className="text-xl font-semibold">Athonis</h4>
-              <p className="text-sm max-w-xs">
-                Plataforma inteligente para gestão logística, criada para
-                facilitar seu dia a dia.
-              </p>
-            </div>
-
-            <div className="text-sm text-gray-400">
-              © {new Date().getFullYear()} Athonis — Todos os direitos
-              reservados.
-            </div>
-          </div>
-        </footer>
       </div>
+      {/* FOOTER */}
+      <footer id="contato" className="mt-32 py-12 bg-gray-900 text-gray-300">
+        <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-10">
+          <div className="flex flex-col gap-2">
+            <h4 className="text-xl font-semibold">Athonis</h4>
+            <p className="text-sm max-w-xs">
+              Plataforma inteligente para gestão logística, criada para
+              facilitar seu dia a dia.
+            </p>
+          </div>
+
+          <div className="text-sm text-gray-400">
+            © {new Date().getFullYear()} Athonis — Todos os direitos reservados.
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
