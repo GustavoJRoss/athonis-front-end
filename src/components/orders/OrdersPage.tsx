@@ -2,7 +2,6 @@
 
 import { DataTable, DataTableRefProps } from "../datatables/Datatable";
 import { useRef } from "react";
-import { Button } from "@/components/ui/button";
 import { DialogOpenRef } from "../types/types";
 import { IconAction } from "../utils/IconAction";
 import { EyeIcon, PencilIcon, TrashIcon } from "lucide-react";
@@ -10,6 +9,8 @@ import { getOrders } from "@/src/lib/orders/requests";
 import { OrderDialog } from "./dialogs/OrdersDialogs";
 import { OrderType } from "../types/orders";
 import { DeleteOrderDialog } from "./dialogs/DeleteOrderDialog";
+import { Button } from "antd";
+import { PlusCircleOutlined } from "@ant-design/icons";
 
 type OrdersPageProps = {
   initialData: any[];
@@ -28,8 +29,13 @@ export default function OrdersPage({
     <>
       <DataTable
         ref={dataTableRef}
+        className="h-[calc(100vh-427px)]"
         headerActions={
-          <Button onClick={() => orderDialogRef.current?.open("create")}>
+          <Button
+            type="primary"
+            icon={<PlusCircleOutlined />}
+            onClick={() => orderDialogRef.current?.open("create")}
+          >
             Criar Pedido
           </Button>
         }

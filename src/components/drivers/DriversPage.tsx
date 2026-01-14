@@ -37,6 +37,7 @@ export default function DriversPage({
             Adicionar Motorista
           </Button>
         }
+        className="h-[calc(100vh-427px)]"
         columnDefs={[
           {
             headerName: "Ações",

@@ -69,7 +69,7 @@ export const LayoutRootPage = ({
                 key: "4",
                 icon: <UploadOutlined />,
                 label: "Importação Pedidos",
-                onClick: () => router.push("/orders/imports"),
+                onClick: () => router.push("/orders/import"),
               },
               {
                 key: "5",

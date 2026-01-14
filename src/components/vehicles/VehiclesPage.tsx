@@ -81,6 +81,7 @@ export default function VehiclesPage({
             field: "year",
           },
         ]}
+        className="h-[calc(100vh-427px)]"
         getMethod={async (getProps) => {
           const userResponse = await getVehicles({
             page: getProps.page,
