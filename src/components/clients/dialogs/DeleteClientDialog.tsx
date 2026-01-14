@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/useToast";
 import { deleteClient } from "@/src/lib/clients/requests";
+import { Modal } from "antd";
 import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 
 type DeleteClientDialogProps = {
@@ -54,30 +55,19 @@ export const DeleteClientDialog = forwardRef<any, DeleteClientDialogProps>(
     }));
 
     return (
-      <Dialog open={showDialog} onOpenChange={setShowDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Delete Client</DialogTitle>
-          </DialogHeader>
-          <div className="flex flex-col">
-            <p>Você tem certeza que você quer deletar este cliente?</p>
-          </div>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button ref={dialogButtonRef} variant={"outline"}>
-                Cancelar
-              </Button>
-            </DialogClose>
-            <Button
-              onClick={handleDeleteClient}
-              className="bg-red-500 hover:bg-red-800"
-              loading={loading}
-            >
-              Deletar
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <Modal
+        open={showDialog}
+        onCancel={() => setShowDialog(false)}
+        onOk={handleDeleteClient}
+        okText="Deletar"
+        okButtonProps={{ danger: true, loading }}
+        cancelText="Cancelar"
+      >
+        <h2 className="mb-4 text-lg font-semibold">Delete Client</h2>
+        <div className="flex flex-col">
+          <p>Você tem certeza que você quer deletar este cliente?</p>
+        </div>
+      </Modal>
     );
   }
 );

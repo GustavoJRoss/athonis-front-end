@@ -10,6 +10,8 @@ import { EyeIcon, PencilIcon, TrashIcon } from "lucide-react";
 import { ClientType } from "../types/clients";
 import { DeleteClientDialog } from "./dialogs/DeleteClientDialog";
 import { Button } from "antd";
+import { PlusCircleOutlined } from "@ant-design/icons";
+import { useRouter } from "next/navigation";
 
 type ClientsPageProps = {
   initialData: any[];
@@ -24,6 +26,8 @@ export default function ClientsPage({
   const clientDialogRef = useRef<DialogOpenRef<ClientType>>(null);
   const deleteClientRef = useRef<any>(null);
 
+  const router = useRouter();
+
   return (
     <>
       <DataTable
@@ -31,41 +35,44 @@ export default function ClientsPage({
         headerActions={
           <Button
             type="primary"
+            icon={<PlusCircleOutlined />}
             onClick={() => clientDialogRef.current?.open("create")}
           >
             Criar Cliente
           </Button>
         }
+        onRowClicked={(e) => router.push(`/clients/${e.data?.client_id}`)}
+        className="h-[calc(100vh-400px)]"
         columnDefs={[
-          {
-            headerName: "Ações",
-            pinned: true,
-            maxWidth: 130,
-            headerClass: "*:*:*:justify-center",
-            cellRenderer: ({ data }: any) => {
-              return (
-                <div className="flex gap-4 h-full items-center justify-center">
-                  <IconAction
-                    icon={TrashIcon}
-                    text="Deletar"
-                    onClick={() => deleteClientRef.current.open(data.client_id)}
-                  />
-                  <IconAction
-                    icon={PencilIcon}
-                    text="Editar"
-                    onClick={() => {
-                      clientDialogRef.current?.open("edit", data);
-                    }}
-                  />
-                  <IconAction
-                    icon={EyeIcon}
-                    text="Visualizar"
-                    onClick={() => clientDialogRef.current?.open("view", data)}
-                  />
-                </div>
-              );
-            },
-          },
+          // {
+          //   headerName: "Ações",
+          //   pinned: true,
+          //   maxWidth: 130,
+          //   headerClass: "*:*:*:justify-center",
+          //   cellRenderer: ({ data }: any) => {
+          //     return (
+          //       <div className="flex gap-4 h-full items-center justify-center">
+          //         <IconAction
+          //           icon={TrashIcon}
+          //           text="Deletar"
+          //           onClick={() => deleteClientRef.current.open(data.client_id)}
+          //         />
+          //         <IconAction
+          //           icon={PencilIcon}
+          //           text="Editar"
+          //           onClick={() => {
+          //             clientDialogRef.current?.open("edit", data);
+          //           }}
+          //         />
+          //         <IconAction
+          //           icon={EyeIcon}
+          //           text="Visualizar"
+          //           onClick={() => clientDialogRef.current?.open("view", data)}
+          //         />
+          //       </div>
+          //     );
+          //   },
+          // },
           { headerName: "Código", field: "client_id", maxWidth: 80 },
           { headerName: "Nome", field: "name" },
           { headerName: "Nome Fantasia", field: "trade_name" },

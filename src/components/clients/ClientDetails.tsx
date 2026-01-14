@@ -2,8 +2,12 @@
 
 import { Label } from "@/components/ui/label";
 import { Button, Card, Flex, Input, Tooltip } from "antd";
-import { Grid, GridCell } from "../ui/Grid";
+import { Grid } from "../ui/Grid";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { ClientDialog } from "./dialogs/ClientsDialogs";
+import { useRef } from "react";
+import { useRouter } from "next/navigation";
+import { DeleteClientDialog } from "./dialogs/DeleteClientDialog";
 
 export type ClientType = {
   client_id: number;
@@ -30,8 +34,21 @@ export type ClientType = {
 };
 
 export const ClientDetails = ({ client }: { client: ClientType }) => {
+  const router = useRouter();
+
+  const editClientDialogRef = useRef<any>(null);
+  const deleteClientRef = useRef<any>(null);
+
   return (
     <Card className="h-[calc(100vh-250px)] shadow-sm overflow-y-auto">
+      <ClientDialog
+        ref={editClientDialogRef}
+        onSubmitSuccess={() => router.refresh()}
+      />
+      <DeleteClientDialog
+        ref={deleteClientRef}
+        onSubmitSuccess={() => router.push("/clients")}
+      />
       <Grid size={12}>
         <Grid.Cell span={{ lg: 6, md: 12 }}>
           <Label label="Nome do Cliente">
@@ -46,10 +63,19 @@ export const ClientDetails = ({ client }: { client: ClientType }) => {
         <Grid.Cell span={{ xl: 1 }}>
           <Flex justify="end" align="end" className="h-full" gap={8}>
             <Tooltip title="Editar Cliente">
-              <Button type="primary" icon={<EditOutlined />} />
+              <Button
+                type="primary"
+                icon={<EditOutlined />}
+                onClick={() => editClientDialogRef.current.open("edit", client)}
+              />
             </Tooltip>
             <Tooltip title="Deletar Cliente">
-              <Button type="primary" danger icon={<DeleteOutlined />} />
+              <Button
+                type="primary"
+                danger
+                icon={<DeleteOutlined />}
+                onClick={() => deleteClientRef.current.open(client?.client_id)}
+              />
             </Tooltip>
           </Flex>
         </Grid.Cell>
