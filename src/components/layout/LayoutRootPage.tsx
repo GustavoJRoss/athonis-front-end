@@ -119,7 +119,7 @@ export const LayoutRootPage = ({
             </Tooltip>
           </div>
         </Header>
-        <Content className="h-[calc(100vh-64px)] flex flex-col flex-nowrap p-4 gap-8 overflow-y-auto">
+        <Content className="h-[calc(100vh-64px)] flex flex-col flex-nowrap p-4 gap-4 overflow-y-auto">
           {children}
         </Content>
       </Layout>

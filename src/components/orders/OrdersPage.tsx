@@ -9,8 +9,9 @@ import { getOrders } from "@/src/lib/orders/requests";
 import { OrderDialog } from "./dialogs/OrdersDialogs";
 import { OrderType } from "../types/orders";
 import { DeleteOrderDialog } from "./dialogs/DeleteOrderDialog";
-import { Button } from "antd";
+import { Button, Typography } from "antd";
 import { PlusCircleOutlined } from "@ant-design/icons";
+import { useRouter } from "next/navigation";
 
 type OrdersPageProps = {
   initialData: any[];
@@ -25,11 +26,13 @@ export default function OrdersPage({
   const orderDialogRef = useRef<DialogOpenRef<OrderType>>(null);
   const deleteClientRef = useRef<any>(null);
 
+  const router = useRouter();
+
   return (
     <>
       <DataTable
         ref={dataTableRef}
-        className="h-[calc(100vh-427px)]"
+        className="h-[calc(100vh-300px)]"
         headerActions={
           <Button
             type="primary"
@@ -43,30 +46,23 @@ export default function OrdersPage({
           {
             headerName: "Ações",
             pinned: true,
-            maxWidth: 130,
+            maxWidth: 100,
             cellRenderer: ({ data }: any) => {
               return (
                 <div className="flex gap-4 h-full items-center justify-center">
                   <IconAction
-                    icon={TrashIcon}
-                    text="Deletar"
-                    onClick={() => deleteClientRef.current.open(data.order_id)}
-                  />
-                  <IconAction
-                    icon={PencilIcon}
-                    text="Editar"
-                    onClick={() => {
-                      orderDialogRef.current?.open("edit", data);
-                    }}
-                  />
-                  <IconAction
                     icon={EyeIcon}
-                    text="Visualizar"
-                    onClick={() => orderDialogRef.current?.open("view", data)}
+                    text="Visualizar Detalhes"
+                    onClick={() => router.push(`/orders/${data?.order_id}`)}
                   />
                 </div>
               );
             },
+          },
+          {
+            headerName: "Título",
+            field: "title",
+            filter: "agTextColumnFilter",
           },
           {
             headerName: "ID",
@@ -78,11 +74,7 @@ export default function OrdersPage({
             field: "client_id",
             filter: "agNumberColumnFilter",
           },
-          {
-            headerName: "Título",
-            field: "title",
-            filter: "agTextColumnFilter",
-          },
+
           {
             headerName: "Descrição",
             field: "description",

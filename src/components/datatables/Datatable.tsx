@@ -126,6 +126,7 @@ export const DataTable = forwardRef<any, DataTableProps>((props, ref) => {
         <AgGridReact
           ref={gridRef}
           columnDefs={columnDefs}
+          suppressAutoSize={false}
           rowData={rowData}
           gridOptions={gridOptions}
           pagination={false}

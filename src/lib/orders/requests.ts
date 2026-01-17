@@ -1,6 +1,7 @@
 import { OrderFormData } from "@/src/components/orders/dialogs/OrdersDialogs";
 import { api } from "../api/axios";
-import { RequestResponseData } from "../types";
+import { DefaultResponseDataList, RequestResponseData } from "../types";
+import { OrderType } from "@/src/components/types/orders";
 
 export async function getOrders({
   page = 1,
@@ -11,7 +12,7 @@ export async function getOrders({
   pageSize: number;
   filter?: string;
 }) {
-  let dataResponse: RequestResponseData;
+  let dataResponse: RequestResponseData<DefaultResponseDataList>;
 
   try {
     const apiRequest = await api();
@@ -19,6 +20,28 @@ export async function getOrders({
     const responseData = await apiRequest.get(
       `/orders?page=${page}&limit=${pageSize}&title=${filter}&sort_by=title&order=DESC`
     );
+
+    dataResponse = {
+      success: true,
+      data: responseData?.data,
+    };
+  } catch (error: any) {
+    dataResponse = {
+      success: false,
+      message: error?.message,
+    };
+  }
+
+  return dataResponse;
+}
+
+export async function getOrdersById({ orderId }: { orderId: string }) {
+  let dataResponse: RequestResponseData<OrderType>;
+
+  try {
+    const apiRequest = await api();
+
+    const responseData = await apiRequest.get(`/orders/${orderId}`);
 
     dataResponse = {
       success: true,
@@ -45,7 +68,7 @@ export async function getOrdersByClientId({
   filter?: string;
   client_id: number | string;
 }) {
-  let dataResponse: RequestResponseData;
+  let dataResponse: RequestResponseData<DefaultResponseDataList>;
 
   try {
     const apiRequest = await api();
@@ -85,7 +108,7 @@ export async function createOrder({
   description,
   invoice_number,
 }: OrderFormData) {
-  let dataResponse: RequestResponseData;
+  let dataResponse: RequestResponseData<DefaultResponseDataList>;
 
   try {
     const apiRequest = await api();
@@ -140,7 +163,7 @@ export async function updateOrder({
   invoice_number,
   order_id,
 }: OrderFormData) {
-  let dataResponse: RequestResponseData;
+  let dataResponse: RequestResponseData<DefaultResponseDataList>;
 
   try {
     const apiRequest = await api();
@@ -177,7 +200,7 @@ export async function updateOrder({
 }
 
 export async function deleteOrder({ id }: { id: number }) {
-  let dataResponse: RequestResponseData;
+  let dataResponse: RequestResponseData<DefaultResponseDataList>;
 
   try {
     const apiRequest = await api();
@@ -198,7 +221,7 @@ export async function deleteOrder({ id }: { id: number }) {
 }
 
 export async function importOrders({ file }: { file: File }) {
-  let dataResponse: RequestResponseData;
+  let dataResponse: RequestResponseData<DefaultResponseDataList>;
 
   try {
     const apiRequest = await api("multipart/form-data");
@@ -227,7 +250,7 @@ export async function getRejectedFiles({
   dataInicio: string;
   dataFim: string;
 }) {
-  let dataResponse: RequestResponseData;
+  let dataResponse: RequestResponseData<DefaultResponseDataList>;
 
   try {
     const apiRequest = await api();
@@ -250,7 +273,7 @@ export async function getRejectedFiles({
 }
 
 export async function downloadRejectedFile({ filename }: { filename: string }) {
-  let dataResponse: RequestResponseData;
+  let dataResponse: RequestResponseData<DefaultResponseDataList>;
 
   try {
     const apiRequest = await api("text/csv");
