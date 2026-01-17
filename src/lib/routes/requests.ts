@@ -85,6 +85,30 @@ export async function getRoutes({
   return dataResponse;
 }
 
+export async function getRoutesById({ routeId }: { routeId: number | string }) {
+  let dataResponse: RequestResponseData;
+
+  try {
+    const apiRequest = await api();
+
+    const responseData = await apiRequest.get(
+      `/optimized-routes-history/${routeId}`
+    );
+
+    dataResponse = {
+      success: true,
+      data: responseData?.data,
+    };
+  } catch (error: any) {
+    dataResponse = {
+      success: false,
+      message: error?.message,
+    };
+  }
+
+  return dataResponse;
+}
+
 export async function getStreetViewData({
   order_id,
 }: {

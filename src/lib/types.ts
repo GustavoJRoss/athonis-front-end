@@ -26,14 +26,16 @@ export type ApiResponse<T> = {
   statusCode?: number;
 };
 
-export type RequestResponseData = {
-  success: boolean;
-  data?: {
-    items: any[];
-    meta: {
-      total: number;
-    };
+export type DefaultResponseDataList = {
+  items: any[];
+  meta: {
+    total: number;
   };
+};
+
+export type RequestResponseData<T> = {
+  success: boolean;
+  data?: T;
   message?: string;
 };
 

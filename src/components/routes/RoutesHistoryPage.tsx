@@ -7,6 +7,7 @@ import { MapIcon } from "lucide-react";
 import { getRoutes, getStreetViewData } from "@/src/lib/routes/requests";
 import { IconAction } from "../utils/IconAction";
 import { Card } from "antd";
+import { useRouter } from "next/navigation";
 
 type RoutesHistoryPageProps = {
   initialData: any[];
@@ -17,6 +18,8 @@ export default function RoutesHistoryPage({
   initialData,
   totalRows,
 }: RoutesHistoryPageProps) {
+  const router = useRouter();
+
   const [routes, setRoutes] = useState<any[]>([]);
   const [streetViewMap, setStreetViewMap] = useState<Record<number, any>>({});
 
@@ -53,28 +56,11 @@ export default function RoutesHistoryPage({
   return (
     <>
       <DataTable
-        className="h-[calc(100vh-472px)]"
+        className="h-[calc(100vh-437px)]"
         ref={dataTableRef}
         gridRef={gridRef}
         rowSelection="multiple"
         columnDefs={[
-          {
-            headerName: "Ações",
-            pinned: true,
-            maxWidth: 80,
-            resizable: false,
-            cellRenderer: ({ data }: any) => (
-              <div className="h-full flex gap-4 items-center justify-center">
-                <IconAction
-                  icon={MapIcon}
-                  text="Visualizar Rota"
-                  onClick={() => {
-                    setRoutes(data?.optimization_result?.routes);
-                  }}
-                />
-              </div>
-            ),
-          },
           {
             headerName: "Código",
             field: "id",
@@ -107,6 +93,23 @@ export default function RoutesHistoryPage({
           {
             headerName: "Atualizado Em",
             field: "updated_at",
+          },
+          {
+            headerName: "Ações",
+            field: "actions",
+            maxWidth: 80,
+            resizable: false,
+            cellRenderer: ({ data }: any) => (
+              <div className="h-full flex gap-4 items-center justify-center">
+                <IconAction
+                  icon={MapIcon}
+                  text="Visualizar Rota"
+                  onClick={() => {
+                    router.push(`/routes/${data.id}`);
+                  }}
+                />
+              </div>
+            ),
           },
         ]}
         getMethod={async (getProps) => {
@@ -166,7 +169,10 @@ export default function RoutesHistoryPage({
                       width="100%"
                       height="250"
                       className="rounded-md"
-                      style={{ border: 0, borderRadius: "8px" }}
+                      style={{
+                        border: 0,
+                        borderRadius: "8px",
+                      }}
                       loading="lazy"
                       allowFullScreen
                       src={`https://maps.google.com/maps?q=${stop.coordinates.latitude},${stop.coordinates.longitude}&z=15&output=embed`}
@@ -179,7 +185,10 @@ export default function RoutesHistoryPage({
                         width="100%"
                         height="250"
                         className="rounded-md"
-                        style={{ border: 0, borderRadius: "8px" }}
+                        style={{
+                          border: 0,
+                          borderRadius: "8px",
+                        }}
                         loading="lazy"
                         allowFullScreen
                         src={`https://www.google.com/maps/embed?pb=!4v0!6m8!1m7!1s${sv.panoId}!2m2!1d${sv.coordinates.latitude}!2d${sv.coordinates.longitude}!3f0!4f0!5f0.7820865974627469`}
