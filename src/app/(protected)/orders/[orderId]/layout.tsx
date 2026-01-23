@@ -2,7 +2,7 @@
 
 import HeaderPage from "@/src/components/utils/headerPage/HeaderPage";
 import { Tabs, TabsProps } from "antd";
-import { UsersIcon } from "lucide-react";
+import { ListIcon } from "lucide-react";
 import { useParams, usePathname, useRouter } from "next/navigation";
 
 export default function OrdersDetailsLayout({
@@ -32,7 +32,7 @@ export default function OrdersDetailsLayout({
     <>
       <HeaderPage
         title="Pedido"
-        icon={UsersIcon}
+        icon={ListIcon}
         backTo={{ link: "/orders", title: "Voltar para página de clientes." }}
       />
       <Tabs

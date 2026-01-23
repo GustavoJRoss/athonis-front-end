@@ -42,23 +42,10 @@ export default function OrdersPage({
             Criar Pedido
           </Button>
         }
+        onRowClicked={(e) =>
+          router.push(`/orders/${e?.data?.order_id}/details`)
+        }
         columnDefs={[
-          {
-            headerName: "Ações",
-            pinned: true,
-            maxWidth: 100,
-            cellRenderer: ({ data }: any) => {
-              return (
-                <div className="flex gap-4 h-full items-center justify-center">
-                  <IconAction
-                    icon={EyeIcon}
-                    text="Visualizar Detalhes"
-                    onClick={() => router.push(`/orders/${data?.order_id}`)}
-                  />
-                </div>
-              );
-            },
-          },
           {
             headerName: "Título",
             field: "title",

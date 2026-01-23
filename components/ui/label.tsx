@@ -22,7 +22,7 @@ function Label({
 }: LabelProps) {
   return (
     <div className={cn("flex flex-col gap-2", className)}>
-      {label && <span>{label}</span>}
+      {label && <span className="text-nowrap">{label}</span>}
       <div className="flex flex-col gap-1">
         {children}
         {errorText && status === "error" && (
