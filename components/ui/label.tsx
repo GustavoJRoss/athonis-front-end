@@ -21,7 +21,7 @@ function Label({
   ...props
 }: LabelProps) {
   return (
-    <div className={cn("flex flex-col gap-2", className)}>
+    <div className={cn("flex flex-col gap-0.5", className)}>
       {label && <span className="text-nowrap">{label}</span>}
       <div className="flex flex-col gap-1">
         {children}

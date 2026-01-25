@@ -47,18 +47,21 @@ export default function OrdersPage({
         }
         columnDefs={[
           {
+            headerName: "Código",
+            field: "order_id",
+            filter: "agNumberColumnFilter",
+            cellClass: "text-center",
+            maxWidth: 120,
+          },
+          {
             headerName: "Título",
             field: "title",
             filter: "agTextColumnFilter",
           },
-          {
-            headerName: "ID",
-            field: "order_id",
-            filter: "agNumberColumnFilter",
-          },
+
           {
             headerName: "Cliente",
-            field: "client_id",
+            field: "client.name",
             filter: "agNumberColumnFilter",
           },
 
@@ -80,12 +83,12 @@ export default function OrdersPage({
 
           {
             headerName: "Veículo",
-            field: "vehicle_id",
+            field: "vehicle.name",
             filter: "agNumberColumnFilter",
           },
           {
             headerName: "Motorista",
-            field: "driver_id",
+            field: "driver.name",
             filter: "agNumberColumnFilter",
           },
 
