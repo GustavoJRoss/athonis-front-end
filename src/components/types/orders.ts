@@ -15,4 +15,18 @@ export type OrderType = {
   delivery_zipcode: string;
   delivery_number: string;
   delivery_complement: string;
+  vehicle: {
+    name: string;
+    model: string;
+    brand: string;
+    vehicle_id: number;
+    year: number;
+  };
+  driver: {
+    name: string;
+    driver_id: number;
+    document: string;
+    gender: string;
+    birth_date: string;
+  };
 };

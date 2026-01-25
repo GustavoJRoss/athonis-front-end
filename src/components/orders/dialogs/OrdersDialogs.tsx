@@ -27,8 +27,8 @@ export type OrderFormData = {
   invoice_number?: string;
   urgency: string;
   vehicle_id: number;
-  vehicle_name: number;
-  driver_name: number;
+  vehicle_name: string;
+  driver_name: string;
   driver_id: number;
   quantity: number;
 
@@ -96,7 +96,7 @@ export const OrderDialog = forwardRef<
       dialogFooterRef.current?.setLoading(false);
 
       if (res?.success) {
-        dialogFooterRef.current?.close();
+        setShowDialog(false);
         successToast("Pedido atualizado com sucesso!");
         onSubmitSuccess();
         return;
@@ -108,14 +108,14 @@ export const OrderDialog = forwardRef<
 
   const setFormData = (data?: OrderType) => {
     if (!data) return;
-
     setValue("client_id", data.client_id);
     setValue("title", data.title);
     setValue("description", data.description);
     setValue("invoice_number", data.invoice_number);
     setValue("urgency", data.urgency);
-    setValue("vehicle_id", data.vehicle_id);
+    setValue("vehicle_name", data.vehicle?.name);
     setValue("driver_id", data.driver_id);
+    setValue("driver_name", data.driver?.name);
     setValue("quantity", data.quantity);
 
     setValue("delivery_street", data.delivery_street);
@@ -238,20 +238,25 @@ export const OrderDialog = forwardRef<
 
           <Grid size={12}>
             <Grid.Cell span={{ md: 12, lg: 12, xl: 8 }}>
-              <Label
-                label="Título"
-                status={formState.errors.title && "error"}
-                errorText={formState.errors.title?.message}
-              >
-                <Input
-                  {...register("title", {
-                    required: "Este campo é obrigatório.",
-                  })}
-                  placeholder="Entrega de mercadorias"
-                  status={formState.errors.title && "error"}
-                  disabled={dialogType === "view"}
-                />
-              </Label>
+              <Controller
+                control={control}
+                name="title"
+                rules={{ required: "Este campo é obrigatório." }}
+                render={({ field }) => (
+                  <Label
+                    label="Título"
+                    status={formState.errors.title && "error"}
+                    errorText={formState.errors.title?.message}
+                  >
+                    <Input
+                      {...field}
+                      placeholder="Entrega de mercadorias"
+                      status={formState.errors.title && "error"}
+                      disabled={dialogType === "view"}
+                    />
+                  </Label>
+                )}
+              />
             </Grid.Cell>
 
             <Grid.Cell span={{ md: 12, lg: 12, xl: 4 }}>
@@ -281,229 +286,285 @@ export const OrderDialog = forwardRef<
               </Label>
             </Grid.Cell>
             <Grid.Cell span={12}>
-              <Label
-                label="Descrição"
-                className="col-span-2"
-                status={formState.errors.description && "error"}
-                errorText={formState.errors.description?.message}
-              >
-                <Input.TextArea
-                  {...register("description", {
-                    required: "Este campo é obrigatório.",
-                  })}
-                  placeholder="Descrição do pedido..."
-                  disabled={dialogType === "view"}
-                  status={formState.errors.description && "error"}
-                />
-              </Label>
+              <Controller
+                control={control}
+                name="description"
+                rules={{ required: "Este campo é obrigatório." }}
+                render={({ field }) => (
+                  <Label
+                    label="Descrição"
+                    className="col-span-2"
+                    status={formState.errors.description && "error"}
+                    errorText={formState.errors.description?.message}
+                  >
+                    <Input.TextArea
+                      {...field}
+                      placeholder="Descrição do pedido..."
+                      disabled={dialogType === "view"}
+                      status={formState.errors.description && "error"}
+                    />
+                  </Label>
+                )}
+              />
             </Grid.Cell>
             <Grid.Cell span={{ md: 12, lg: 12, xl: 3 }}>
-              <Label
-                label="Número NF"
-                status={formState.errors.invoice_number && "error"}
-                errorText={formState.errors.invoice_number?.message}
-              >
-                <Input
-                  {...register("invoice_number", {
-                    required: "Este campo é obrigatório.",
-                  })}
-                  placeholder="NF-123456"
-                  disabled={dialogType === "view"}
-                  status={formState.errors.invoice_number && "error"}
-                />
-              </Label>
+              <Controller
+                control={control}
+                name="invoice_number"
+                rules={{ required: "Este campo é obrigatório." }}
+                render={({ field }) => (
+                  <Label
+                    label="Número NF"
+                    status={formState.errors.invoice_number && "error"}
+                    errorText={formState.errors.invoice_number?.message}
+                  >
+                    <Input
+                      {...field}
+                      placeholder="NF-123456"
+                      disabled={dialogType === "view"}
+                      status={formState.errors.invoice_number && "error"}
+                    />
+                  </Label>
+                )}
+              />
             </Grid.Cell>
             <Grid.Cell span={{ md: 12, lg: 12, xl: 3 }}>
-              <Label
-                label="Quantidade"
-                status={formState.errors.quantity && "error"}
-                errorText={formState.errors.quantity?.message}
-              >
-                <Input
-                  type="number"
-                  {...register("quantity", {
-                    valueAsNumber: true,
-                    required: "Este campo é obrigatório",
-                  })}
-                  disabled={dialogType === "view"}
-                  min={1}
-                  placeholder="Quantidade de items"
-                  status={formState.errors.quantity && "error"}
-                />
-              </Label>
+              <Controller
+                control={control}
+                name="quantity"
+                rules={{
+                  required: "Este campo é obrigatório",
+                }}
+                render={({ field }) => (
+                  <Label
+                    label="Quantidade"
+                    status={formState.errors.quantity && "error"}
+                    errorText={formState.errors.quantity?.message}
+                  >
+                    <Input
+                      type="number"
+                      {...field}
+                      disabled={dialogType === "view"}
+                      min={1}
+                      placeholder="Quantidade de items"
+                      status={formState.errors.quantity && "error"}
+                    />
+                  </Label>
+                )}
+              />
             </Grid.Cell>
             <Grid.Cell span={{ md: 12, lg: 12, xl: 2 }}>
-              <Label
-                label="Cliente ID"
-                status={formState.errors.client_id && "error"}
-                errorText={formState.errors.client_id?.message}
-              >
-                <Input
-                  {...register("client_id", {
-                    valueAsNumber: true,
-                    required: "Este campo é obrigatório.",
-                  })}
-                  onChange={async (e) => {
-                    await handleGetClientInfo(Number(e.target.value));
-                    register("client_id").onChange(e);
-                  }}
-                  disabled={dialogType === "view"}
-                  min={1}
-                  status={formState.errors.client_id && "error"}
-                  placeholder="O id do seu cliente"
-                />
-              </Label>
+              <Controller
+                control={control}
+                name="client_id"
+                render={({ field }) => (
+                  <Label
+                    label="Cliente ID"
+                    status={formState.errors.client_id && "error"}
+                    errorText={formState.errors.client_id?.message}
+                  >
+                    <Input
+                      {...field}
+                      onChange={async (e) => {
+                        await handleGetClientInfo(Number(e.target.value));
+                        field.onChange(e);
+                      }}
+                      disabled={dialogType === "view"}
+                      min={1}
+                      status={formState.errors.client_id && "error"}
+                      placeholder="O id do seu cliente"
+                    />
+                  </Label>
+                )}
+              />
             </Grid.Cell>
 
             <Grid.Cell span={{ md: 12, lg: 12, xl: 4 }}>
-              <Label label="Name">
-                <div className="flex gap-3 items-center">
-                  <Input
-                    disabled
-                    {...register("name")}
-                    min={1}
-                    placeholder="O nome do cliente"
-                  />
-
-                  <Tooltip text="Selecione seu cliente">
-                    <Button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        e.preventDefault();
-                        lookClientRef.current.open();
-                      }}
-                      type="primary"
-                      icon={
-                        <div className="flex h-full w-full justify-center items-center">
-                          <ListCheckIcon size={18} />
-                        </div>
-                      }
-                    />
-                  </Tooltip>
-                </div>
-              </Label>
+              <Controller
+                control={control}
+                name="name"
+                render={({ field }) => (
+                  <Label label="Name">
+                    <div className="flex gap-3 items-center">
+                      <Input
+                        {...field}
+                        disabled
+                        placeholder="O nome do cliente"
+                      />
+                      <Tooltip text="Selecione seu cliente">
+                        <Button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            lookClientRef.current.open();
+                          }}
+                          type="primary"
+                          icon={
+                            <div className="flex h-full w-full justify-center items-center">
+                              <ListCheckIcon size={18} />
+                            </div>
+                          }
+                        />
+                      </Tooltip>
+                    </div>
+                  </Label>
+                )}
+              />
             </Grid.Cell>
 
             <Grid.Cell span={{ md: 12, lg: 12, xl: 6 }}>
-              <Label
-                label="Veículo"
-                status={formState.errors.vehicle_id && "error"}
-                errorText={formState.errors.vehicle_id?.message}
-              >
-                <div className="flex gap-3 items-center">
-                  <Input
-                    {...register("vehicle_name")}
-                    placeholder="O nome do veículo"
-                    readOnly
-                    status={formState.errors.vehicle_id && "error"}
-                  />
+              <Controller
+                control={control}
+                name="vehicle_name"
+                render={({ field }) => (
+                  <Label
+                    label="Veículo"
+                    status={formState.errors.vehicle_name && "error"}
+                    errorText={formState.errors.vehicle_name?.message}
+                  >
+                    <div className="flex gap-3 items-center">
+                      <Input
+                        {...field}
+                        placeholder="O nome do veículo"
+                        readOnly
+                        status={formState.errors.vehicle_name && "error"}
+                      />
 
-                  <Tooltip text="Selecione seu Veículo">
-                    <Button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        e.preventDefault();
-                        lookVehicleRef.current.open();
-                      }}
-                      type="primary"
-                      icon={
-                        <div className="flex h-full w-full justify-center items-center">
-                          <ListCheckIcon size={18} />
-                        </div>
-                      }
-                    />
-                  </Tooltip>
-                </div>
-              </Label>
+                      <Tooltip text="Selecione seu Veículo">
+                        <Button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            lookVehicleRef.current.open();
+                          }}
+                          type="primary"
+                          icon={
+                            <div className="flex h-full w-full justify-center items-center">
+                              <ListCheckIcon size={18} />
+                            </div>
+                          }
+                        />
+                      </Tooltip>
+                    </div>
+                  </Label>
+                )}
+              />
             </Grid.Cell>
-
             <Grid.Cell span={{ md: 12, lg: 12, xl: 6 }}>
-              <Label
-                label="Motorista"
-                status={formState.errors.driver_id && "error"}
-                errorText={formState.errors.driver_id?.message}
-              >
-                <div className="flex gap-3 items-center">
-                  <Input
-                    {...register("driver_name")}
-                    placeholder="O nome do motorista"
-                    readOnly
-                    status={formState.errors.driver_id && "error"}
-                  />
+              <Controller
+                control={control}
+                name="driver_name"
+                render={({ field }) => (
+                  <Label
+                    label="Motorista"
+                    status={formState.errors.driver_name && "error"}
+                    errorText={formState.errors.driver_name?.message}
+                  >
+                    <div className="flex gap-3 items-center">
+                      <Input
+                        {...field}
+                        placeholder="O nome do motorista"
+                        readOnly
+                        status={formState.errors.driver_name && "error"}
+                      />
 
-                  <Tooltip text="Selecione seu Motorista">
-                    <Button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        e.preventDefault();
-                        lookDriverRef.current.open();
-                      }}
-                      type="primary"
-                      icon={
-                        <div className="flex h-full w-full justify-center items-center">
-                          <ListCheckIcon size={18} />
-                        </div>
-                      }
-                    />
-                  </Tooltip>
-                </div>
-              </Label>
+                      <Tooltip text="Selecione seu Motorista">
+                        <Button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            lookDriverRef.current.open();
+                          }}
+                          type="primary"
+                          icon={
+                            <div className="flex h-full w-full justify-center items-center">
+                              <ListCheckIcon size={18} />
+                            </div>
+                          }
+                        />
+                      </Tooltip>
+                    </div>
+                  </Label>
+                )}
+              />
             </Grid.Cell>
 
             <Grid.Cell span={12}>
               <Fieldset title="Endereço de Entrega">
                 <Grid size={12}>
                   <Grid.Cell span={{ md: 12, lg: 12, xl: 6 }}>
-                    <Label
-                      label="Rua"
-                      status={formState.errors.delivery_street && "error"}
-                      errorText={formState.errors.delivery_street?.message}
-                    >
-                      <Input
-                        {...register("delivery_street", {
-                          required: "Este campo é obrigatório.",
-                        })}
-                        disabled={dialogType === "view"}
-                        placeholder="Rua das flores"
-                        status={formState.errors.delivery_street && "error"}
-                      />
-                    </Label>
+                    <Controller
+                      control={control}
+                      name="delivery_street"
+                      rules={{
+                        required: "Este campo é obrigatório.",
+                      }}
+                      render={({ field }) => (
+                        <Label
+                          label="Rua"
+                          status={formState.errors.delivery_street && "error"}
+                          errorText={formState.errors.delivery_street?.message}
+                        >
+                          <Input
+                            {...field}
+                            disabled={dialogType === "view"}
+                            placeholder="Rua das flores"
+                            status={formState.errors.delivery_street && "error"}
+                          />
+                        </Label>
+                      )}
+                    />
                   </Grid.Cell>
-
                   <Grid.Cell span={{ md: 12, lg: 12, xl: 6 }}>
-                    <Label
-                      label="Bairro"
-                      status={formState.errors.delivery_district && "error"}
-                      errorText={formState.errors.delivery_district?.message}
-                    >
-                      <Input
-                        {...register("delivery_district", {
-                          required: "Este campo é obrigatório.",
-                        })}
-                        disabled={dialogType === "view"}
-                        placeholder="Rio Branco"
-                        status={formState.errors.delivery_district && "error"}
-                      />
-                    </Label>
+                    <Controller
+                      control={control}
+                      name="delivery_district"
+                      rules={{
+                        required: "Este campo é obrigatório.",
+                      }}
+                      render={({ field }) => (
+                        <Label
+                          label="Bairro"
+                          status={formState.errors.delivery_district && "error"}
+                          errorText={
+                            formState.errors.delivery_district?.message
+                          }
+                        >
+                          <Input
+                            {...field}
+                            disabled={dialogType === "view"}
+                            placeholder="Rio Branco"
+                            status={
+                              formState.errors.delivery_district && "error"
+                            }
+                          />
+                        </Label>
+                      )}
+                    />
                   </Grid.Cell>
-
                   <Grid.Cell span={{ md: 12, lg: 12, xl: 6 }}>
-                    <Label
-                      label="Cidade"
-                      status={formState.errors.delivery_city && "error"}
-                      errorText={formState.errors.delivery_city?.message}
-                    >
-                      <Input
-                        {...register("delivery_city", {
-                          required: "Este campo é obrigatório.",
-                        })}
-                        disabled={dialogType === "view"}
-                        placeholder="São Paulo"
-                        status={formState.errors.delivery_city && "error"}
-                      />
-                    </Label>
+                    <Controller
+                      control={control}
+                      name="delivery_city"
+                      rules={{
+                        required: "Este campo é obrigatório.",
+                      }}
+                      render={({ field }) => (
+                        <Label
+                          label="Cidade"
+                          status={formState.errors.delivery_city && "error"}
+                          errorText={formState.errors.delivery_city?.message}
+                        >
+                          <Input
+                            {...field}
+                            disabled={dialogType === "view"}
+                            placeholder="São Paulo"
+                            status={formState.errors.delivery_city && "error"}
+                          />
+                        </Label>
+                      )}
+                    />
                   </Grid.Cell>
-
                   <Grid.Cell span={{ md: 12, lg: 12, xl: 2 }}>
                     <Label
                       label="Estado"
@@ -530,52 +591,79 @@ export const OrderDialog = forwardRef<
                   </Grid.Cell>
 
                   <Grid.Cell span={{ md: 12, lg: 12, xl: 2 }}>
-                    <Label
-                      label="CEP"
-                      status={formState.errors.delivery_zipcode && "error"}
-                      errorText={formState.errors.delivery_zipcode?.message}
-                    >
-                      <Input
-                        {...register("delivery_zipcode", {
-                          required: "Este campo é obrigatório.",
-                        })}
-                        disabled={dialogType === "view"}
-                        placeholder="12345678"
-                        status={formState.errors.delivery_zipcode && "error"}
-                      />
-                    </Label>
+                    <Controller
+                      control={control}
+                      name="delivery_zipcode"
+                      rules={{
+                        required: "Este campo é obrigatório.",
+                      }}
+                      render={({ field }) => (
+                        <Label
+                          label="CEP"
+                          status={formState.errors.delivery_zipcode && "error"}
+                          errorText={formState.errors.delivery_zipcode?.message}
+                        >
+                          <Input
+                            {...field}
+                            disabled={dialogType === "view"}
+                            placeholder="12345678"
+                            status={
+                              formState.errors.delivery_zipcode && "error"
+                            }
+                          />
+                        </Label>
+                      )}
+                    />
                   </Grid.Cell>
 
                   <Grid.Cell span={{ md: 12, lg: 12, xl: 2 }}>
-                    <Label
-                      label="Número"
-                      status={formState.errors.delivery_number && "error"}
-                      errorText={formState.errors.delivery_number?.message}
-                    >
-                      <Input
-                        {...register("delivery_number", {
-                          required: "Este campo é obrigatório.",
-                        })}
-                        disabled={dialogType === "view"}
-                        placeholder="Número do pedido"
-                        status={formState.errors.delivery_number && "error"}
-                      />
-                    </Label>
+                    <Controller
+                      control={control}
+                      name="delivery_number"
+                      rules={{
+                        required: "Este campo é obrigatório.",
+                      }}
+                      render={({ field }) => (
+                        <Label
+                          label="Número"
+                          status={formState.errors.delivery_number && "error"}
+                          errorText={formState.errors.delivery_number?.message}
+                        >
+                          <Input
+                            {...field}
+                            disabled={dialogType === "view"}
+                            placeholder="Número do pedido"
+                            status={formState.errors.delivery_number && "error"}
+                          />
+                        </Label>
+                      )}
+                    />
                   </Grid.Cell>
-
                   <Grid.Cell span={{ md: 12, lg: 12, xl: 12 }}>
-                    <Label
-                      label="Complemento"
-                      status={formState.errors.delivery_complement && "error"}
-                      errorText={formState.errors.delivery_complement?.message}
-                    >
-                      <Input.TextArea
-                        {...register("delivery_complement")}
-                        disabled={dialogType === "view"}
-                        placeholder="Complemento do endereço"
-                        status={formState.errors.delivery_complement && "error"}
-                      />
-                    </Label>
+                    <Controller
+                      control={control}
+                      name="delivery_complement"
+                      render={({ field }) => (
+                        <Label
+                          label="Complemento"
+                          status={
+                            formState.errors.delivery_complement && "error"
+                          }
+                          errorText={
+                            formState.errors.delivery_complement?.message
+                          }
+                        >
+                          <Input.TextArea
+                            {...field}
+                            disabled={dialogType === "view"}
+                            placeholder="Complemento do endereço"
+                            status={
+                              formState.errors.delivery_complement && "error"
+                            }
+                          />
+                        </Label>
+                      )}
+                    />
                   </Grid.Cell>
                 </Grid>
               </Fieldset>
