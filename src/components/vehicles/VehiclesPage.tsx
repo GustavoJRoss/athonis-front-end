@@ -2,7 +2,6 @@
 
 import { DataTable, DataTableRefProps } from "../datatables/Datatable";
 import { useRef } from "react";
-import { Button } from "@/components/ui/button";
 import { DialogOpenRef } from "../types/types";
 import { IconAction } from "../utils/IconAction";
 import { EyeIcon, PencilIcon, TrashIcon } from "lucide-react";
@@ -10,6 +9,7 @@ import { getVehicles } from "@/src/lib/vehicles/requests";
 import { DeleteVehicleDialog } from "./dialogs/DeleteVehicleDialogs";
 import { VehicleType } from "../types/vehicle";
 import { VehiclesDialog } from "./dialogs/VehiclesDialog";
+import { Button } from "antd";
 
 type VehiclesPageProps = {
   initialData: any[];
@@ -29,7 +29,10 @@ export default function VehiclesPage({
       <DataTable
         ref={dataTableRef}
         headerActions={
-          <Button onClick={() => vehicleDialogRef.current?.open("create")}>
+          <Button
+            type="primary"
+            onClick={() => vehicleDialogRef.current?.open("create")}
+          >
             Adicionar Veículo
           </Button>
         }

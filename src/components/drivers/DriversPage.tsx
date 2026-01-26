@@ -3,17 +3,14 @@
 import { getClients } from "@/src/lib/clients/requests";
 import { DataTable, DataTableRefProps } from "../datatables/Datatable";
 import { useRef } from "react";
-import { Button } from "@/components/ui/button";
 import { DialogOpenRef } from "../types/types";
 import { IconAction } from "../utils/IconAction";
 import { EyeIcon, PencilIcon, TrashIcon } from "lucide-react";
-import { ClientType } from "../types/clients";
-import { ClientDialog } from "../clients/dialogs/ClientsDialogs";
-import { DeleteClientDialog } from "../clients/dialogs/DeleteClientDialog";
 import { getDrivers } from "@/src/lib/drivers/requests";
 import { DriversDialog } from "./dialogs/DriversDialog";
 import { DeleteDriverDialog } from "./dialogs/DeleteDriverDialog";
 import { DriverType } from "../types/drivers";
+import { Button } from "antd";
 
 type DriversPageProps = {
   initialData: any[];
@@ -33,7 +30,10 @@ export default function DriversPage({
       <DataTable
         ref={dataTableRef}
         headerActions={
-          <Button onClick={() => driverDialogRef.current?.open("create")}>
+          <Button
+            type="primary"
+            onClick={() => driverDialogRef.current?.open("create")}
+          >
             Adicionar Motorista
           </Button>
         }
