@@ -18,6 +18,7 @@ import { LookupVehicle } from "../../lookups/LookupVehicle";
 import { Button, Input, Modal, Select, Typography } from "antd";
 import { Grid } from "../../ui/Grid";
 import { Fieldset } from "../../ui/Fieldset";
+import { SaveOutlined } from "@ant-design/icons";
 
 export type OrderFormData = {
   client_id: number;
@@ -81,7 +82,7 @@ export const OrderDialog = forwardRef<
       dialogFooterRef.current?.setLoading(false);
 
       if (res?.success) {
-        dialogFooterRef.current?.close();
+        setShowDialog(false);
         successToast("Pedido criado com sucesso!");
         onSubmitSuccess();
         return;
@@ -221,6 +222,7 @@ export const OrderDialog = forwardRef<
         destroyOnHidden
         okButtonProps={{
           disabled: dialogType === "view",
+          icon: <SaveOutlined />,
         }}
       >
         <form

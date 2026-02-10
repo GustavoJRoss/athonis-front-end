@@ -1,14 +1,6 @@
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { useToast } from "@/hooks/useToast";
 import { deleteOrder } from "@/src/lib/orders/requests";
+import { Modal } from "antd";
 import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 
 type DeleteOrderDialogProps = {
@@ -53,30 +45,18 @@ export const DeleteOrderDialog = forwardRef<any, DeleteOrderDialogProps>(
     }));
 
     return (
-      <Dialog open={showDialog} onOpenChange={setShowDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Delete Client</DialogTitle>
-          </DialogHeader>
-          <div className="flex flex-col">
-            <p>Você tem certeza que você quer deletar este pedido?</p>
-          </div>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button ref={dialogButtonRef} variant={"outline"}>
-                Cancelar
-              </Button>
-            </DialogClose>
-            <Button
-              onClick={handleDeleteOrder}
-              className="bg-red-500 hover:bg-red-800"
-              loading={loading}
-            >
-              Deletar
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <Modal
+        open={showDialog}
+        onCancel={() => setShowDialog(false)}
+        onOk={handleDeleteOrder}
+        okText="Deletar"
+        okButtonProps={{ danger: true, loading }}
+        cancelText="Cancelar"
+      >
+        <div className="flex flex-col">
+          <p>Você tem certeza que você quer deletar este pedido?</p>
+        </div>
+      </Modal>
     );
   }
 );

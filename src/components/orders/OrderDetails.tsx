@@ -9,14 +9,24 @@ import { OrderDialog } from "./dialogs/OrdersDialogs";
 import { useRouter } from "next/navigation";
 import { useRef } from "react";
 import { Fieldset } from "../ui/Fieldset";
+import { deleteOrder } from "@/src/lib/orders/requests";
+import { useToast } from "@/hooks/useToast";
+import { DeleteOrderDialog } from "./dialogs/DeleteOrderDialog";
 
 export default function OrderDetails({ order }: { order: OrderType }) {
   const router = useRouter();
 
   const orderDialogRef = useRef<any>(null);
+  const deleteOrderRef = useRef<any>(null);
+
+  const { successToast, errorToast } = useToast();
 
   return (
     <Card className="overflow-y-auto max-h-[calc(100vh-225px)]">
+      <DeleteOrderDialog
+        ref={deleteOrderRef}
+        onSubmitSuccess={() => router.push("/orders")}
+      />
       <Grid size={12}>
         <Grid.Cell span={11}>
           <Label label="Título">
@@ -35,6 +45,7 @@ export default function OrderDetails({ order }: { order: OrderType }) {
               type="primary"
               danger
               className="w-full"
+              onClick={() => deleteOrderRef?.current?.open(order?.order_id)}
               icon={<DeleteOutlined />}
             />
           </Flex>

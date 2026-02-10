@@ -1,13 +1,4 @@
 import {
-  Dialog,
-  DialogBody,
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
   forwardRef,
   useEffect,
   useImperativeHandle,
@@ -15,10 +6,10 @@ import {
   useState,
 } from "react";
 import { DataTable } from "../datatables/Datatable";
-import { Button } from "@/components/ui/button";
-import { CheckIcon } from "lucide-react";
 import { AgGridReact } from "ag-grid-react";
 import { getDrivers } from "@/src/lib/drivers/requests";
+import { Button, Modal } from "antd";
+import { CheckOutlined } from "@ant-design/icons";
 
 type LookupDriverProps = {
   onSelect: (data: any) => void;
@@ -47,58 +38,56 @@ export const LookupDriver = forwardRef<any, LookupDriverProps>(
     }));
 
     return (
-      <Dialog open={showDialog} onOpenChange={setShowDialog}>
-        <DialogContent
-          className="
-    [&]:max-w-none
-    [&]:w-[40vw]
-    [&]:max-h-none
-  "
-        >
-          <DialogHeader>
-            <DialogTitle>Selecione seu motorista</DialogTitle>
-          </DialogHeader>
-          <DialogBody>
-            <DataTable
-              ref={dataTableRef}
-              gridRef={gridRef}
-              rowSelection={"single"}
-              columnDefs={[
-                {
-                  headerName: "",
-                  checkboxSelection: true,
-                  headerCheckboxSelection: true,
-                  width: 50,
-                  pinned: true,
-                },
-                { headerName: "Nome", field: "name" },
-                { headerName: "Gênero", field: "gender", maxWidth: 100 },
-                { headerName: "Documento", field: "document" },
-                { headerName: " Data de Nascimento", field: "birth_date" },
-              ]}
-              getMethod={async (getProps) => {
-                const userResponse = await getDrivers({
-                  page: getProps.page,
-                  pageSize: getProps.pageSize,
-                  filter: getProps.filter,
-                });
-                return {
-                  data: userResponse?.data?.items || [],
-                  total: userResponse?.data?.meta?.total || 0,
-                };
-              }}
-            />
-          </DialogBody>
-          <DialogFooter>
-            <DialogClose>
-              <Button variant={"outline"}>Fechar</Button>
-            </DialogClose>
-            <Button icon={CheckIcon} onClick={handleSelect}>
-              Selecionar Motorista
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <Modal
+        open={showDialog}
+        title="Selecione seu motorista"
+        onCancel={() => setShowDialog(false)}
+        width="80vw"
+        footer={[
+          <Button key="cancel" onClick={() => setShowDialog(false)}>
+            Fechar
+          </Button>,
+          <Button
+            key="select"
+            type="primary"
+            icon={<CheckOutlined />}
+            onClick={handleSelect}
+          >
+            Selecionar Motorista
+          </Button>,
+        ]}
+      >
+        <DataTable
+          ref={dataTableRef}
+          gridRef={gridRef}
+          rowSelection={"single"}
+          className="h-[500px]"
+          columnDefs={[
+            {
+              headerName: "",
+              checkboxSelection: true,
+              headerCheckboxSelection: true,
+              width: 50,
+              pinned: true,
+            },
+            { headerName: "Nome", field: "name" },
+            { headerName: "Gênero", field: "gender", maxWidth: 100 },
+            { headerName: "Documento", field: "document" },
+            { headerName: " Data de Nascimento", field: "birth_date" },
+          ]}
+          getMethod={async (getProps) => {
+            const userResponse = await getDrivers({
+              page: getProps.page,
+              pageSize: getProps.pageSize,
+              filter: getProps.filter,
+            });
+            return {
+              data: userResponse?.data?.items || [],
+              total: userResponse?.data?.meta?.total || 0,
+            };
+          }}
+        />
+      </Modal>
     );
   }
 );
