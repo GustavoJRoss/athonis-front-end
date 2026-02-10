@@ -8,6 +8,9 @@ import { DialogOpenRef, DialogOpenType } from "../../types/types";
 import { ClientType } from "../../types/clients";
 import { Button, Input, Modal, Select } from "antd";
 import { Label } from "@/components/ui/label";
+import { Grid } from "../../ui/Grid";
+import { SaveOutlined } from "@ant-design/icons";
+import { Fieldset } from "../../ui/Fieldset";
 
 export type ClientFormData = {
   name: string;
@@ -171,324 +174,356 @@ export const ClientDialog = forwardRef<
       destroyOnHidden
       okButtonProps={{
         disabled: dialogType === "view",
+        icon: <SaveOutlined />,
       }}
+      width={"60%"}
     >
       <form noValidate>
         <h2 className="mb-4 text-lg font-semibold">
           {dialogType === "create"
             ? "Criar"
             : dialogType === "edit"
-            ? "Editar"
-            : "Visualizar"}{" "}
+              ? "Editar"
+              : "Visualizar"}{" "}
           Cliente
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Label
-            label="Nome"
-            status={formState.errors.name && "error"}
-            errorText={formState.errors.name?.message}
-          >
-            <Controller
-              name="name"
-              control={control}
-              rules={{ required: "Este campo é obrigatório" }}
-              render={({ field, fieldState }) => (
-                <Input
-                  {...field}
-                  disabled={dialogType === "view"}
-                  placeholder="João Silva"
-                  status={fieldState.error ? "error" : undefined}
-                />
-              )}
-            />
-          </Label>
-
-          <Label
-            label="Nome Fantasia"
-            status={formState.errors.trade_name && "error"}
-            errorText={formState.errors.trade_name?.message}
-          >
-            <Controller
-              name="trade_name"
-              control={control}
-              rules={{ required: "Este campo é obrigatório" }}
-              render={({ field, fieldState }) => (
-                <Input
-                  {...field}
-                  placeholder="João Silva e Cia"
-                  disabled={dialogType === "view"}
-                  status={fieldState.error ? "error" : undefined}
-                />
-              )}
-            />
-          </Label>
-
-          <Label
-            label="Documento"
-            status={formState.errors.document && "error"}
-            errorText={formState.errors.document?.message}
-          >
-            <Controller
-              name="document"
-              control={control}
-              rules={{ required: "Este campo é obrigatório" }}
-              render={({ field, fieldState }) => (
-                <Input
-                  {...field}
-                  type="number"
-                  placeholder="12345678900"
-                  disabled={dialogType === "view"}
-                  status={fieldState.error ? "error" : undefined}
-                />
-              )}
-            />
-          </Label>
-          <Label
-            label="Inscrição Estadual"
-            status={formState.errors.state_registration && "error"}
-            errorText={formState.errors.state_registration?.message}
-          >
-            <Controller
-              name="state_registration"
-              control={control}
-              rules={{ required: "Este campo é obrigatório" }}
-              render={({ field, fieldState }) => (
-                <Input
-                  {...field}
-                  placeholder="Inscrição estadual"
-                  disabled={dialogType === "view"}
-                  status={fieldState.error ? "error" : undefined}
-                />
-              )}
-            />
-          </Label>
-          <Label
-            label="Email"
-            status={formState.errors.email && "error"}
-            errorText={formState.errors.email?.message}
-          >
-            <Controller
-              name="email"
-              control={control}
-              rules={{ required: "Este campo é obrigatório" }}
-              render={({ field, fieldState }) => (
-                <Input
-                  {...field}
-                  type="email"
-                  placeholder="email@exemplo.com"
-                  disabled={dialogType === "view"}
-                  status={fieldState.error ? "error" : undefined}
-                />
-              )}
-            />
-          </Label>
-          <Label
-            label="Telefone"
-            status={formState.errors.phone && "error"}
-            errorText={formState.errors.phone?.message}
-          >
-            <Controller
-              name="phone"
-              control={control}
-              rules={{ required: "Este campo é obrigatório" }}
-              render={({ field, fieldState }) => (
-                <Input
-                  {...field}
-                  placeholder="(11) 99999-9999"
-                  disabled={dialogType === "view"}
-                  status={fieldState.error ? "error" : undefined}
-                />
-              )}
-            />
-          </Label>
-          <Label
-            label="Tipo"
-            status={formState.errors.type && "error"}
-            errorText={formState.errors.type?.message}
-          >
-            <Controller
-              control={control}
-              name="type"
-              rules={{ required: "Este campo é obrigatório" }}
-              render={({ field, fieldState }) => (
-                <Select
-                  {...field}
-                  disabled={dialogType === "view"}
-                  status={fieldState.error ? "error" : undefined}
-                  options={[
-                    { label: "Pessoa Física", value: "F" },
-                    { label: "Pessoa Jurídica", value: "J" },
-                  ]}
-                />
-              )}
-            />
-          </Label>
-
-          <Label
-            label="Rua"
-            status={formState.errors.street && "error"}
-            errorText={formState.errors.street?.message}
-          >
-            <Controller
-              name="street"
-              control={control}
-              rules={{ required: "Este campo é obrigatório" }}
-              render={({ field, fieldState }) => (
-                <Input
-                  {...field}
-                  disabled={dialogType === "view"}
-                  placeholder="Rua das Flores"
-                  status={fieldState.error ? "error" : undefined}
-                />
-              )}
-            />
-          </Label>
-
-          <Label
-            label="Bairro"
-            status={formState.errors.neighborhood && "error"}
-            errorText={formState.errors.neighborhood?.message}
-          >
-            <Controller
-              name="neighborhood"
-              control={control}
-              rules={{ required: "Este campo é obrigatório" }}
-              render={({ field, fieldState }) => (
-                <Input
-                  {...field}
-                  disabled={dialogType === "view"}
-                  placeholder="Centro"
-                  status={fieldState.error ? "error" : undefined}
-                />
-              )}
-            />
-          </Label>
-
-          <Label
-            label="Cidade"
-            status={formState.errors.city && "error"}
-            errorText={formState.errors.city?.message}
-          >
-            <Controller
-              name="city"
-              control={control}
-              rules={{ required: "Este campo é obrigatório" }}
-              render={({ field, fieldState }) => (
-                <Input
-                  {...field}
-                  disabled={dialogType === "view"}
-                  placeholder="São Paulo"
-                  status={fieldState.error ? "error" : undefined}
-                />
-              )}
-            />
-          </Label>
-
-          <Label
-            label="Estado"
-            status={formState.errors.state && "error"}
-            errorText={formState.errors.state?.message}
-          >
-            <Controller
-              control={control}
-              name="state"
-              rules={{ required: "Este campo é obrigatório" }}
-              render={({ field, fieldState }) => (
-                <Select
-                  {...field}
-                  disabled={dialogType === "view"}
-                  status={fieldState.error ? "error" : undefined}
-                  options={statesOptions.map((item) => ({
-                    label: item,
-                    value: item,
-                  }))}
-                />
-              )}
-            />
-          </Label>
-
-          <Label
-            label="CEP"
-            status={formState.errors.zip_code && "error"}
-            errorText={formState.errors.zip_code?.message}
-          >
-            <Controller
-              name="zip_code"
-              control={control}
-              rules={{ required: "Este campo é obrigatório" }}
-              render={({ field, fieldState }) => (
-                <Input
-                  {...field}
-                  disabled={dialogType === "view"}
-                  placeholder="01234-567"
-                  status={fieldState.error ? "error" : undefined}
-                />
-              )}
-            />
-          </Label>
-
-          <Label
-            label="Número"
-            status={formState.errors.number && "error"}
-            errorText={formState.errors.number?.message}
-          >
-            <Controller
-              name="number"
-              control={control}
-              rules={{ required: "Este campo é obrigatório" }}
-              render={({ field, fieldState }) => (
-                <Input
-                  {...field}
-                  type="number"
-                  disabled={dialogType === "view"}
-                  placeholder="123"
-                  status={fieldState.error ? "error" : undefined}
-                />
-              )}
-            />
-          </Label>
-
-          <Label
-            label="Complemento"
-            status={formState.errors.complement && "error"}
-            errorText={formState.errors.complement?.message}
-          >
-            <Controller
-              name="complement"
-              control={control}
-              rules={{ required: "Este campo é obrigatório" }}
-              render={({ field, fieldState }) => (
-                <Input
-                  {...field}
-                  disabled={dialogType === "view"}
-                  placeholder="Apto 45"
-                  status={fieldState.error ? "error" : undefined}
-                />
-              )}
-            />
-          </Label>
-        </div>
-
-        <Label
-          label="Observações"
-          status={formState.errors.notes && "error"}
-          errorText={formState.errors.notes?.message}
-        >
-          <Controller
-            name="notes"
-            control={control}
-            rules={{ required: "Este campo é obrigatório" }}
-            render={({ field, fieldState }) => (
-              <Input.TextArea
-                {...field}
-                placeholder="Alguma observação do cliente..."
-                disabled={dialogType === "view"}
-                status={fieldState.error ? "error" : undefined}
-                rows={4}
+        <Grid size={12}>
+          <Grid.Cell span={{ md: 12, lg: 6 }}>
+            <Label
+              label="Nome"
+              status={formState.errors.name && "error"}
+              errorText={formState.errors.name?.message}
+            >
+              <Controller
+                name="name"
+                control={control}
+                rules={{ required: "Este campo é obrigatório" }}
+                render={({ field, fieldState }) => (
+                  <Input
+                    {...field}
+                    disabled={dialogType === "view"}
+                    placeholder="João Silva"
+                    status={fieldState.error ? "error" : undefined}
+                  />
+                )}
               />
-            )}
-          />
-        </Label>
+            </Label>
+          </Grid.Cell>
+
+          <Grid.Cell span={{ md: 12, lg: 6 }}>
+            <Label
+              label="Nome Fantasia"
+              status={formState.errors.trade_name && "error"}
+              errorText={formState.errors.trade_name?.message}
+            >
+              <Controller
+                name="trade_name"
+                control={control}
+                rules={{ required: "Este campo é obrigatório" }}
+                render={({ field, fieldState }) => (
+                  <Input
+                    {...field}
+                    placeholder="João Silva e Cia"
+                    disabled={dialogType === "view"}
+                    status={fieldState.error ? "error" : undefined}
+                  />
+                )}
+              />
+            </Label>
+          </Grid.Cell>
+          <Grid.Cell span={{ md: 12, lg: 6 }}>
+            <Label
+              label="Email"
+              status={formState.errors.email && "error"}
+              errorText={formState.errors.email?.message}
+            >
+              <Controller
+                name="email"
+                control={control}
+                rules={{ required: "Este campo é obrigatório" }}
+                render={({ field, fieldState }) => (
+                  <Input
+                    {...field}
+                    type="email"
+                    placeholder="email@exemplo.com"
+                    disabled={dialogType === "view"}
+                    status={fieldState.error ? "error" : undefined}
+                  />
+                )}
+              />
+            </Label>
+          </Grid.Cell>
+          <Grid.Cell span={{ md: 12, lg: 3 }}>
+            <Label
+              label="Documento"
+              status={formState.errors.document && "error"}
+              errorText={formState.errors.document?.message}
+            >
+              <Controller
+                name="document"
+                control={control}
+                rules={{ required: "Este campo é obrigatório" }}
+                render={({ field, fieldState }) => (
+                  <Input
+                    {...field}
+                    type="number"
+                    placeholder="12345678900"
+                    disabled={dialogType === "view"}
+                    status={fieldState.error ? "error" : undefined}
+                  />
+                )}
+              />
+            </Label>
+          </Grid.Cell>
+          <Grid.Cell span={{ md: 12, lg: 3 }}>
+            <Label
+              label="Inscrição Estadual"
+              status={formState.errors.state_registration && "error"}
+              errorText={formState.errors.state_registration?.message}
+            >
+              <Controller
+                name="state_registration"
+                control={control}
+                rules={{ required: "Este campo é obrigatório" }}
+                render={({ field, fieldState }) => (
+                  <Input
+                    {...field}
+                    placeholder="Inscrição estadual"
+                    disabled={dialogType === "view"}
+                    status={fieldState.error ? "error" : undefined}
+                  />
+                )}
+              />
+            </Label>
+          </Grid.Cell>
+
+          <Grid.Cell span={{ md: 12, lg: 3 }}>
+            <Label
+              label="Telefone"
+              status={formState.errors.phone && "error"}
+              errorText={formState.errors.phone?.message}
+            >
+              <Controller
+                name="phone"
+                control={control}
+                rules={{ required: "Este campo é obrigatório" }}
+                render={({ field, fieldState }) => (
+                  <Input
+                    {...field}
+                    placeholder="(11) 99999-9999"
+                    disabled={dialogType === "view"}
+                    status={fieldState.error ? "error" : undefined}
+                  />
+                )}
+              />
+            </Label>
+          </Grid.Cell>
+
+          <Grid.Cell span={{ md: 12, lg: 3 }}>
+            <Label
+              label="Tipo"
+              status={formState.errors.type && "error"}
+              errorText={formState.errors.type?.message}
+            >
+              <Controller
+                control={control}
+                name="type"
+                rules={{ required: "Este campo é obrigatório" }}
+                render={({ field, fieldState }) => (
+                  <Select
+                    {...field}
+                    disabled={dialogType === "view"}
+                    status={fieldState.error ? "error" : undefined}
+                    options={[
+                      { label: "Pessoa Física", value: "F" },
+                      { label: "Pessoa Jurídica", value: "J" },
+                    ]}
+                  />
+                )}
+              />
+            </Label>
+          </Grid.Cell>
+
+          <Grid.Cell span={12}>
+            <Fieldset title="Endereço">
+              <Grid size={12}>
+                <Grid.Cell span={{ md: 12, lg: 6 }}>
+                  <Label
+                    label="Rua"
+                    status={formState.errors.street && "error"}
+                    errorText={formState.errors.street?.message}
+                  >
+                    <Controller
+                      name="street"
+                      control={control}
+                      rules={{ required: "Este campo é obrigatório" }}
+                      render={({ field, fieldState }) => (
+                        <Input
+                          {...field}
+                          disabled={dialogType === "view"}
+                          placeholder="Rua das Flores"
+                          status={fieldState.error ? "error" : undefined}
+                        />
+                      )}
+                    />
+                  </Label>
+                </Grid.Cell>
+                <Grid.Cell span={{ md: 12, lg: 6 }}>
+                  <Label
+                    label="Bairro"
+                    status={formState.errors.neighborhood && "error"}
+                    errorText={formState.errors.neighborhood?.message}
+                  >
+                    <Controller
+                      name="neighborhood"
+                      control={control}
+                      rules={{ required: "Este campo é obrigatório" }}
+                      render={({ field, fieldState }) => (
+                        <Input
+                          {...field}
+                          disabled={dialogType === "view"}
+                          placeholder="Centro"
+                          status={fieldState.error ? "error" : undefined}
+                        />
+                      )}
+                    />
+                  </Label>
+                </Grid.Cell>
+                <Grid.Cell span={4}>
+                  <Label
+                    label="Cidade"
+                    status={formState.errors.city && "error"}
+                    errorText={formState.errors.city?.message}
+                  >
+                    <Controller
+                      name="city"
+                      control={control}
+                      rules={{ required: "Este campo é obrigatório" }}
+                      render={({ field, fieldState }) => (
+                        <Input
+                          {...field}
+                          disabled={dialogType === "view"}
+                          placeholder="São Paulo"
+                          status={fieldState.error ? "error" : undefined}
+                        />
+                      )}
+                    />
+                  </Label>
+                </Grid.Cell>
+                <Grid.Cell span={4}>
+                  <Label
+                    label="Estado"
+                    status={formState.errors.state && "error"}
+                    errorText={formState.errors.state?.message}
+                  >
+                    <Controller
+                      control={control}
+                      name="state"
+                      rules={{ required: "Este campo é obrigatório" }}
+                      render={({ field, fieldState }) => (
+                        <Select
+                          {...field}
+                          disabled={dialogType === "view"}
+                          status={fieldState.error ? "error" : undefined}
+                          options={statesOptions.map((item) => ({
+                            label: item,
+                            value: item,
+                          }))}
+                        />
+                      )}
+                    />
+                  </Label>
+                </Grid.Cell>
+                <Grid.Cell span={4}>
+                  <Label
+                    label="CEP"
+                    status={formState.errors.zip_code && "error"}
+                    errorText={formState.errors.zip_code?.message}
+                  >
+                    <Controller
+                      name="zip_code"
+                      control={control}
+                      rules={{ required: "Este campo é obrigatório" }}
+                      render={({ field, fieldState }) => (
+                        <Input
+                          {...field}
+                          disabled={dialogType === "view"}
+                          placeholder="01234-567"
+                          status={fieldState.error ? "error" : undefined}
+                        />
+                      )}
+                    />
+                  </Label>
+                </Grid.Cell>
+                <Grid.Cell span={4}>
+                  <Label
+                    label="Número"
+                    status={formState.errors.number && "error"}
+                    errorText={formState.errors.number?.message}
+                  >
+                    <Controller
+                      name="number"
+                      control={control}
+                      rules={{ required: "Este campo é obrigatório" }}
+                      render={({ field, fieldState }) => (
+                        <Input
+                          {...field}
+                          type="number"
+                          disabled={dialogType === "view"}
+                          placeholder="123"
+                          status={fieldState.error ? "error" : undefined}
+                        />
+                      )}
+                    />
+                  </Label>
+                </Grid.Cell>
+                <Grid.Cell span={4}>
+                  <Label
+                    label="Complemento"
+                    status={formState.errors.complement && "error"}
+                    errorText={formState.errors.complement?.message}
+                  >
+                    <Controller
+                      name="complement"
+                      control={control}
+                      rules={{ required: "Este campo é obrigatório" }}
+                      render={({ field, fieldState }) => (
+                        <Input
+                          {...field}
+                          disabled={dialogType === "view"}
+                          placeholder="Apto 45"
+                          status={fieldState.error ? "error" : undefined}
+                        />
+                      )}
+                    />
+                  </Label>
+                </Grid.Cell>
+              </Grid>
+            </Fieldset>
+          </Grid.Cell>
+          <Grid.Cell span={12}>
+            <Label
+              label="Observações"
+              status={formState.errors.notes && "error"}
+              errorText={formState.errors.notes?.message}
+            >
+              <Controller
+                name="notes"
+                control={control}
+                rules={{ required: "Este campo é obrigatório" }}
+                render={({ field, fieldState }) => (
+                  <Input.TextArea
+                    {...field}
+                    placeholder="Alguma observação do cliente..."
+                    disabled={dialogType === "view"}
+                    status={fieldState.error ? "error" : undefined}
+                    rows={4}
+                  />
+                )}
+              />
+            </Label>
+          </Grid.Cell>
+        </Grid>
       </form>
     </Modal>
   );

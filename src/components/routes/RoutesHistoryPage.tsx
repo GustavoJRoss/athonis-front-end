@@ -8,6 +8,8 @@ import { getRoutes, getStreetViewData } from "@/src/lib/routes/requests";
 import { IconAction } from "../utils/IconAction";
 import { Card } from "antd";
 import { useRouter } from "next/navigation";
+import RouteValidation from "./RouteValidation";
+import { OrderType } from "../types/orders";
 
 type RoutesHistoryPageProps = {
   initialData: any[];
@@ -59,7 +61,7 @@ export default function RoutesHistoryPage({
         className="h-[calc(100vh-437px)]"
         ref={dataTableRef}
         gridRef={gridRef}
-        rowSelection="multiple"
+        rowSelection={{ mode: "multiRow", checkboxes: true }}
         columnDefs={[
           {
             headerName: "Código",
@@ -126,85 +128,11 @@ export default function RoutesHistoryPage({
         initialData={initialData}
         initialTotal={totalRows}
       />
-
-      {routes?.map((route: any) => (
-        <Card key={route.vehicleId} className="shadow-sm p-4 space-y-4">
-          <h1 className="text-xl font-semibold">
-            {route.vehicleName} — Motorista: {route.driverName}
-          </h1>
-
-          {route.stops.map((stop: any) => {
-            const sv = streetViewMap[stop.orderId];
-
-            return (
-              <div key={stop.orderId} className="border-t pt-4 space-y-2">
-                <p>
-                  <b>Cliente:</b> {stop.clientName}
-                </p>
-                <p>
-                  <b>Endereço:</b> {stop.address}
-                </p>
-
-                <div className="flex gap-5">
-                  <a
-                    className="text-blue-600 underline"
-                    href={`https://www.google.com/maps/search/?api=1&query=${stop.coordinates.latitude},${stop.coordinates.longitude}`}
-                    target="_blank"
-                  >
-                    Abrir no Google Maps
-                  </a>
-
-                  <a
-                    className="text-blue-600 underline"
-                    href={`https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${stop.coordinates.latitude},${stop.coordinates.longitude}`}
-                    target="_blank"
-                  >
-                    Abrir Street View
-                  </a>
-                </div>
-
-                <div className="flex">
-                  <Card className="shadow-md *:!p-2">
-                    <iframe
-                      width="100%"
-                      height="250"
-                      className="rounded-md"
-                      style={{
-                        border: 0,
-                        borderRadius: "8px",
-                      }}
-                      loading="lazy"
-                      allowFullScreen
-                      src={`https://maps.google.com/maps?q=${stop.coordinates.latitude},${stop.coordinates.longitude}&z=15&output=embed`}
-                    />
-                  </Card>
-
-                  {sv ? (
-                    <Card className="shadow-md *:!p-2">
-                      <iframe
-                        width="100%"
-                        height="250"
-                        className="rounded-md"
-                        style={{
-                          border: 0,
-                          borderRadius: "8px",
-                        }}
-                        loading="lazy"
-                        allowFullScreen
-                        src={`https://www.google.com/maps/embed?pb=!4v0!6m8!1m7!1s${sv.panoId}!2m2!1d${sv.coordinates.latitude}!2d${sv.coordinates.longitude}!3f0!4f0!5f0.7820865974627469`}
-                      />
-                    </Card>
-                  ) : (
-                    <div className="w-full h-[250px] flex items-center justify-center rounded-md bg-gray-100">
-                      Carregando Street View...
-                    </div>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </Card>
-      ))}
+      <RouteValidation
+        getSelectedRows={() =>
+          gridRef.current?.api.getSelectedRows() as OrderType[]
+        }
+      />
     </>
   );
 }
