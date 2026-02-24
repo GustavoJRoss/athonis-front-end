@@ -11,7 +11,7 @@ export async function getVehicles({
   pageSize: number;
   filter?: string;
 }) {
-  let dataResponse: RequestResponseData;
+  let dataResponse: RequestResponseData<any>;
   console.log({ page, pageSize });
   try {
     const apiRequest = await api();
@@ -19,7 +19,7 @@ export async function getVehicles({
     const responseData = await apiRequest.get(
       `/vehicles?page=${page}&limit=${pageSize}&name=${filter}`
     );
-    console.log({responseData})
+    console.log({ responseData });
     dataResponse = {
       success: true,
       data: responseData?.data,
@@ -42,7 +42,7 @@ export async function createVehicle({
 }: VehicleFormData) {
   const apiRequest = await api();
 
-  let dataResponse: RequestResponseData;
+  let dataResponse: RequestResponseData<any>;
 
   try {
     const responseData = await apiRequest.post(`/vehicles`, {
@@ -73,7 +73,7 @@ export async function updateVehicle({
   vehicle_id,
   year,
 }: VehicleFormData) {
-  let dataResponse: RequestResponseData;
+  let dataResponse: RequestResponseData<any>;
 
   try {
     const apiRequest = await api();
@@ -99,7 +99,7 @@ export async function updateVehicle({
 }
 
 export async function deleteVehicle({ id }: { id: number }) {
-  let dataResponse: RequestResponseData;
+  let dataResponse: RequestResponseData<any>;
 
   try {
     const apiRequest = await api();

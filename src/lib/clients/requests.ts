@@ -10,7 +10,7 @@ export async function getClients({
   pageSize: number;
   filter?: string;
 }) {
-  let dataResponse: RequestResponseData;
+  let dataResponse: RequestResponseData<any>;
 
   try {
     const apiRequest = await api();
@@ -92,7 +92,7 @@ export async function createClient({
   complement?: string;
   notes?: string;
 }) {
-  let dataResponse: RequestResponseData;
+  let dataResponse: RequestResponseData<any>;
 
   try {
     const apiRequest = await api();
@@ -164,7 +164,7 @@ export async function updateClient({
   complement?: string;
   notes?: string;
 }) {
-  let dataResponse: RequestResponseData;
+  let dataResponse: RequestResponseData<any>;
 
   try {
     const apiRequest = await api();
@@ -201,7 +201,7 @@ export async function updateClient({
 }
 
 export async function deleteClient({ id }: { id: number }) {
-  let dataResponse: RequestResponseData;
+  let dataResponse: RequestResponseData<any>;
 
   try {
     const apiRequest = await api();

@@ -64,7 +64,7 @@ export async function getRoutes({
   pageSize: number;
   filter?: string;
 }) {
-  let dataResponse: RequestResponseData;
+  let dataResponse: RequestResponseData<any>;
 
   try {
     const apiRequest = await api();
@@ -86,7 +86,7 @@ export async function getRoutes({
 }
 
 export async function getRoutesById({ routeId }: { routeId: number | string }) {
-  let dataResponse: RequestResponseData;
+  let dataResponse: RequestResponseData<any>;
 
   try {
     const apiRequest = await api();
@@ -114,7 +114,7 @@ export async function getStreetViewData({
 }: {
   order_id: number | string;
 }) {
-  let dataResponse: RequestResponseData;
+  let dataResponse: RequestResponseData<any>;
 
   try {
     const apiRequest = await api();

@@ -157,10 +157,6 @@ export default async function RouteDetails({ routeInfo }: { routeInfo: any }) {
                         title: "Endereço",
                         dataIndex: "address",
                       },
-                      {
-                        title: "Previsão",
-                        render: (_, stop) => stop?.estimatedArrivalTime,
-                      },
                     ]}
                   />
                 ),

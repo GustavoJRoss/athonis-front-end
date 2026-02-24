@@ -11,7 +11,7 @@ export async function getDrivers({
   pageSize: number;
   filter?: string;
 }) {
-  let dataResponse: RequestResponseData;
+  let dataResponse: RequestResponseData<any>;
 
   try {
     const apiRequest = await api();
@@ -40,7 +40,7 @@ export async function createDriver({
   birth_date,
   gender,
 }: DriverFormData) {
-  let dataResponse: RequestResponseData;
+  let dataResponse: RequestResponseData<any>;
 
   try {
     const apiRequest = await api();
@@ -73,7 +73,7 @@ export async function updateDriver({
   gender,
   driver_id,
 }: DriverFormData) {
-  let dataResponse: RequestResponseData;
+  let dataResponse: RequestResponseData<any>;
 
   try {
     const apiRequest = await api();
@@ -99,7 +99,7 @@ export async function updateDriver({
 }
 
 export async function deleteDriver({ id }: { id: number }) {
-  let dataResponse: RequestResponseData;
+  let dataResponse: RequestResponseData<any>;
 
   try {
     const apiRequest = await api();
