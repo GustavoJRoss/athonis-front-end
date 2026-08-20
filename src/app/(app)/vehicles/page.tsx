@@ -1,0 +1,250 @@
+"use client";
+
+import { useCallback, useMemo, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Plus, Trash2 } from "lucide-react";
+import { PageHeader } from "@/components/ui/page-header";
+import { SearchInput } from "@/components/ui/search-input";
+import { Button } from "@/components/ui/button";
+import { DataTable, type DataTableColumn } from "@/components/tables";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { DialogContent, DialogHeader, DialogRoot, DialogTitle } from "@/components/ui/dialog";
+import {
+  DrawerBody,
+  DrawerContent,
+  DrawerHeader,
+  DrawerRoot,
+  DrawerTitle,
+  getDrawerSwipeDirection,
+} from "@/components/ui/drawer";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Icon, Stack, Text } from "@/components/ui/primitives";
+import { VEHICLE_STATUS_META, VEHICLE_TYPE_LABEL } from "@/constants/domain";
+import {
+  useCreateVehicle,
+  useDeleteVehicle,
+  useUpdateVehicle,
+  useVehicles,
+} from "@/features/vehicles/hooks";
+import { useDrivers } from "@/features/drivers/hooks";
+import { VehicleForm } from "@/features/vehicles/vehicle-form";
+import { toaster } from "@/components/ui/toast";
+import type { VehicleFormInput } from "@/lib/validation/vehicle";
+import type { Vehicle } from "@/types/domain";
+
+export default function VehiclesPage() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const [search, setSearch] = useState("");
+  const { data: vehicles, isLoading, isError, refetch } = useVehicles(search);
+  const { data: drivers } = useDrivers();
+  const createMutation = useCreateVehicle();
+  const updateMutation = useUpdateVehicle();
+  const deleteMutation = useDeleteVehicle();
+
+  const [formOpen, setFormOpen] = useState(() => searchParams.get("new") === "1");
+  const [editing, setEditing] = useState<Vehicle | null>(null);
+  const [deleting, setDeleting] = useState<Vehicle | null>(null);
+  const [detail, setDetail] = useState<Vehicle | null>(null);
+
+  const driverOptions = useMemo(
+    () => (drivers ?? []).map((driver) => ({ value: driver.id, label: driver.name })),
+    [drivers],
+  );
+  const driverName = useCallback(
+    (id: string | null) => drivers?.find((driver) => driver.id === id)?.name ?? "—",
+    [drivers],
+  );
+
+  const columns: DataTableColumn<Vehicle>[] = useMemo(
+    () => [
+      {
+        id: "plate",
+        header: "Placa",
+        sortAccessor: (vehicle) => vehicle.plate,
+        cell: (vehicle) => (
+          <Stack gap={0}>
+            <Text weight="medium">{vehicle.plate}</Text>
+            <Text size="caption" color="muted">
+              {vehicle.brand} {vehicle.model}
+            </Text>
+          </Stack>
+        ),
+      },
+      { id: "type", header: "Tipo", cell: (vehicle) => VEHICLE_TYPE_LABEL[vehicle.type] },
+      {
+        id: "capacityKg",
+        header: "Capacidade",
+        align: "right",
+        sortAccessor: (vehicle) => vehicle.capacityKg,
+        cell: (vehicle) => `${vehicle.capacityKg.toLocaleString("pt-BR")} kg`,
+      },
+      { id: "driver", header: "Motorista", cell: (vehicle) => driverName(vehicle.driverId) },
+      {
+        id: "status",
+        header: "Status",
+        cell: (vehicle) => (
+          <StatusBadge tone={VEHICLE_STATUS_META[vehicle.status].tone}>
+            {VEHICLE_STATUS_META[vehicle.status].label}
+          </StatusBadge>
+        ),
+      },
+    ],
+    [driverName],
+  );
+
+  function openCreate() {
+    setEditing(null);
+    setFormOpen(true);
+  }
+
+  function closeForm() {
+    setFormOpen(false);
+    if (searchParams.get("new")) router.replace(pathname);
+  }
+
+  async function handleSubmit(values: VehicleFormInput) {
+    try {
+      if (editing) {
+        await updateMutation.mutateAsync({ id: editing.id, input: values });
+        toaster.success({ title: "Veículo atualizado" });
+      } else {
+        await createMutation.mutateAsync(values);
+        toaster.success({ title: "Veículo criado" });
+      }
+      closeForm();
+      setEditing(null);
+    } catch {
+      toaster.error({ title: "Não foi possível salvar o veículo", description: "Tente novamente." });
+    }
+  }
+
+  async function handleDelete() {
+    if (!deleting) return;
+    try {
+      await deleteMutation.mutateAsync(deleting.id);
+      toaster.success({ title: "Veículo removido" });
+      setDeleting(null);
+    } catch {
+      toaster.error({ title: "Não foi possível remover o veículo", description: "Tente novamente." });
+    }
+  }
+
+  return (
+    <Stack gap={6}>
+      <PageHeader
+        title="Veículos"
+        description="Frota e disponibilidade de veículos"
+        actions={
+          <Button variant="primary" onClick={openCreate}>
+            <Icon icon={Plus} size="sm" /> Novo veículo
+          </Button>
+        }
+      />
+
+      <SearchInput
+        value={search}
+        onValueChange={setSearch}
+        placeholder="Buscar por placa, modelo ou marca..."
+        className="max-w-sm"
+      />
+
+      <DataTable
+        columns={columns}
+        data={vehicles ?? []}
+        getRowId={(vehicle) => vehicle.id}
+        loading={isLoading}
+        error={isError}
+        onRetry={() => refetch()}
+        onRowClick={setDetail}
+        rowActions={() => [
+          { value: "view", label: "Ver detalhes" },
+          { value: "edit", label: "Editar" },
+          { value: "delete", label: "Excluir", danger: true, icon: Trash2 },
+        ]}
+        onRowActionSelect={(vehicle, action) => {
+          if (action === "view") setDetail(vehicle);
+          if (action === "edit") {
+            setEditing(vehicle);
+            setFormOpen(true);
+          }
+          if (action === "delete") setDeleting(vehicle);
+        }}
+      />
+
+      <DialogRoot
+        open={formOpen}
+        onOpenChange={(details) => {
+          setFormOpen(details.open);
+          if (!details.open && searchParams.get("new")) router.replace(pathname);
+        }}
+      >
+        <DialogContent size="lg">
+          <DialogHeader>
+            <DialogTitle>{editing ? "Editar veículo" : "Novo veículo"}</DialogTitle>
+          </DialogHeader>
+          <VehicleForm
+            key={editing?.id ?? "new"}
+            defaultValues={editing ?? undefined}
+            driverOptions={driverOptions}
+            onSubmit={handleSubmit}
+            onCancel={closeForm}
+            loading={createMutation.isPending || updateMutation.isPending}
+            submitLabel={editing ? "Salvar alterações" : "Criar veículo"}
+          />
+        </DialogContent>
+      </DialogRoot>
+
+      <DrawerRoot
+        open={!!detail}
+        onOpenChange={(details) => !details.open && setDetail(null)}
+        swipeDirection={getDrawerSwipeDirection("right")}
+      >
+        <DrawerContent side="right">
+          {detail && (
+            <>
+              <DrawerHeader>
+                <DrawerTitle>{detail.plate}</DrawerTitle>
+              </DrawerHeader>
+              <DrawerBody>
+                <Stack gap={4}>
+                  <DetailRow label="Modelo" value={`${detail.brand} ${detail.model}`} />
+                  <DetailRow label="Tipo" value={VEHICLE_TYPE_LABEL[detail.type]} />
+                  <DetailRow label="Capacidade" value={`${detail.capacityKg.toLocaleString("pt-BR")} kg`} />
+                  <DetailRow label="Motorista" value={driverName(detail.driverId)} />
+                  <StatusBadge tone={VEHICLE_STATUS_META[detail.status].tone}>
+                    {VEHICLE_STATUS_META[detail.status].label}
+                  </StatusBadge>
+                </Stack>
+              </DrawerBody>
+            </>
+          )}
+        </DrawerContent>
+      </DrawerRoot>
+
+      <ConfirmDialog
+        open={!!deleting}
+        onOpenChange={(open) => !open && setDeleting(null)}
+        title={`Excluir veículo ${deleting?.plate}?`}
+        description="Esta ação não pode ser desfeita."
+        tone="danger"
+        confirmLabel="Excluir"
+        loading={deleteMutation.isPending}
+        onConfirm={handleDelete}
+      />
+    </Stack>
+  );
+}
+
+function DetailRow({ label, value }: { label: string; value: string }) {
+  return (
+    <Stack gap={0.5}>
+      <Text size="caption" color="muted">
+        {label}
+      </Text>
+      <Text size="body-sm">{value}</Text>
+    </Stack>
+  );
+}

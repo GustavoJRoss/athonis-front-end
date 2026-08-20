@@ -1,0 +1,149 @@
+"use client";
+
+import { useMemo, useState } from "react";
+import type { LucideIcon } from "lucide-react";
+import {
+  DialogBackdrop,
+  DialogContent as ArkDialogContent,
+  DialogPositioner,
+  DialogRoot,
+  Portal,
+} from "@ark-ui/react";
+import { Search } from "lucide-react";
+import { cn } from "@/lib/utils/cn";
+import { Icon } from "@/components/ui/primitives";
+
+export type CommandItem = {
+  id: string;
+  label: string;
+  group?: string;
+  icon?: LucideIcon;
+  shortcut?: string;
+  onSelect: () => void;
+};
+
+export type CommandMenuProps = {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  items: CommandItem[];
+  placeholder?: string;
+};
+
+export function CommandMenu({
+  open,
+  onOpenChange,
+  items,
+  placeholder = "Digite um comando ou pesquise...",
+}: CommandMenuProps) {
+  const [query, setQuery] = useState("");
+  const [highlighted, setHighlighted] = useState(0);
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return items;
+    return items.filter((item) => item.label.toLowerCase().includes(q));
+  }, [items, query]);
+
+  const groups = useMemo(() => {
+    const map = new Map<string, CommandItem[]>();
+    for (const item of filtered) {
+      const group = item.group ?? "Ações";
+      map.set(group, [...(map.get(group) ?? []), item]);
+    }
+    return Array.from(map.entries());
+  }, [filtered]);
+
+  function handleQueryChange(value: string) {
+    setQuery(value);
+    setHighlighted(0);
+  }
+
+  function runSelected() {
+    const item = filtered[highlighted];
+    if (!item) return;
+    item.onSelect();
+    onOpenChange(false);
+  }
+
+  return (
+    <DialogRoot
+      open={open}
+      onOpenChange={(details) => {
+        onOpenChange(details.open);
+        setHighlighted(0);
+        if (!details.open) setQuery("");
+      }}
+    >
+      <Portal>
+        <DialogBackdrop className="fixed inset-0 z-40 bg-foreground/40" />
+        <DialogPositioner className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-24">
+          <ArkDialogContent
+            className="flex w-full max-w-lg flex-col overflow-hidden rounded-lg border border-border bg-surface shadow-overlay"
+            onKeyDown={(event) => {
+              if (event.key === "ArrowDown") {
+                event.preventDefault();
+                setHighlighted((current) => Math.min(current + 1, filtered.length - 1));
+              } else if (event.key === "ArrowUp") {
+                event.preventDefault();
+                setHighlighted((current) => Math.max(current - 1, 0));
+              } else if (event.key === "Enter") {
+                event.preventDefault();
+                runSelected();
+              }
+            }}
+          >
+            <div className="flex items-center gap-2 border-b border-border-subtle px-4">
+              <Icon icon={Search} size="sm" className="text-muted" />
+              <input
+                autoFocus
+                value={query}
+                onChange={(event) => handleQueryChange(event.target.value)}
+                placeholder={placeholder}
+                className="h-12 flex-1 bg-transparent text-body text-foreground outline-none placeholder:text-muted"
+              />
+            </div>
+            <div className="max-h-80 overflow-y-auto p-2">
+              {filtered.length === 0 ? (
+                <div className="px-3 py-8 text-center text-body-sm text-muted">
+                  Nenhum resultado encontrado
+                </div>
+              ) : (
+                groups.map(([group, groupItems]) => (
+                  <div key={group} className="mb-2 last:mb-0">
+                    <div className="px-2.5 py-1.5 text-caption font-medium text-muted">
+                      {group}
+                    </div>
+                    {groupItems.map((item) => {
+                      const index = filtered.indexOf(item);
+                      return (
+                        <button
+                          key={item.id}
+                          type="button"
+                          onMouseEnter={() => setHighlighted(index)}
+                          onClick={() => {
+                            item.onSelect();
+                            onOpenChange(false);
+                          }}
+                          className={cn(
+                            "flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-left text-body-sm text-foreground",
+                            index === highlighted && "bg-surface-hover",
+                          )}
+                        >
+                          {item.icon && <Icon icon={item.icon} size="sm" className="text-muted" />}
+                          <span className="flex-1">{item.label}</span>
+                          {item.shortcut && (
+                            <span className="text-caption text-muted">{item.shortcut}</span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                ))
+              )}
+            </div>
+          </ArkDialogContent>
+        </DialogPositioner>
+      </Portal>
+    </DialogRoot>
+  );
+}

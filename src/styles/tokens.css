@@ -1,0 +1,183 @@
+/**
+ * ATHONIS Design Tokens
+ * ---------------------
+ * Fonte única da verdade para cor, tipografia, spacing, radius e shadow.
+ * Nenhum componente deve usar valor hardcoded (hex, rgb, px arbitrário) —
+ * sempre a classe utilitária Tailwind gerada a partir de um destes tokens.
+ * Ver `tokens.md` nesta mesma pasta para a documentação de uso.
+ *
+ * Os valores "runtime" (que mudam entre claro/escuro) ficam em :root sem o
+ * prefixo `color-`; o bloco `@theme inline` só faz o mapeamento para o
+ * namespace que o Tailwind usa para gerar `bg-*`/`text-*`/`border-*`. Isso
+ * evita self-reference (`--color-x: var(--color-x)`) e mantém a troca de
+ * tema reativa via `prefers-color-scheme`.
+ */
+
+:root {
+  /* Cor semântica — modo claro (default) */
+  --background: #f5f6f8;
+  --foreground: #12151a;
+
+  --surface: #ffffff;
+  --surface-muted: #f0f1f4;
+  --surface-hover: #e9ebef;
+  --surface-active: #e1e4ea;
+
+  --border: #dde1e7;
+  --border-subtle: #eaecf0;
+
+  --primary: #2f5de3;
+  --primary-hover: #2748be;
+  --primary-active: #1f3a9c;
+  --primary-foreground: #ffffff;
+
+  --secondary: #e9ebef;
+  --secondary-hover: #dde1e7;
+  --secondary-active: #cbd0d9;
+  --secondary-foreground: #12151a;
+
+  --success: #17845a;
+  --success-foreground: #ffffff;
+
+  --warning: #d97706;
+  --warning-foreground: #1c1300;
+
+  --danger: #dc2626;
+  --danger-foreground: #ffffff;
+
+  --info: #0369a1;
+  --info-foreground: #ffffff;
+
+  --muted: #6b7280;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0d0f13;
+    --foreground: #edeef1;
+
+    --surface: #16191f;
+    --surface-muted: #1c2028;
+    --surface-hover: #232833;
+    --surface-active: #2a303d;
+
+    --border: #2a303d;
+    --border-subtle: #1f2430;
+
+    --primary: #5b82f2;
+    --primary-hover: #7a9bf5;
+    --primary-active: #a0b8f8;
+    --primary-foreground: #0d0f13;
+
+    --secondary: #232833;
+    --secondary-hover: #2a303d;
+    --secondary-active: #333a49;
+    --secondary-foreground: #edeef1;
+
+    --success: #34b784;
+    --success-foreground: #04140d;
+
+    --warning: #f0a942;
+    --warning-foreground: #1c1300;
+
+    --danger: #f0605a;
+    --danger-foreground: #1c0504;
+
+    --info: #4bb4ec;
+    --info-foreground: #04141c;
+
+    --muted: #8b93a3;
+  }
+}
+
+@theme inline {
+  /* --- Cor: expõe bg-*, text-*, border-*, ring-*, fill-* para cada token --- */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-surface-hover: var(--surface-hover);
+  --color-surface-active: var(--surface-active);
+
+  --color-border: var(--border);
+  --color-border-subtle: var(--border-subtle);
+
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-active: var(--primary-active);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-hover: var(--secondary-hover);
+  --color-secondary-active: var(--secondary-active);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-danger: var(--danger);
+  --color-danger-foreground: var(--danger-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+
+  --color-muted: var(--muted);
+
+  /* --- Tipografia: escala semântica (font-size + line-height pareados) --- */
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  --text-display: 3rem;
+  --text-display--line-height: 1.1;
+  --text-display--font-weight: 700;
+
+  --text-heading-1: 2.25rem;
+  --text-heading-1--line-height: 1.2;
+  --text-heading-1--font-weight: 700;
+
+  --text-heading-2: 1.875rem;
+  --text-heading-2--line-height: 1.25;
+  --text-heading-2--font-weight: 600;
+
+  --text-heading-3: 1.5rem;
+  --text-heading-3--line-height: 1.3;
+  --text-heading-3--font-weight: 600;
+
+  --text-heading-4: 1.25rem;
+  --text-heading-4--line-height: 1.35;
+  --text-heading-4--font-weight: 600;
+
+  --text-body-lg: 1.125rem;
+  --text-body-lg--line-height: 1.6;
+
+  --text-body: 1rem;
+  --text-body--line-height: 1.6;
+
+  --text-body-sm: 0.875rem;
+  --text-body-sm--line-height: 1.5;
+
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1.4;
+
+  --text-label: 0.8125rem;
+  --text-label--line-height: 1.4;
+  --text-label--font-weight: 500;
+
+  /* --- Radius --- */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-full: 9999px;
+
+  /*
+   * --- Shadow ---
+   * Política: shadow é reservado exclusivamente para elementos flutuantes
+   * (Dropdown, Popover, Dialog, Drawer, Menu, Tooltip). Nunca usar em card,
+   * botão, input ou qualquer elemento estático de layout — elevação nesses
+   * casos vem de `border`/`surface`, não de shadow.
+   */
+  --shadow-float: 0 4px 16px -2px rgb(0 0 0 / 0.12), 0 2px 6px -2px rgb(0 0 0 / 0.08);
+  --shadow-overlay: 0 16px 40px -8px rgb(0 0 0 / 0.24), 0 4px 12px -4px rgb(0 0 0 / 0.12);
+}
