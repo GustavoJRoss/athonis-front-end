@@ -5,3 +5,17 @@ body {
   background: var(--color-background);
   color: var(--color-foreground);
 }
+
+/*
+ * Ark UI posiciona as camadas flutuantes com `z-index: var(--z-index)` inline
+ * (padrão 50) — o mesmo nível do dialog. Elevamos os flutuantes para que um
+ * select aberto dentro de um dialog fique visível.
+ */
+[data-scope="select"][data-part="positioner"],
+[data-scope="combobox"][data-part="positioner"],
+[data-scope="menu"][data-part="positioner"],
+[data-scope="popover"][data-part="positioner"],
+[data-scope="tooltip"][data-part="positioner"],
+[data-scope="date-picker"][data-part="positioner"] {
+  --z-index: var(--z-floating) !important;
+}

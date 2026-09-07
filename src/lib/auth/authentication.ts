@@ -24,11 +24,9 @@ export async function login(input: LoginInput): Promise<LoginResult> {
       email: parsed.data.email,
       password: parsed.data.password,
     });
-    console.log({ data });
     token = data?.access_token;
     expiresIn = data?.expires_in;
   } catch (error) {
-    console.log({ error });
     if (isAxiosError(error)) {
       if (error.response?.status === 401) {
         return { success: false, message: "Email ou senha incorretos" };

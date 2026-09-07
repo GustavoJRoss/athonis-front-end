@@ -49,9 +49,12 @@ export default function DriversPage() {
   const [deleting, setDeleting] = useState<Driver | null>(null);
   const [detail, setDetail] = useState<Driver | null>(null);
 
+  // O vínculo é o veículo apontar para o motorista. Comparar vehicle.id com
+  // driverId casaria dois identificadores sem relação (motorista 1 x veículo 1).
   const vehiclePlate = useCallback(
-    (id: string | null) =>
-      vehicles?.find((vehicle) => vehicle.driverId === id || vehicle.id === id)?.plate ?? "—",
+    (driverId: string | null) =>
+      vehicles?.find((vehicle) => vehicle.driverId !== null && vehicle.driverId === driverId)
+        ?.plate ?? "—",
     [vehicles],
   );
 
@@ -119,8 +122,11 @@ export default function DriversPage() {
       }
       closeForm();
       setEditing(null);
-    } catch {
-      toaster.error({ title: "Não foi possível salvar o motorista", description: "Tente novamente." });
+    } catch (error) {
+      toaster.error({
+        title: "Não foi possível salvar o motorista",
+        description: error instanceof Error ? error.message : "Tente novamente.",
+      });
     }
   }
 
@@ -130,8 +136,11 @@ export default function DriversPage() {
       await deleteMutation.mutateAsync(deleting.id);
       toaster.success({ title: "Motorista removido" });
       setDeleting(null);
-    } catch {
-      toaster.error({ title: "Não foi possível remover o motorista", description: "Tente novamente." });
+    } catch (error) {
+      toaster.error({
+        title: "Não foi possível remover o motorista",
+        description: error instanceof Error ? error.message : "Tente novamente.",
+      });
     }
   }
 
@@ -188,14 +197,19 @@ export default function DriversPage() {
           <DialogHeader>
             <DialogTitle>{editing ? "Editar motorista" : "Novo motorista"}</DialogTitle>
           </DialogHeader>
-          <DriverForm
-            key={editing?.id ?? "new"}
-            defaultValues={editing ?? undefined}
-            onSubmit={handleSubmit}
-            onCancel={closeForm}
-            loading={createMutation.isPending || updateMutation.isPending}
-            submitLabel={editing ? "Salvar alterações" : "Cadastrar motorista"}
-          />
+          {/* Desmontar ao fechar: sem isso o formulario reabre com o
+              que foi digitado no cadastro anterior. */}
+          {formOpen && (
+            <DriverForm
+              key={editing?.id ?? "new"}
+              defaultValues={editing ?? undefined}
+              isEditing={!!editing}
+              onSubmit={handleSubmit}
+              onCancel={closeForm}
+              loading={createMutation.isPending || updateMutation.isPending}
+              submitLabel={editing ? "Salvar alterações" : "Cadastrar motorista"}
+            />
+          )}
         </DialogContent>
       </DialogRoot>
 

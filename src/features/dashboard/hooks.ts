@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { customersApi, driversApi, ordersApi, routesApi, vehiclesApi } from "@/lib/mocks/api";
+import { customersApi, driversApi, ordersApi, routesApi, vehiclesApi } from "@/lib/api/resources";
 
 export function useDashboardData() {
   return useQuery({

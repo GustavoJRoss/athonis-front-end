@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ordersApi } from "@/lib/mocks/api";
+import { ordersApi } from "@/lib/api/resources";
 import type { OrderFormInput } from "@/lib/validation/order";
 
 const QUERY_KEY = ["orders"] as const;
@@ -24,7 +24,7 @@ export function useOrders(search?: string) {
 export function useCreateOrder() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (input: OrderFormInput) => ordersApi.create({ ...input, routeId: null }),
+    mutationFn: (input: OrderFormInput) => ordersApi.create(input),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: QUERY_KEY }),
   });
 }

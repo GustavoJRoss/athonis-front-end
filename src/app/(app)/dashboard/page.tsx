@@ -33,7 +33,13 @@ import { ChartCard, ChartTooltip, CHART_COLOR, CHART_SERIES_PALETTE } from "@/co
 import { ORDER_STATUS_META } from "@/constants/domain";
 import { useDashboardData } from "@/features/dashboard/hooks";
 
-const TODAY = "2026-08-18";
+/** Data de hoje no fuso local, em YYYY-MM-DD. */
+function todayIso() {
+  const now = new Date();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  return `${now.getFullYear()}-${month}-${day}`;
+}
 
 export default function DashboardPage() {
   const { data, isLoading, isError, refetch } = useDashboardData();
@@ -42,7 +48,7 @@ export default function DashboardPage() {
     if (!data) return null;
     const { orders, routes, drivers } = data;
 
-    const ordersToday = orders.filter((order) => order.date === TODAY).length;
+    const ordersToday = orders.filter((order) => order.date === todayIso()).length;
     const delivered = orders.filter((order) => order.status === "delivered").length;
     const pending = orders.filter((order) => order.status === "pending").length;
     const delayed = orders.filter((order) => order.status === "delayed").length;
@@ -55,7 +61,14 @@ export default function DashboardPage() {
 
   const ordersTrend = useMemo(() => {
     if (!data) return [];
-    const days = ["2026-08-14", "2026-08-15", "2026-08-16", "2026-08-17", "2026-08-18", "2026-08-19", "2026-08-20"];
+    // Últimos 7 dias terminando hoje, em vez de um intervalo fixo.
+    const days = Array.from({ length: 7 }, (_, index) => {
+      const date = new Date();
+      date.setDate(date.getDate() - (6 - index));
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${date.getFullYear()}-${month}-${day}`;
+    });
     return days.map((day) => ({
       day: new Date(`${day}T00:00:00`).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }),
       pedidos: data.orders.filter((order) => order.date === day).length,

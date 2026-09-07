@@ -32,6 +32,8 @@ import {
 } from "@/components/ui/drawer";
 import { ChartCard, ChartTooltip, CHART_COLOR, CHART_SERIES_PALETTE } from "@/components/charts";
 import { ORDER_STATUS_META } from "@/constants/domain";
+import { deliveryWindowHours, fullDayHours } from "@/lib/utils/delivery-window";
+import { useCompany } from "@/features/company/hooks";
 import { useAnalyticsData } from "@/features/analytics/hooks";
 import type { Order } from "@/types/domain";
 
@@ -42,12 +44,6 @@ const PERIOD_OPTIONS: SelectOption[] = [
   { value: "30", label: "Últimos 30 dias" },
   { value: "all", label: "Todo o período" },
 ];
-
-const WINDOW_HOURS: Record<string, number> = {
-  "08:00–12:00": 4,
-  "13:00–17:00": 4,
-  "18:00–22:00": 4,
-};
 
 function withinPeriod(date: string, days: string) {
   if (days === "all") return true;
@@ -100,6 +96,10 @@ export default function AnalyticsPage() {
     });
   }, [data, period, driverId, vehicleId, state, status]);
 
+  const { data: company } = useCompany();
+  // "Dia todo" vale o expediente cadastrado pela empresa.
+  const diaTodoHoras = fullDayHours(company?.operationStartTime, company?.operationEndTime);
+
   const metrics = useMemo(() => {
     const total = filteredOrders.length;
     const delivered = filteredOrders.filter((order) => order.status === "delivered").length;
@@ -108,7 +108,12 @@ export default function AnalyticsPage() {
     const avgWindowHours =
       total > 0
         ? Math.round(
-            (filteredOrders.reduce((sum, order) => sum + (WINDOW_HOURS[order.deliveryWindow] ?? 4), 0) / total) * 10,
+            (filteredOrders.reduce(
+              (sum, order) => sum + deliveryWindowHours(order.deliveryWindow, diaTodoHoras),
+              0,
+            ) /
+              total) *
+              10,
           ) / 10
         : 0;
 

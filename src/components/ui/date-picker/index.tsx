@@ -93,7 +93,9 @@ export function DatePicker({
       >
         <DatePickerInput
           placeholder={placeholder}
-          className="h-full flex-1 bg-transparent text-body text-foreground outline-none placeholder:text-muted"
+          // min-w-0: o input não encolhe ao lado do ícone do calendário
+          // (shrink-0) e empurra o campo para fora da coluna, criando scroll.
+          className="h-full min-w-0 flex-1 bg-transparent text-body text-foreground outline-none placeholder:text-muted"
         />
         {clearable && (
           <DatePickerClearTrigger className="flex size-8 shrink-0 items-center justify-center rounded-md text-muted hover:bg-surface-hover hover:text-foreground">

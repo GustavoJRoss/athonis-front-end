@@ -62,13 +62,15 @@ export default function VehiclesPage() {
     () => [
       {
         id: "plate",
-        header: "Placa",
-        sortAccessor: (vehicle) => vehicle.plate,
+        header: "Veículo",
+        sortAccessor: (vehicle) => vehicle.name || vehicle.plate,
         cell: (vehicle) => (
           <Stack gap={0}>
-            <Text weight="medium">{vehicle.plate}</Text>
+            <Text weight="medium">{vehicle.name || vehicle.plate}</Text>
             <Text size="caption" color="muted">
-              {vehicle.brand} {vehicle.model}
+              {[vehicle.plate, [vehicle.brand, vehicle.model].filter(Boolean).join(" ")]
+                .filter(Boolean)
+                .join(" · ")}
             </Text>
           </Stack>
         ),
@@ -116,8 +118,11 @@ export default function VehiclesPage() {
       }
       closeForm();
       setEditing(null);
-    } catch {
-      toaster.error({ title: "Não foi possível salvar o veículo", description: "Tente novamente." });
+    } catch (error) {
+      toaster.error({
+        title: "Não foi possível salvar o veículo",
+        description: error instanceof Error ? error.message : "Tente novamente.",
+      });
     }
   }
 
@@ -127,8 +132,11 @@ export default function VehiclesPage() {
       await deleteMutation.mutateAsync(deleting.id);
       toaster.success({ title: "Veículo removido" });
       setDeleting(null);
-    } catch {
-      toaster.error({ title: "Não foi possível remover o veículo", description: "Tente novamente." });
+    } catch (error) {
+      toaster.error({
+        title: "Não foi possível remover o veículo",
+        description: error instanceof Error ? error.message : "Tente novamente.",
+      });
     }
   }
 
@@ -185,15 +193,19 @@ export default function VehiclesPage() {
           <DialogHeader>
             <DialogTitle>{editing ? "Editar veículo" : "Novo veículo"}</DialogTitle>
           </DialogHeader>
-          <VehicleForm
-            key={editing?.id ?? "new"}
-            defaultValues={editing ?? undefined}
-            driverOptions={driverOptions}
-            onSubmit={handleSubmit}
-            onCancel={closeForm}
-            loading={createMutation.isPending || updateMutation.isPending}
-            submitLabel={editing ? "Salvar alterações" : "Criar veículo"}
-          />
+          {/* Desmontar ao fechar: sem isso o formulario reabre com o
+              que foi digitado no cadastro anterior. */}
+          {formOpen && (
+            <VehicleForm
+              key={editing?.id ?? "new"}
+              defaultValues={editing ?? undefined}
+              driverOptions={driverOptions}
+              onSubmit={handleSubmit}
+              onCancel={closeForm}
+              loading={createMutation.isPending || updateMutation.isPending}
+              submitLabel={editing ? "Salvar alterações" : "Criar veículo"}
+            />
+          )}
         </DialogContent>
       </DialogRoot>
 

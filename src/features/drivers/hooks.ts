@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { driversApi } from "@/lib/mocks/api";
+import { driversApi } from "@/lib/api/resources";
 import type { DriverFormInput } from "@/lib/validation/driver";
 
 const QUERY_KEY = ["drivers"] as const;
@@ -26,7 +26,7 @@ export function useCreateDriver() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (input: DriverFormInput) =>
-      driversApi.create({ ...input, vehicleId: null, deliveryCount: 0, performance: 0 }),
+      driversApi.create(input),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: QUERY_KEY }),
   });
 }

@@ -23,6 +23,9 @@ import { ORDER_STATUS_META } from "@/constants/domain";
 import { useCreateOrder, useDeleteOrder, useOrders, useUpdateOrder } from "@/features/orders/hooks";
 import { useCustomers } from "@/features/customers/hooks";
 import { useDrivers } from "@/features/drivers/hooks";
+import { useVehicles } from "@/features/vehicles/hooks";
+import { vehicleLabel } from "@/lib/utils/vehicle-label";
+import { deliveryWindowLabel } from "@/lib/utils/delivery-window";
 import { OrderForm } from "@/features/orders/order-form";
 import { toaster } from "@/components/ui/toast";
 import type { OrderFormInput } from "@/lib/validation/order";
@@ -39,6 +42,7 @@ export default function OrdersPage() {
   const { data: orders, isLoading, isError, refetch } = useOrders(search);
   const { data: customers } = useCustomers();
   const { data: drivers } = useDrivers();
+  const { data: vehicles } = useVehicles();
   const createMutation = useCreateOrder();
   const updateMutation = useUpdateOrder();
   const deleteMutation = useDeleteOrder();
@@ -61,17 +65,19 @@ export default function OrdersPage() {
     if (highlightId) router.replace(pathname);
   }
 
-  const customerOptions = useMemo(
-    () => (customers ?? []).map((customer) => ({ value: customer.id, label: customer.name })),
-    [customers],
+  const vehicleOptions = useMemo(
+    () => (vehicles ?? []).map((vehicle) => ({ value: vehicle.id, label: vehicleLabel(vehicle) })),
+    [vehicles],
   );
   const driverOptions = useMemo(
     () => (drivers ?? []).map((driver) => ({ value: driver.id, label: driver.name })),
     [drivers],
   );
 
+  // Entrega avulsa não tem cliente: mostramos o título do pedido.
   const customerName = useCallback(
-    (id: string) => customers?.find((customer) => customer.id === id)?.name ?? "—",
+    (id: string | null) =>
+      id ? (customers?.find((customer) => customer.id === id)?.name ?? "—") : "Entrega avulsa",
     [customers],
   );
   const driverName = useCallback(
@@ -99,7 +105,8 @@ export default function OrdersPage() {
         id: "date",
         header: "Data",
         sortAccessor: (order) => order.date,
-        cell: (order) => `${new Date(`${order.date}T00:00:00`).toLocaleDateString("pt-BR")} · ${order.deliveryWindow}`,
+        cell: (order) =>
+          `${new Date(`${order.date}T00:00:00`).toLocaleDateString("pt-BR")} · ${deliveryWindowLabel(order.deliveryWindow)}`,
       },
       { id: "driver", header: "Motorista", cell: (order) => driverName(order.driverId) },
       {
@@ -143,8 +150,11 @@ export default function OrdersPage() {
       }
       closeForm();
       setEditing(null);
-    } catch {
-      toaster.error({ title: "Não foi possível salvar o pedido", description: "Tente novamente." });
+    } catch (error) {
+      toaster.error({
+        title: "Não foi possível salvar o pedido",
+        description: error instanceof Error ? error.message : "Tente novamente.",
+      });
     }
   }
 
@@ -203,20 +213,26 @@ export default function OrdersPage() {
           if (!details.open && searchParams.get("new")) router.replace(pathname);
         }}
       >
-        <DialogContent size="lg">
+        <DialogContent size="3xl">
           <DialogHeader>
-            <DialogTitle>{editing ? `Editar ${editing.id}` : "Novo pedido"}</DialogTitle>
+            <DialogTitle>{editing ? `Editar pedido ${editing.id}` : "Novo pedido"}</DialogTitle>
           </DialogHeader>
-          <OrderForm
-            key={editing?.id ?? "new"}
-            defaultValues={editing ?? undefined}
-            customerOptions={customerOptions}
-            driverOptions={driverOptions}
-            onSubmit={handleSubmit}
-            onCancel={closeForm}
-            loading={createMutation.isPending || updateMutation.isPending}
-            submitLabel={editing ? "Salvar alterações" : "Criar pedido"}
-          />
+          {/* Desmontar ao fechar: sem isso o formulario reabre com o
+              que foi digitado no cadastro anterior. */}
+          {formOpen && (
+            <OrderForm
+              key={editing?.id ?? "new"}
+              defaultValues={editing ?? undefined}
+              isEditing={!!editing}
+              customers={customers ?? []}
+              driverOptions={driverOptions}
+              vehicleOptions={vehicleOptions}
+              onSubmit={handleSubmit}
+              onCancel={closeForm}
+              loading={createMutation.isPending || updateMutation.isPending}
+              submitLabel={editing ? "Salvar alterações" : "Criar pedido"}
+            />
+          )}
         </DialogContent>
       </DialogRoot>
 
@@ -238,7 +254,7 @@ export default function OrdersPage() {
                   <DetailRow label="Destino" value={detail.destination} />
                   <DetailRow
                     label="Data / Janela"
-                    value={`${new Date(`${detail.date}T00:00:00`).toLocaleDateString("pt-BR")} · ${detail.deliveryWindow}`}
+                    value={`${new Date(`${detail.date}T00:00:00`).toLocaleDateString("pt-BR")} · ${deliveryWindowLabel(detail.deliveryWindow)}`}
                   />
                   <DetailRow label="Motorista" value={driverName(detail.driverId)} />
                   <DetailRow label="Rota" value={detail.routeId ?? "—"} />

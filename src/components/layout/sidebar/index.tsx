@@ -9,6 +9,8 @@ import { TooltipContent, TooltipRoot, TooltipTrigger } from "@/components/ui/too
 import { NAV_ITEMS } from "@/constants/navigation";
 
 export type SidebarProps = {
+  /** Nome exibido na marca do menu lateral. */
+  brandName?: string;
   collapsed?: boolean;
   onToggleCollapsed?: () => void;
   showToggle?: boolean;
@@ -17,6 +19,7 @@ export type SidebarProps = {
 };
 
 export function Sidebar({
+  brandName = "ATHONIS",
   collapsed = false,
   onToggleCollapsed,
   showToggle = true,
@@ -35,7 +38,7 @@ export function Sidebar({
     >
       <div className={cn("flex h-14 shrink-0 items-center border-b border-border-subtle px-4", collapsed && "justify-center px-0")}>
         <Text weight="semibold" className="text-heading-4 text-foreground">
-          {collapsed ? "A" : "ATHONIS"}
+          {collapsed ? (brandName.trim()[0] ?? "A").toUpperCase() : brandName}
         </Text>
       </div>
 

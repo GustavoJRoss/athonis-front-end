@@ -23,6 +23,10 @@ const SIZE = {
   md: "max-w-md",
   lg: "max-w-lg",
   xl: "max-w-2xl",
+  // Formulários densos (pedido, cliente) usam a largura da tela no desktop
+  // e continuam empilhados no mobile.
+  "2xl": "max-w-4xl",
+  "3xl": "max-w-6xl",
 } as const;
 export type DialogSize = keyof typeof SIZE;
 
@@ -93,6 +97,25 @@ export function DialogTitle({ children }: { children: ReactNode }) {
 
 export function DialogDescription({ children }: { children: ReactNode }) {
   return <ArkDialogDescription className="text-body-sm text-muted">{children}</ArkDialogDescription>;
+}
+
+/**
+ * Formulário dentro de um dialog.
+ *
+ * O DialogContent limita a altura e distribui em coluna; um <form> comum no
+ * meio quebra essa cadeia — o corpo deixa de rolar e o rodapé (com o botão de
+ * salvar) é empurrado para fora da tela. Este wrapper mantém a cadeia flex.
+ */
+export function DialogForm({
+  children,
+  className,
+  ...rest
+}: React.ComponentPropsWithoutRef<"form">) {
+  return (
+    <form className={cn("flex min-h-0 flex-1 flex-col", className)} {...rest}>
+      {children}
+    </form>
+  );
 }
 
 export function DialogBody({

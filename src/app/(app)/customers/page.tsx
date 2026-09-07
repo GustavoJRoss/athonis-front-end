@@ -129,8 +129,11 @@ export default function CustomersPage() {
       }
       closeForm();
       setEditing(null);
-    } catch {
-      toaster.error({ title: "Não foi possível salvar o cliente", description: "Tente novamente." });
+    } catch (error) {
+      toaster.error({
+        title: "Não foi possível salvar o cliente",
+        description: error instanceof Error ? error.message : "Tente novamente.",
+      });
     }
   }
 
@@ -140,8 +143,11 @@ export default function CustomersPage() {
       await deleteMutation.mutateAsync(deleting.id);
       toaster.success({ title: "Cliente removido" });
       setDeleting(null);
-    } catch {
-      toaster.error({ title: "Não foi possível remover o cliente", description: "Tente novamente." });
+    } catch (error) {
+      toaster.error({
+        title: "Não foi possível remover o cliente",
+        description: error instanceof Error ? error.message : "Tente novamente.",
+      });
     }
   }
 
@@ -186,18 +192,22 @@ export default function CustomersPage() {
           if (!details.open && searchParams.get("new")) router.replace(pathname);
         }}
       >
-        <DialogContent size="lg">
+        <DialogContent size="2xl">
           <DialogHeader>
             <DialogTitle>{editing ? "Editar cliente" : "Novo cliente"}</DialogTitle>
           </DialogHeader>
-          <CustomerForm
-            key={editing?.id ?? "new"}
-            defaultValues={editing ?? undefined}
-            onSubmit={handleSubmit}
-            onCancel={closeForm}
-            loading={createMutation.isPending || updateMutation.isPending}
-            submitLabel={editing ? "Salvar alterações" : "Criar cliente"}
-          />
+          {/* Desmontar ao fechar: sem isso o formulario reabre com o
+              que foi digitado no cadastro anterior. */}
+          {formOpen && (
+            <CustomerForm
+              key={editing?.id ?? "new"}
+              defaultValues={editing ?? undefined}
+              onSubmit={handleSubmit}
+              onCancel={closeForm}
+              loading={createMutation.isPending || updateMutation.isPending}
+              submitLabel={editing ? "Salvar alterações" : "Criar cliente"}
+            />
+          )}
         </DialogContent>
       </DialogRoot>
 

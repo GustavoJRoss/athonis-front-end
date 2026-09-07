@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { vehiclesApi } from "@/lib/mocks/api";
+import { vehiclesApi } from "@/lib/api/resources";
 import type { VehicleFormInput } from "@/lib/validation/vehicle";
 
 const QUERY_KEY = ["vehicles"] as const;

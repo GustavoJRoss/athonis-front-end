@@ -180,4 +180,14 @@
    */
   --shadow-float: 0 4px 16px -2px rgb(0 0 0 / 0.12), 0 2px 6px -2px rgb(0 0 0 / 0.08);
   --shadow-overlay: 0 16px 40px -8px rgb(0 0 0 / 0.24), 0 4px 12px -4px rgb(0 0 0 / 0.12);
+
+  /*
+   * --- Camadas (z-index) ---
+   * Um dropdown aberto de dentro de um dialog precisa ficar ACIMA dele.
+   * Com os dois no mesmo nível, a lista abria atrás do dialog e o campo
+   * parecia não responder ao clique.
+   */
+  --z-backdrop: 40;
+  --z-overlay: 50;  /* dialog, drawer */
+  --z-floating: 60; /* select, menu, popover, tooltip abertos sobre um overlay */
 }

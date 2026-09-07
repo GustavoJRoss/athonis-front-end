@@ -3,6 +3,7 @@ import type {
   CustomerStatus,
   DriverStatus,
   OrderStatus,
+  OrderUrgency,
   RouteStatus,
   VehicleStatus,
   VehicleType,
@@ -17,6 +18,13 @@ export const ORDER_STATUS_META: StatusMeta<OrderStatus> = {
   delivered: { label: "Entregue", tone: "success" },
   delayed: { label: "Atrasado", tone: "danger" },
   cancelled: { label: "Cancelado", tone: "muted" },
+};
+
+export const ORDER_URGENCY_META: StatusMeta<OrderUrgency> = {
+  low: { label: "Baixa", tone: "muted" },
+  normal: { label: "Normal", tone: "info" },
+  high: { label: "Alta", tone: "warning" },
+  critical: { label: "Crítica", tone: "danger" },
 };
 
 export const DRIVER_STATUS_META: StatusMeta<DriverStatus> = {

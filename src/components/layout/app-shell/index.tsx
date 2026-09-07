@@ -16,6 +16,8 @@ export type AppShellProps = {
   children: ReactNode;
   userName: string;
   userEmail?: string;
+  /** Nome fantasia da empresa; cai no padrão quando ainda não há cadastro. */
+  companyName?: string;
   userMenuItems?: MenuAction[];
   onUserMenuSelect?: (value: string) => void;
 };
@@ -24,6 +26,7 @@ export function AppShell({
   children,
   userName,
   userEmail,
+  companyName = "ATHONIS",
   userMenuItems,
   onUserMenuSelect,
 }: AppShellProps) {
@@ -37,7 +40,7 @@ export function AppShell({
     (item) => pathname === item.href || pathname?.startsWith(`${item.href}/`),
   );
   const breadcrumb = activeNavItem
-    ? [{ label: "ATHONIS", href: "/dashboard" }, { label: activeNavItem.label }]
+    ? [{ label: companyName, href: "/dashboard" }, { label: activeNavItem.label }]
     : undefined;
 
   async function handleUserMenuSelect(value: string) {
@@ -83,6 +86,7 @@ export function AppShell({
   return (
     <div className="flex h-dvh overflow-hidden bg-background">
       <Sidebar
+        brandName={companyName}
         collapsed={collapsed}
         onToggleCollapsed={() => setCollapsed((current) => !current)}
         className="hidden lg:flex"
@@ -94,7 +98,7 @@ export function AppShell({
         swipeDirection={getDrawerSwipeDirection("left")}
       >
         <DrawerContent side="left" className="max-w-72 p-0">
-          <Sidebar showToggle={false} onNavigate={() => setMobileOpen(false)} />
+          <Sidebar brandName={companyName} showToggle={false} onNavigate={() => setMobileOpen(false)} />
         </DrawerContent>
       </DrawerRoot>
 

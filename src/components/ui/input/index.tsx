@@ -84,7 +84,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           value={value}
           disabled={disabled}
           className={cn(
-            "h-full flex-1 bg-transparent text-body text-foreground outline-none placeholder:text-muted",
+            // min-w-0: sem isso o input não encolhe abaixo da largura padrão
+            // do navegador (~20 caracteres) e estoura a coluna do grid.
+            "h-full min-w-0 flex-1 bg-transparent text-body text-foreground outline-none placeholder:text-muted",
             className,
           )}
           {...rest}

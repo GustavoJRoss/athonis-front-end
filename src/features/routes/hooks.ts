@@ -1,9 +1,7 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { routesApi } from "@/lib/mocks/api";
-import type { RouteFormInput } from "@/lib/validation/route";
-import type { RouteStop } from "@/types/domain";
+import { routesApi } from "@/lib/api/resources";
 
 const QUERY_KEY = ["routes"] as const;
 
@@ -15,29 +13,34 @@ export function useRoutes(search?: string) {
       routesApi.list(
         query
           ? (route) =>
-              route.name.toLowerCase().includes(query) || route.region.toLowerCase().includes(query)
+              route.name.toLowerCase().includes(query) ||
+              route.region.toLowerCase().includes(query) ||
+              route.driverName.toLowerCase().includes(query)
           : undefined,
       ),
   });
 }
 
-export function useCreateRoute() {
+/**
+ * Rotas não são cadastradas à mão: elas nascem da otimização de um conjunto
+ * de pedidos. O retorno traz os pedidos que ficaram de fora, com o motivo,
+ * e avisa quando o resultado é simulado (sem a API do Google).
+ */
+export function useOptimizeRoutes() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (input: RouteFormInput) => {
-      const stops: RouteStop[] = [];
-      return routesApi.create({ ...input, stops, startedAt: null });
+    mutationFn: (orderIds: string[]) => routesApi.optimize(orderIds),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: QUERY_KEY }),
   });
 }
 
-export function useUpdateRoute() {
-  const queryClient = useQueryClient();
+/** Checa a elegibilidade dos pedidos antes de gastar chamada de otimização. */
+export function useValidateOrdersForRoute() {
   return useMutation({
-    mutationFn: ({ id, input }: { id: string; input: Partial<RouteFormInput> }) =>
-      routesApi.update(id, input),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: QUERY_KEY }),
+    mutationFn: (orderIds: string[]) => routesApi.validate(orderIds),
   });
 }
 

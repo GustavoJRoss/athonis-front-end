@@ -99,7 +99,7 @@ export function CommandMenu({
                 value={query}
                 onChange={(event) => handleQueryChange(event.target.value)}
                 placeholder={placeholder}
-                className="h-12 flex-1 bg-transparent text-body text-foreground outline-none placeholder:text-muted"
+                className="h-12 min-w-0 flex-1 bg-transparent text-body text-foreground outline-none placeholder:text-muted"
               />
             </div>
             <div className="max-h-80 overflow-y-auto p-2">

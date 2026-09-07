@@ -9,7 +9,7 @@ import { Select, type SelectOption } from "@/components/ui/select";
 import { Radio } from "@/components/ui/radio";
 import { Grid } from "@/components/ui/primitives";
 import { Button } from "@/components/ui/button";
-import { DialogBody, DialogFooter } from "@/components/ui/dialog";
+import { DialogBody, DialogFooter, DialogForm } from "@/components/ui/dialog";
 import { VEHICLE_TYPE_LABEL } from "@/constants/domain";
 
 const TYPE_OPTIONS: SelectOption[] = Object.entries(VEHICLE_TYPE_LABEL).map(([value, label]) => ({
@@ -45,9 +45,17 @@ export function VehicleForm({
   });
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate>
+    <DialogForm onSubmit={handleSubmit(onSubmit)} noValidate>
       <DialogBody>
-        <Grid columns={2} gap={4}>
+        <Grid columns={1} gap={4} className="[&>*]:min-w-0 sm:grid-cols-2">
+          <Input
+            label="Nome"
+            description="Como o veículo é chamado na operação"
+            placeholder="Van de Entregas 001"
+            error={errors.name?.message}
+            containerClassName="sm:col-span-2"
+            {...register("name")}
+          />
           <Input label="Placa" required error={errors.plate?.message} {...register("plate")} />
           <Input label="Modelo" required error={errors.model?.message} {...register("model")} />
           <Input label="Marca" required error={errors.brand?.message} {...register("brand")} />
@@ -113,6 +121,6 @@ export function VehicleForm({
           {submitLabel}
         </Button>
       </DialogFooter>
-    </form>
+    </DialogForm>
   );
 }

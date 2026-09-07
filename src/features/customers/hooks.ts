@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { customersApi } from "@/lib/mocks/api";
+import { customersApi } from "@/lib/api/resources";
 import type { Customer } from "@/types/domain";
 import type { CustomerFormInput } from "@/lib/validation/customer";
 
@@ -27,7 +27,7 @@ export function useCreateCustomer() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (input: CustomerFormInput) =>
-      customersApi.create({ ...input, orderCount: 0, lastOrderDate: null }),
+      customersApi.create(input),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: QUERY_KEY }),
   });
 }
