@@ -133,3 +133,16 @@ export function maskPlate(value: string): string {
 export function isValidPlate(value: string): boolean {
   return /^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$/.test(maskPlate(value));
 }
+
+// -------------------------------------------------------------- Comparacao
+
+/**
+ * Compara campos que tem pontuacao (documento, telefone, CEP) pelos digitos.
+ *
+ * Sem isso, procurar "529.982" nao acha quem foi gravado sem pontuacao — e o
+ * contrario tambem: quem digita so numeros nao acha o registro formatado.
+ */
+export function digitsInclude(stored: string, query: string): boolean {
+  const digits = onlyDigits(query);
+  return digits.length > 0 && onlyDigits(stored).includes(digits);
+}

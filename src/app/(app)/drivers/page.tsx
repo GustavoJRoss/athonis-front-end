@@ -6,7 +6,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { PageHeader } from "@/components/ui/page-header";
 import { SearchInput } from "@/components/ui/search-input";
 import { Button } from "@/components/ui/button";
-import { DataTable, type DataTableColumn } from "@/components/tables";
+import { DataTable, ListEmpty, type DataTableColumn } from "@/components/tables";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { DialogContent, DialogHeader, DialogRoot, DialogTitle } from "@/components/ui/dialog";
 import {
@@ -20,6 +20,7 @@ import {
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Icon, Inline, Stack, Text } from "@/components/ui/primitives";
 import { cnhCategoryDescription, DRIVER_STATUS_META } from "@/constants/domain";
+import { maskCnh, maskCpf, maskPhone } from "@/lib/utils/masks";
 import { validadeCnh, validadeCnhLabel } from "@/lib/utils/cnh";
 import { formatDateBr } from "@/lib/utils/date";
 import {
@@ -70,7 +71,7 @@ export default function DriversPage() {
           <Stack gap={0}>
             <Text weight="medium">{driver.name}</Text>
             <Text size="caption" color="muted">
-              {driver.document}
+              {maskCpf(driver.document) || "—"}
             </Text>
           </Stack>
         ),
@@ -171,6 +172,19 @@ export default function DriversPage() {
       />
 
       <DataTable
+        emptyState={
+          <ListEmpty
+            search={search}
+            entity="motorista"
+            emptyTitle="Nenhum motorista cadastrado"
+            emptyDescription="Cadastre um motorista para poder montar rotas."
+            action={
+              <Button variant="primary" onClick={openCreate}>
+                <Icon icon={Plus} size="sm" /> Novo motorista
+              </Button>
+            }
+          />
+        }
         columns={columns}
         data={driverList ?? []}
         getRowId={(driver) => driver.id}
@@ -233,8 +247,8 @@ export default function DriversPage() {
               </DrawerHeader>
               <DrawerBody>
                 <Stack gap={4}>
-                  <DetailRow label="CPF" value={detail.document} />
-                  <DetailRow label="CNH" value={detail.cnh || "—"} />
+                  <DetailRow label="CPF" value={maskCpf(detail.document) || "—"} />
+                  <DetailRow label="CNH" value={maskCnh(detail.cnh) || "—"} />
                   <DetailRow
                     label="Categoria"
                     value={
@@ -252,7 +266,7 @@ export default function DriversPage() {
                       <CnhValidadeBadge expiration={detail.cnhExpiration} />
                     </Inline>
                   </Stack>
-                  <DetailRow label="Telefone" value={detail.phone} />
+                  <DetailRow label="Telefone" value={maskPhone(detail.phone) || "—"} />
                   <DetailRow label="Veículo" value={vehiclePlate(detail.id)} />
                   <DetailRow label="Entregas realizadas" value={String(detail.deliveryCount)} />
                   <DetailRow label="Performance" value={`${detail.performance}%`} />

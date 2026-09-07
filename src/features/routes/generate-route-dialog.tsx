@@ -154,7 +154,7 @@ export function GenerateRouteDialog({
                     <Stack gap={0.5}>
                       <Text weight="medium">{order.title}</Text>
                       <Text size="caption" color="muted">
-                        {order.customerName || `Cliente ${order.customerId}`} · {order.destination}
+                        {order.customerName || "Entrega avulsa"} · {order.destination}
                       </Text>
                       {blocked && (
                         <Text size="caption" className="text-warning">

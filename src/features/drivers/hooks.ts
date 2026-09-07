@@ -3,6 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { driversApi } from "@/lib/api/resources";
 import type { DriverFormInput } from "@/lib/validation/driver";
+import { digitsInclude } from "@/lib/utils/masks";
 
 const QUERY_KEY = ["drivers"] as const;
 
@@ -15,8 +16,9 @@ export function useDrivers(search?: string) {
         query
           ? (driver) =>
               driver.name.toLowerCase().includes(query) ||
-              driver.document.includes(query) ||
-              driver.cnh.includes(query)
+              digitsInclude(driver.document, query) ||
+              digitsInclude(driver.cnh, query) ||
+              digitsInclude(driver.phone, query)
           : undefined,
       ),
   });

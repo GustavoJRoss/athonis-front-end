@@ -6,7 +6,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { PageHeader } from "@/components/ui/page-header";
 import { SearchInput } from "@/components/ui/search-input";
 import { Button } from "@/components/ui/button";
-import { DataTable, type DataTableColumn } from "@/components/tables";
+import { DataTable, ListEmpty, type DataTableColumn } from "@/components/tables";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { DialogContent, DialogHeader, DialogRoot, DialogTitle } from "@/components/ui/dialog";
 import {
@@ -174,6 +174,19 @@ export default function OrdersPage() {
       <SearchInput value={search} onValueChange={setSearch} placeholder="Buscar por número ou destino..." className="max-w-sm" />
 
       <DataTable
+        emptyState={
+          <ListEmpty
+            search={search}
+            entity="pedido"
+            emptyTitle="Nenhum pedido cadastrado"
+            emptyDescription="Crie um pedido para começar a planejar as entregas."
+            action={
+              <Button variant="primary" onClick={openCreate}>
+                <Icon icon={Plus} size="sm" /> Novo pedido
+              </Button>
+            }
+          />
+        }
         columns={columns}
         data={orders ?? []}
         getRowId={(order) => order.id}

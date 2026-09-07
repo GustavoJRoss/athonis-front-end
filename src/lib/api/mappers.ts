@@ -19,6 +19,7 @@ import type { DriverFormInput } from "@/lib/validation/driver";
 import type { OrderFormInput } from "@/lib/validation/order";
 import type { VehicleFormInput } from "@/lib/validation/vehicle";
 import type { CompanyFormInput } from "@/lib/validation/company";
+import { onlyDigits } from "@/lib/utils/masks";
 
 /** Origem exibida enquanto o endereço do depósito não é cadastrado por empresa. */
 export const DEPOT_LABEL = "Depósito";
@@ -123,7 +124,7 @@ export function toApiCompany(input: CompanyFormInput) {
     state_registration: orNull(input.stateRegistration),
     municipal_registration: orNull(input.municipalRegistration),
     email: orNull(input.email),
-    phone: orNull(input.phone),
+    phone: orNull(onlyDigits(input.phone ?? "")),
     website: orNull(input.website),
     depot_street: orNull(input.depotStreet),
     depot_number: orNull(input.depotNumber),
@@ -131,7 +132,7 @@ export function toApiCompany(input: CompanyFormInput) {
     depot_district: orNull(input.depotDistrict),
     depot_city: orNull(input.depotCity),
     depot_state: input.depotState ? input.depotState.toUpperCase() : null,
-    depot_zip_code: orNull(input.depotZipCode),
+    depot_zip_code: orNull(onlyDigits(input.depotZipCode ?? "")),
     depot_latitude: input.depotLatitude ?? null,
     depot_longitude: input.depotLongitude ?? null,
     cost_per_km: input.costPerKm,
@@ -247,9 +248,9 @@ export function toApiDriver(input: DriverFormInput) {
   return {
     name: input.name,
     // Campo deixado em branco não é dado: vai como ausente, não como "".
-    document: input.document || undefined,
-    phone: input.phone || undefined,
-    cnh: input.cnh || undefined,
+    document: onlyDigits(input.document ?? "") || undefined,
+    phone: onlyDigits(input.phone ?? "") || undefined,
+    cnh: onlyDigits(input.cnh ?? "") || undefined,
     cnh_category: input.cnhCategory || undefined,
     cnh_expiration: input.cnhExpiration || undefined,
     status: input.status,

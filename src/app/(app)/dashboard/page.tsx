@@ -156,7 +156,12 @@ export default function DashboardPage() {
       </Grid>
 
       <Grid columns={2} gap={4} className="grid-cols-1 lg:grid-cols-2">
-        <ChartCard title="Evolução de pedidos" description="Últimos 7 dias">
+        <ChartCard
+          title="Evolução de pedidos"
+          description="Últimos 7 dias"
+          empty={ordersTrend.every((ponto) => ponto.pedidos === 0)}
+          emptyMessage="Nenhum pedido nos últimos 7 dias"
+        >
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={ordersTrend}>
               <CartesianGrid vertical={false} stroke={CHART_COLOR.border} />
@@ -168,7 +173,12 @@ export default function DashboardPage() {
           </ResponsiveContainer>
         </ChartCard>
 
-        <ChartCard title="Status das entregas" description="Distribuição por status">
+        <ChartCard
+          title="Status das entregas"
+          description="Distribuição por status"
+          empty={statusDistribution.length === 0}
+          emptyMessage="Nenhum pedido cadastrado"
+        >
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Tooltip content={<ChartTooltip />} />
@@ -186,7 +196,12 @@ export default function DashboardPage() {
           </ResponsiveContainer>
         </ChartCard>
 
-        <ChartCard title="Performance das rotas" description="Top motoristas por performance">
+        <ChartCard
+          title="Performance das rotas"
+          description="Top motoristas por performance"
+          empty={driverPerformance.length === 0}
+          emptyMessage="Nenhum motorista com entregas registradas"
+        >
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={driverPerformance}>
               <CartesianGrid vertical={false} stroke={CHART_COLOR.border} />
@@ -198,7 +213,12 @@ export default function DashboardPage() {
           </ResponsiveContainer>
         </ChartCard>
 
-        <ChartCard title="Distribuição de entregas" description="Pedidos por estado (UF)">
+        <ChartCard
+          title="Distribuição de entregas"
+          description="Pedidos por estado (UF)"
+          empty={deliveriesByState.length === 0}
+          emptyMessage="Nenhum pedido cadastrado"
+        >
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={deliveriesByState} layout="vertical" margin={{ left: 8 }}>
               <CartesianGrid horizontal={false} stroke={CHART_COLOR.border} />

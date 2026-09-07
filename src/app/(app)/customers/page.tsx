@@ -6,7 +6,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { PageHeader } from "@/components/ui/page-header";
 import { SearchInput } from "@/components/ui/search-input";
 import { Button } from "@/components/ui/button";
-import { DataTable, type DataTableColumn } from "@/components/tables";
+import { DataTable, ListEmpty, type DataTableColumn } from "@/components/tables";
 import { StatusBadge } from "@/components/ui/status-badge";
 import {
   DialogContent,
@@ -25,6 +25,7 @@ import {
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Icon, Inline, Stack, Text } from "@/components/ui/primitives";
 import { CUSTOMER_STATUS_META } from "@/constants/domain";
+import { maskCep, maskDocument, maskPhone } from "@/lib/utils/masks";
 import {
   useCreateCustomer,
   useCustomers,
@@ -62,7 +63,7 @@ export default function CustomersPage() {
           <Stack gap={0}>
             <Text weight="medium">{customer.name}</Text>
             <Text size="caption" color="muted">
-              {customer.document}
+              {maskDocument(customer.document, customer.type)}
             </Text>
           </Stack>
         ),
@@ -73,7 +74,7 @@ export default function CustomersPage() {
         sortAccessor: (customer) => customer.city,
         cell: (customer) => `${customer.city}/${customer.state}`,
       },
-      { id: "phone", header: "Telefone", cell: (customer) => customer.phone },
+      { id: "phone", header: "Telefone", cell: (customer) => maskPhone(customer.phone) || "—" },
       {
         id: "orderCount",
         header: "Pedidos",
@@ -166,6 +167,19 @@ export default function CustomersPage() {
       <SearchInput value={search} onValueChange={setSearch} placeholder="Buscar por nome, documento ou cidade..." className="max-w-sm" />
 
       <DataTable
+        emptyState={
+          <ListEmpty
+            search={search}
+            entity="cliente"
+            emptyTitle="Nenhum cliente cadastrado"
+            emptyDescription="Cadastre o primeiro cliente para poder criar pedidos com endereço de entrega."
+            action={
+              <Button variant="primary" onClick={openCreate}>
+                <Icon icon={Plus} size="sm" /> Novo cliente
+              </Button>
+            }
+          />
+        }
         columns={columns}
         data={customers ?? []}
         getRowId={(customer) => customer.id}
@@ -224,10 +238,23 @@ export default function CustomersPage() {
               </DrawerHeader>
               <DrawerBody>
                 <Stack gap={4}>
-                  <DetailRow label="Documento" value={detail.document} />
-                  <DetailRow label="Telefone" value={detail.phone} />
+                  <DetailRow
+                    label={detail.type === "F" ? "CPF" : "CNPJ"}
+                    value={maskDocument(detail.document, detail.type)}
+                  />
+                  <DetailRow label="Telefone" value={maskPhone(detail.phone) || "—"} />
                   <DetailRow label="Email" value={detail.email} />
-                  <DetailRow label="Endereço" value={`${detail.address} — ${detail.city}/${detail.state}`} />
+                  <DetailRow
+                    label="Endereço"
+                    value={[
+                      [detail.address, detail.complement].filter(Boolean).join(" - "),
+                      detail.district,
+                      `${detail.city}/${detail.state}`,
+                      maskCep(detail.zipCode),
+                    ]
+                      .filter(Boolean)
+                      .join(" — ")}
+                  />
                   <DetailRow label="Pedidos realizados" value={String(detail.orderCount)} />
                   <DetailRow
                     label="Último pedido"

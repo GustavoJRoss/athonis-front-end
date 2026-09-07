@@ -6,7 +6,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { PageHeader } from "@/components/ui/page-header";
 import { SearchInput } from "@/components/ui/search-input";
 import { Button } from "@/components/ui/button";
-import { DataTable, type DataTableColumn } from "@/components/tables";
+import { DataTable, ListEmpty, type DataTableColumn } from "@/components/tables";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { DialogContent, DialogHeader, DialogRoot, DialogTitle } from "@/components/ui/dialog";
 import {
@@ -156,6 +156,19 @@ export default function VehiclesPage() {
       />
 
       <DataTable
+        emptyState={
+          <ListEmpty
+            search={search}
+            entity="veículo"
+            emptyTitle="Nenhum veículo cadastrado"
+            emptyDescription="Cadastre um veículo para poder montar rotas."
+            action={
+              <Button variant="primary" onClick={openCreate}>
+                <Icon icon={Plus} size="sm" /> Novo veículo
+              </Button>
+            }
+          />
+        }
         columns={columns}
         data={vehicles ?? []}
         getRowId={(vehicle) => vehicle.id}

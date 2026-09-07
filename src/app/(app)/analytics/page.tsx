@@ -253,7 +253,11 @@ export default function AnalyticsPage() {
           </Grid>
 
           <Grid columns={2} gap={4} className="grid-cols-1 lg:grid-cols-2">
-            <ChartCard title="Pedidos por período" description="Volume de pedidos no intervalo filtrado">
+            <ChartCard
+              title="Pedidos por período"
+              description="Volume de pedidos no intervalo filtrado"
+              empty={ordersByPeriod.length === 0}
+            >
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={ordersByPeriod}>
                   <CartesianGrid vertical={false} stroke={CHART_COLOR.border} />
@@ -265,7 +269,12 @@ export default function AnalyticsPage() {
               </ResponsiveContainer>
             </ChartCard>
 
-            <ChartCard title="Entregas por motorista" description="Entregas concluídas no período">
+            <ChartCard
+              title="Entregas por motorista"
+              description="Entregas concluídas no período"
+              empty={deliveriesByDriver.length === 0}
+              emptyMessage="Nenhuma entrega concluída no período"
+            >
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={deliveriesByDriver} layout="vertical" margin={{ left: 8 }}>
                   <CartesianGrid horizontal={false} stroke={CHART_COLOR.border} />
@@ -277,7 +286,12 @@ export default function AnalyticsPage() {
               </ResponsiveContainer>
             </ChartCard>
 
-            <ChartCard title="Performance por rota" description="% de pedidos sem atraso">
+            <ChartCard
+              title="Performance por rota"
+              description="% de pedidos sem atraso"
+              empty={routePerformance.length === 0}
+              emptyMessage="Nenhum pedido vinculado a uma rota no período"
+            >
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={routePerformance}>
                   <CartesianGrid vertical={false} stroke={CHART_COLOR.border} />
@@ -289,7 +303,11 @@ export default function AnalyticsPage() {
               </ResponsiveContainer>
             </ChartCard>
 
-            <ChartCard title="Volume por status" description="Distribuição dos pedidos filtrados">
+            <ChartCard
+              title="Volume por status"
+              description="Distribuição dos pedidos filtrados"
+              empty={statusDistribution.length === 0}
+            >
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Tooltip content={<ChartTooltip />} />

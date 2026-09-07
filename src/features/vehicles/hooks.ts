@@ -14,6 +14,9 @@ export function useVehicles(search?: string) {
       vehiclesApi.list(
         query
           ? (vehicle) =>
+              // O nome e o identificador principal do veiculo: procurar por
+              // ele tem de funcionar.
+              vehicle.name.toLowerCase().includes(query) ||
               vehicle.plate.toLowerCase().includes(query) ||
               vehicle.model.toLowerCase().includes(query) ||
               vehicle.brand.toLowerCase().includes(query)

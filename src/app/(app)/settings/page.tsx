@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState, LoadingState } from "@/components/ui/state";
 import { Box, Grid, Icon, Inline, Stack, Text } from "@/components/ui/primitives";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { maskCnpj } from "@/lib/utils/masks";
 import { toaster } from "@/components/ui/toast";
 import { CompanyForm } from "@/features/company/company-form";
 import { useCompany, useUpdateCompany } from "@/features/company/hooks";
@@ -67,8 +68,8 @@ export default function SettingsPage() {
                     {company.tradeName || company.corporateName}
                   </Text>
                   <Text size="body-sm" color="muted">
-                    CNPJ {company.document || "não informado"} · identificador do tenant:{" "}
-                    {company.idCompany}
+                    CNPJ {maskCnpj(company.document) || "não informado"} · identificador do
+                    tenant: {company.idCompany}
                   </Text>
                 </Stack>
               </Inline>
