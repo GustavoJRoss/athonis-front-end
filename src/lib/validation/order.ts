@@ -12,7 +12,12 @@ export const orderFormSchema = z.object({
   quantity: z.coerce.number().int().min(1, "Informe a quantidade"),
   urgency: z.enum(["low", "normal", "high", "critical"], { error: "Selecione a urgência" }),
   status: z.enum(["pending", "planned", "in_route", "delivered", "delayed", "cancelled"], { error: "Selecione o status" }),
-  value: z.coerce.number().min(0, "Informe o valor"),
+  // Opcional: nem toda entrega tem valor declarado, e gravar zero afirmaria
+  // que a mercadoria não vale nada.
+  value: z.preprocess(
+    (valor) => (valor === "" || valor === null || valor === undefined ? undefined : Number(valor)),
+    z.number().min(0, "O valor não pode ser negativo").optional(),
+  ),
   date: z.string().min(1, "Informe a data"),
   // Vazio = dia todo. A maioria das entregas não tem hora marcada.
   deliveryWindow: z.string().optional(),

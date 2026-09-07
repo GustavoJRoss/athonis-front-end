@@ -358,7 +358,7 @@ export function mapOrder(order: ApiOrder): Order {
     vehicleId: toNullableId(order.vehicle_id),
     routeId: toNullableId(order.route_id),
     status: order.status ?? "pending",
-    value: Number(order.value ?? 0),
+    value: numberOrNull(order.value),
     street: order.delivery_street ?? "",
     number: order.delivery_number ?? "",
     district: order.delivery_district ?? "",

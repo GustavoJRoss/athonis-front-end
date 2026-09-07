@@ -103,8 +103,8 @@ export default function OrdersPage() {
         id: "value",
         header: "Valor",
         align: "right",
-        sortAccessor: (order) => order.value,
-        cell: (order) => currency.format(order.value),
+        sortAccessor: (order) => order.value ?? 0,
+        cell: (order) => valueLabel(order.value),
       },
       {
         id: "status",
@@ -225,7 +225,7 @@ export default function OrdersPage() {
           {formOpen && (
             <OrderForm
               key={editing?.id ?? "new"}
-              defaultValues={editing ?? undefined}
+              defaultValues={editing ? toFormValues(editing) : undefined}
               isEditing={!!editing}
               customers={customers ?? []}
               drivers={drivers ?? []}
@@ -261,7 +261,7 @@ export default function OrdersPage() {
                   />
                   <DetailRow label="Motorista" value={driverName(detail.driverId)} />
                   <DetailRow label="Rota" value={detail.routeId ?? "—"} />
-                  <DetailRow label="Valor" value={currency.format(detail.value)} />
+                  <DetailRow label="Valor" value={valueLabel(detail.value)} />
                   <Inline gap={2}>
                     <Text size="body-sm" color="muted">
                       Status:
@@ -280,8 +280,12 @@ export default function OrdersPage() {
       <ConfirmDialog
         open={!!deleting}
         onOpenChange={(open) => !open && setDeleting(null)}
-        title={`Excluir ${deleting?.id}?`}
-        description="Esta ação não pode ser desfeita."
+        title={deleting ? `Excluir o pedido #${deleting.id}?` : ""}
+        description={
+          deleting
+            ? `${customerName(deleting.customerId)} — ${deleting.destination}. Esta ação não pode ser desfeita.`
+            : "Esta ação não pode ser desfeita."
+        }
         tone="danger"
         confirmLabel="Excluir"
         loading={deleteMutation.isPending}
@@ -289,6 +293,16 @@ export default function OrdersPage() {
       />
     </Stack>
   );
+}
+
+/** O cadastro guarda nulo onde o formulário espera ausente. */
+function toFormValues(order: Order): Partial<OrderFormInput> {
+  return { ...order, value: order.value ?? undefined };
+}
+
+/** Valor nao informado nao vira "R$ 0,00": zero afirma outra coisa. */
+function valueLabel(value: number | null): string {
+  return value === null ? "—" : currency.format(value);
 }
 
 function DetailRow({ label, value }: { label: string; value: string }) {

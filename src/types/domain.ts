@@ -90,7 +90,8 @@ export type Order = {
   vehicleId: string | null;
   routeId: string | null;
   status: OrderStatus;
-  value: number;
+  /** Nulo quando não foi informado — zero afirmaria que não vale nada. */
+  value: number | null;
   /** Endereço de entrega estruturado, como o backend exige. */
   street: string;
   number: string;

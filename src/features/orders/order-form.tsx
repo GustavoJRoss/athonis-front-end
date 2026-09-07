@@ -97,7 +97,9 @@ export function OrderForm({
       driverId: null,
       vehicleId: null,
       quantity: 1,
-      value: 0,
+      // Sem padrao: o campo comeca vazio, e zero passa a significar
+      // "entrega sem valor declarado" so quando alguem digitar.
+      value: undefined,
       deliveryWindow: ANY_TIME,
       ...defaultValues,
     },
@@ -355,7 +357,7 @@ export function OrderForm({
                 label="Valor (R$)"
                 type="number"
                 step="0.01"
-                required
+                description="Opcional"
                 error={errors.value?.message}
                 {...register("value")}
               />
