@@ -27,12 +27,18 @@ export type Customer = {
 
 export type DriverStatus = "available" | "in_route" | "unavailable";
 
+/** Categorias de CNH usadas na operação. A habilita moto; B a E, carga. */
+export type CnhCategory = "A" | "B" | "C" | "D" | "E" | "AB" | "AC" | "AD" | "AE";
+
 export type Driver = {
   id: string;
   name: string;
   document: string;
   phone: string;
   cnh: string;
+  cnhCategory: CnhCategory | null;
+  /** Validade da CNH em AAAA-MM-DD. */
+  cnhExpiration: string | null;
   vehicleId: string | null;
   status: DriverStatus;
   deliveryCount: number;

@@ -16,6 +16,12 @@ export const driverFormSchema = z
     document: z.string().optional(),
     phone: z.string().optional(),
     cnh: z.string().optional(),
+    cnhCategory: z
+      .enum(["A", "B", "C", "D", "E", "AB", "AC", "AD", "AE"])
+      .nullable()
+      .optional(),
+    /** AAAA-MM-DD. */
+    cnhExpiration: z.string().nullable().optional(),
     status: z.enum(["available", "in_route", "unavailable"]).optional(),
   })
   .superRefine((values, ctx) => {
@@ -33,6 +39,25 @@ export const driverFormSchema = z
 
     if (onlyDigits(values.cnh ?? "") && !isValidCnh(values.cnh ?? "")) {
       ctx.addIssue({ code: "custom", path: ["cnh"], message: "A CNH tem 11 dígitos" });
+    }
+
+    // Categoria e validade só valem juntas: categoria sem validade não diz se
+    // a habilitação ainda vale, e validade sem categoria não diz o que ele
+    // pode dirigir.
+    if (values.cnhCategory && !values.cnhExpiration) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["cnhExpiration"],
+        message: "Informe a validade da CNH",
+      });
+    }
+
+    if (values.cnhExpiration && !values.cnhCategory) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["cnhCategory"],
+        message: "Informe a categoria da CNH",
+      });
     }
   });
 

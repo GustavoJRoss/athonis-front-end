@@ -24,7 +24,6 @@ import { useCreateOrder, useDeleteOrder, useOrders, useUpdateOrder } from "@/fea
 import { useCustomers } from "@/features/customers/hooks";
 import { useDrivers } from "@/features/drivers/hooks";
 import { useVehicles } from "@/features/vehicles/hooks";
-import { vehicleLabel } from "@/lib/utils/vehicle-label";
 import { deliveryWindowLabel } from "@/lib/utils/delivery-window";
 import { OrderForm } from "@/features/orders/order-form";
 import { toaster } from "@/components/ui/toast";
@@ -64,15 +63,6 @@ export default function OrdersPage() {
     setExplicitDetail(value);
     if (highlightId) router.replace(pathname);
   }
-
-  const vehicleOptions = useMemo(
-    () => (vehicles ?? []).map((vehicle) => ({ value: vehicle.id, label: vehicleLabel(vehicle) })),
-    [vehicles],
-  );
-  const driverOptions = useMemo(
-    () => (drivers ?? []).map((driver) => ({ value: driver.id, label: driver.name })),
-    [drivers],
-  );
 
   // Entrega avulsa não tem cliente: mostramos o título do pedido.
   const customerName = useCallback(
@@ -225,8 +215,8 @@ export default function OrdersPage() {
               defaultValues={editing ?? undefined}
               isEditing={!!editing}
               customers={customers ?? []}
-              driverOptions={driverOptions}
-              vehicleOptions={vehicleOptions}
+              drivers={drivers ?? []}
+              vehicles={vehicles ?? []}
               onSubmit={handleSubmit}
               onCancel={closeForm}
               loading={createMutation.isPending || updateMutation.isPending}

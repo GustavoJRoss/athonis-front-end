@@ -19,7 +19,9 @@ import {
 } from "@/components/ui/drawer";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Icon, Inline, Stack, Text } from "@/components/ui/primitives";
-import { DRIVER_STATUS_META } from "@/constants/domain";
+import { CNH_CATEGORY_OPTIONS, DRIVER_STATUS_META } from "@/constants/domain";
+import { validadeCnh, validadeCnhLabel } from "@/lib/utils/cnh";
+import { formatDateBr } from "@/lib/utils/date";
 import {
   useCreateDriver,
   useDeleteDriver,
@@ -72,6 +74,11 @@ export default function DriversPage() {
             </Text>
           </Stack>
         ),
+      },
+      {
+        id: "cnh",
+        header: "Habilitação",
+        cell: (driver) => <CnhCell driver={driver} />,
       },
       { id: "vehicle", header: "Veículo", cell: (driver) => vehiclePlate(driver.id) },
       {
@@ -227,7 +234,25 @@ export default function DriversPage() {
               <DrawerBody>
                 <Stack gap={4}>
                   <DetailRow label="CPF" value={detail.document} />
-                  <DetailRow label="CNH" value={detail.cnh} />
+                  <DetailRow label="CNH" value={detail.cnh || "—"} />
+                  <DetailRow
+                    label="Categoria"
+                    value={
+                      detail.cnhCategory
+                        ? (CNH_CATEGORY_OPTIONS.find((o) => o.value === detail.cnhCategory)?.label ??
+                          detail.cnhCategory)
+                        : "—"
+                    }
+                  />
+                  <Stack gap={0.5}>
+                    <Text size="caption" color="muted">
+                      Validade da CNH
+                    </Text>
+                    <Inline gap={2} align="center">
+                      <Text size="body-sm">{formatDateBr(detail.cnhExpiration)}</Text>
+                      <CnhValidadeBadge expiration={detail.cnhExpiration} />
+                    </Inline>
+                  </Stack>
                   <DetailRow label="Telefone" value={detail.phone} />
                   <DetailRow label="Veículo" value={vehiclePlate(detail.id)} />
                   <DetailRow label="Entregas realizadas" value={String(detail.deliveryCount)} />
@@ -258,6 +283,44 @@ export default function DriversPage() {
         onConfirm={handleDelete}
       />
     </Stack>
+  );
+}
+
+/**
+ * Categoria e validade juntas: uma sem a outra nao responde se o motorista
+ * pode assumir a rota de amanha.
+ */
+function CnhCell({ driver }: { driver: Driver }) {
+  if (!driver.cnhCategory && !driver.cnhExpiration) {
+    return (
+      <Text size="body-sm" color="muted">
+        —
+      </Text>
+    );
+  }
+
+  return (
+    <Stack gap={0.5}>
+      <Text size="body-sm" weight="medium">
+        {driver.cnhCategory ?? "—"}
+      </Text>
+      <Inline gap={2} align="center">
+        <Text size="caption" color="muted">
+          {formatDateBr(driver.cnhExpiration)}
+        </Text>
+        <CnhValidadeBadge expiration={driver.cnhExpiration} />
+      </Inline>
+    </Stack>
+  );
+}
+
+function CnhValidadeBadge({ expiration }: { expiration: string | null }) {
+  const validade = validadeCnh(expiration);
+  const label = validadeCnhLabel(validade);
+  if (!label) return null;
+
+  return (
+    <StatusBadge tone={validade.estado === "vencida" ? "danger" : "warning"}>{label}</StatusBadge>
   );
 }
 

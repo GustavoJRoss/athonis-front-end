@@ -219,6 +219,8 @@ export type ApiDriver = {
   document?: string | null;
   phone?: string | null;
   cnh?: string | null;
+  cnh_category?: string | null;
+  cnh_expiration?: string | null;
   status?: "available" | "in_route" | "unavailable";
   delivery_count?: number;
   performance?: number;
@@ -232,6 +234,8 @@ export function mapDriver(driver: ApiDriver): Driver {
     document: driver.document ?? "",
     phone: driver.phone ?? "",
     cnh: driver.cnh ?? "",
+    cnhCategory: (driver.cnh_category as Driver["cnhCategory"]) ?? null,
+    cnhExpiration: toIsoDate(driver.cnh_expiration) || null,
     vehicleId: toNullableId(driver.vehicle_id),
     status: driver.status ?? "available",
     deliveryCount: Number(driver.delivery_count ?? 0),
@@ -246,6 +250,8 @@ export function toApiDriver(input: DriverFormInput) {
     document: input.document || undefined,
     phone: input.phone || undefined,
     cnh: input.cnh || undefined,
+    cnh_category: input.cnhCategory || undefined,
+    cnh_expiration: input.cnhExpiration || undefined,
     status: input.status,
   };
 }

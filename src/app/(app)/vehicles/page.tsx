@@ -49,10 +49,6 @@ export default function VehiclesPage() {
   const [deleting, setDeleting] = useState<Vehicle | null>(null);
   const [detail, setDetail] = useState<Vehicle | null>(null);
 
-  const driverOptions = useMemo(
-    () => (drivers ?? []).map((driver) => ({ value: driver.id, label: driver.name })),
-    [drivers],
-  );
   const driverName = useCallback(
     (id: string | null) => drivers?.find((driver) => driver.id === id)?.name ?? "—",
     [drivers],
@@ -199,7 +195,7 @@ export default function VehiclesPage() {
             <VehicleForm
               key={editing?.id ?? "new"}
               defaultValues={editing ?? undefined}
-              driverOptions={driverOptions}
+              drivers={drivers ?? []}
               onSubmit={handleSubmit}
               onCancel={closeForm}
               loading={createMutation.isPending || updateMutation.isPending}

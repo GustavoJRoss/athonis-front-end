@@ -14,10 +14,14 @@ import { Button } from "@/components/ui/button";
 import { Box, Grid, Icon, Inline, Stack, Text } from "@/components/ui/primitives";
 import { DialogBody, DialogFooter, DialogForm } from "@/components/ui/dialog";
 import { ORDER_STATUS_META, ORDER_URGENCY_META } from "@/constants/domain";
-import type { Customer } from "@/types/domain";
+import type { Customer, Driver, Vehicle } from "@/types/domain";
 import { ANY_TIME, DELIVERY_WINDOW_OPTIONS } from "@/lib/utils/delivery-window";
 import { maskCep } from "@/lib/utils/masks";
 import { useCepAutofill } from "@/features/shared/use-cep-autofill";
+import { CnhWarning } from "@/features/shared/cnh-warning";
+import { podeDirigir } from "@/lib/utils/cnh";
+import { vehicleLabel } from "@/lib/utils/vehicle-label";
+import { formatDateString, parseDateString } from "@/lib/utils/date";
 
 /** Valor do item "Sem cliente" — o Select trabalha com strings. */
 const NO_CUSTOMER = "__none__";
@@ -36,21 +40,6 @@ const UF_OPTIONS: SelectOption[] = [
   "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG",
   "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO",
 ].map((uf) => ({ value: uf, label: uf }));
-
-function toDate(value: string | undefined) {
-  if (!value) return null;
-  const [year, month, day] = value.split("-").map(Number);
-  if (!year || !month || !day) return null;
-  return new Date(year, month - 1, day);
-}
-
-function toDateString(date: Date | null) {
-  if (!date) return "";
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
 
 function formatAddress(parts: {
   street?: string;
@@ -74,8 +63,8 @@ export type OrderFormProps = {
    */
   isEditing?: boolean;
   customers: Customer[];
-  driverOptions: SelectOption[];
-  vehicleOptions: SelectOption[];
+  drivers: Driver[];
+  vehicles: Vehicle[];
   onSubmit: (values: OrderFormInput) => Promise<void> | void;
   onCancel: () => void;
   submitLabel?: string;
@@ -86,8 +75,8 @@ export function OrderForm({
   defaultValues,
   isEditing = false,
   customers,
-  driverOptions,
-  vehicleOptions,
+  drivers,
+  vehicles,
   onSubmit,
   onCancel,
   submitLabel = "Salvar",
@@ -113,6 +102,28 @@ export function OrderForm({
       ...defaultValues,
     },
   });
+
+  // Motorista e veículo escolhidos, para conferir se a CNH cobre o veículo.
+  const selectedDriver = drivers.find((driver) => driver.id === watch("driverId")) ?? null;
+  const selectedVehicleType =
+    vehicles.find((vehicle) => vehicle.id === watch("vehicleId"))?.type ?? null;
+
+  const driverOptions: SelectOption[] = useMemo(
+    () =>
+      drivers.map((driver) => ({
+        value: driver.id,
+        label:
+          driver.cnhCategory && selectedVehicleType && !podeDirigir(driver.cnhCategory, selectedVehicleType)
+            ? `${driver.name} (CNH ${driver.cnhCategory})`
+            : driver.name,
+      })),
+    [drivers, selectedVehicleType],
+  );
+
+  const vehicleOptions: SelectOption[] = useMemo(
+    () => vehicles.map((vehicle) => ({ value: vehicle.id, label: vehicleLabel(vehicle) })),
+    [vehicles],
+  );
 
   const customerOptions: SelectOption[] = useMemo(
     () => [
@@ -380,8 +391,8 @@ export function OrderForm({
                     label="Data de entrega"
                     required
                     error={errors.date?.message}
-                    value={toDate(field.value)}
-                    onValueChange={(date) => field.onChange(toDateString(date))}
+                    value={parseDateString(field.value)}
+                    onValueChange={(date) => field.onChange(formatDateString(date))}
                   />
                 )}
               />
@@ -443,6 +454,8 @@ export function OrderForm({
                 )}
               />
             </Grid>
+
+            <CnhWarning driver={selectedDriver} vehicleType={selectedVehicleType} />
           </Stack>
 
           {/* ---------------------------------------------- Endereço */}

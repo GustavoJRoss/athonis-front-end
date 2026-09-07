@@ -1,5 +1,6 @@
 import type { StatusTone } from "@/components/ui/status-badge";
 import type {
+  CnhCategory,
   CustomerStatus,
   DriverStatus,
   OrderStatus,
@@ -52,6 +53,22 @@ export const CUSTOMER_STATUS_META: StatusMeta<CustomerStatus> = {
   active: { label: "Ativo", tone: "success" },
   inactive: { label: "Inativo", tone: "muted" },
 };
+
+/**
+ * Categorias de CNH. A descrição existe porque quem preenche o cadastro nem
+ * sempre sabe de cor o que cada letra habilita.
+ */
+export const CNH_CATEGORY_OPTIONS: { value: CnhCategory; label: string }[] = [
+  { value: "A", label: "A — moto" },
+  { value: "B", label: "B — carro e utilitário até 3.500 kg" },
+  { value: "C", label: "C — carga acima de 3.500 kg" },
+  { value: "D", label: "D — transporte de passageiros" },
+  { value: "E", label: "E — carreta e combinações" },
+  { value: "AB", label: "AB — moto + carro" },
+  { value: "AC", label: "AC — moto + carga" },
+  { value: "AD", label: "AD — moto + passageiros" },
+  { value: "AE", label: "AE — moto + carreta" },
+];
 
 export const VEHICLE_TYPE_LABEL: Record<VehicleType, string> = {
   van: "Van",

@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
@@ -11,6 +12,9 @@ import { Grid } from "@/components/ui/primitives";
 import { Button } from "@/components/ui/button";
 import { DialogBody, DialogFooter, DialogForm } from "@/components/ui/dialog";
 import { VEHICLE_TYPE_LABEL } from "@/constants/domain";
+import { CnhWarning } from "@/features/shared/cnh-warning";
+import { podeDirigir } from "@/lib/utils/cnh";
+import type { Driver } from "@/types/domain";
 
 const TYPE_OPTIONS: SelectOption[] = Object.entries(VEHICLE_TYPE_LABEL).map(([value, label]) => ({
   value,
@@ -19,7 +23,7 @@ const TYPE_OPTIONS: SelectOption[] = Object.entries(VEHICLE_TYPE_LABEL).map(([va
 
 export type VehicleFormProps = {
   defaultValues?: Partial<VehicleFormInput>;
-  driverOptions: SelectOption[];
+  drivers: Driver[];
   onSubmit: (values: VehicleFormInput) => Promise<void> | void;
   onCancel: () => void;
   submitLabel?: string;
@@ -28,7 +32,7 @@ export type VehicleFormProps = {
 
 export function VehicleForm({
   defaultValues,
-  driverOptions,
+  drivers,
   onSubmit,
   onCancel,
   submitLabel = "Salvar",
@@ -38,11 +42,30 @@ export function VehicleForm({
     register,
     handleSubmit,
     control,
+    watch,
     formState: { errors },
   } = useForm<z.input<typeof vehicleFormSchema>, unknown, VehicleFormInput>({
     resolver: zodResolver(vehicleFormSchema),
     defaultValues: { status: "available", type: "van", driverId: null, ...defaultValues },
   });
+
+  const type = watch("type");
+  const driverId = watch("driverId");
+  const selectedDriver = drivers.find((driver) => driver.id === driverId) ?? null;
+
+  // A opcao continua selecionavel: o rotulo diz o problema em vez de esconder
+  // o motorista, para nao parecer que o cadastro sumiu.
+  const driverOptions: SelectOption[] = useMemo(
+    () =>
+      drivers.map((driver) => ({
+        value: driver.id,
+        label:
+          driver.cnhCategory && type && !podeDirigir(driver.cnhCategory, type)
+            ? `${driver.name} (CNH ${driver.cnhCategory})`
+            : driver.name,
+      })),
+    [drivers, type],
+  );
 
   return (
     <DialogForm onSubmit={handleSubmit(onSubmit)} noValidate>
@@ -91,6 +114,9 @@ export function VehicleForm({
               />
             )}
           />
+          <div className="sm:col-span-2">
+            <CnhWarning driver={selectedDriver} vehicleType={type} />
+          </div>
           <div className="col-span-2">
             <Controller
               control={control}
