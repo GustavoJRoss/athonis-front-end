@@ -278,8 +278,9 @@ export function mapVehicle(vehicle: ApiVehicle): Vehicle {
     plate: vehicle.plate ?? "",
     model: vehicle.model ?? "",
     brand: vehicle.brand ?? "",
+    year: vehicle.year ?? null,
     type: vehicle.type ?? "van",
-    capacityKg: Number(vehicle.capacity_kg ?? 0),
+    capacityKg: vehicle.capacity_kg ?? null,
     driverId: toNullableId(vehicle.driver_id),
     status: vehicle.status ?? "available",
   };
@@ -287,12 +288,12 @@ export function mapVehicle(vehicle: ApiVehicle): Vehicle {
 
 export function toApiVehicle(input: VehicleFormInput) {
   return {
-    // Nome próprio quando informado; senão, derivado de marca/modelo/placa,
-    // já que o backend exige o campo.
-    name: input.name?.trim() || [input.brand, input.model].filter(Boolean).join(" ") || input.plate,
-    brand: input.brand,
-    model: input.model,
-    plate: input.plate.toUpperCase(),
+    name: input.name.trim(),
+    // Campo em branco vai como ausente, não como "".
+    brand: input.brand || undefined,
+    model: input.model || undefined,
+    plate: input.plate || undefined,
+    year: input.year,
     type: input.type,
     capacity_kg: input.capacityKg,
     status: input.status,

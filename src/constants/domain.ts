@@ -58,17 +58,28 @@ export const CUSTOMER_STATUS_META: StatusMeta<CustomerStatus> = {
  * Categorias de CNH. A descrição existe porque quem preenche o cadastro nem
  * sempre sabe de cor o que cada letra habilita.
  */
-export const CNH_CATEGORY_OPTIONS: { value: CnhCategory; label: string }[] = [
-  { value: "A", label: "A — moto" },
-  { value: "B", label: "B — carro e utilitário até 3.500 kg" },
-  { value: "C", label: "C — carga acima de 3.500 kg" },
-  { value: "D", label: "D — transporte de passageiros" },
-  { value: "E", label: "E — carreta e combinações" },
-  { value: "AB", label: "AB — moto + carro" },
-  { value: "AC", label: "AC — moto + carga" },
-  { value: "AD", label: "AD — moto + passageiros" },
-  { value: "AE", label: "AE — moto + carreta" },
+export const CNH_CATEGORY_OPTIONS: {
+  value: CnhCategory;
+  label: string;
+  description: string;
+}[] = [
+  { value: "A", label: "A", description: "Moto" },
+  { value: "B", label: "B", description: "Carro e utilitário até 3.500 kg" },
+  { value: "C", label: "C", description: "Carga acima de 3.500 kg" },
+  { value: "D", label: "D", description: "Transporte de passageiros" },
+  { value: "E", label: "E", description: "Carreta e combinações" },
+  { value: "AB", label: "AB", description: "Moto + carro" },
+  { value: "AC", label: "AC", description: "Moto + carga" },
+  { value: "AD", label: "AD", description: "Moto + passageiros" },
+  { value: "AE", label: "AE", description: "Moto + carreta" },
 ];
+
+/** Descrição da categoria, para exibir fora da lista. */
+export function cnhCategoryDescription(
+  category: CnhCategory | null | undefined,
+): string | undefined {
+  return CNH_CATEGORY_OPTIONS.find((option) => option.value === category)?.description;
+}
 
 export const VEHICLE_TYPE_LABEL: Record<VehicleType, string> = {
   van: "Van",

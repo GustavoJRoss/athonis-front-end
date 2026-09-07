@@ -55,8 +55,10 @@ export type Vehicle = {
   plate: string;
   model: string;
   brand: string;
+  year: number | null;
   type: VehicleType;
-  capacityKg: number;
+  /** Nulo quando não foi informada — zero seria "carrega nada". */
+  capacityKg: number | null;
   driverId: string | null;
   status: VehicleStatus;
 };

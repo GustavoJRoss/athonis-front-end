@@ -76,8 +76,8 @@ export default function VehiclesPage() {
         id: "capacityKg",
         header: "Capacidade",
         align: "right",
-        sortAccessor: (vehicle) => vehicle.capacityKg,
-        cell: (vehicle) => `${vehicle.capacityKg.toLocaleString("pt-BR")} kg`,
+        sortAccessor: (vehicle) => vehicle.capacityKg ?? 0,
+        cell: (vehicle) => capacityLabel(vehicle.capacityKg),
       },
       { id: "driver", header: "Motorista", cell: (vehicle) => driverName(vehicle.driverId) },
       {
@@ -194,7 +194,8 @@ export default function VehiclesPage() {
           {formOpen && (
             <VehicleForm
               key={editing?.id ?? "new"}
-              defaultValues={editing ?? undefined}
+              defaultValues={editing ? toFormValues(editing) : undefined}
+              isEditing={!!editing}
               drivers={drivers ?? []}
               onSubmit={handleSubmit}
               onCancel={closeForm}
@@ -214,13 +215,19 @@ export default function VehiclesPage() {
           {detail && (
             <>
               <DrawerHeader>
-                <DrawerTitle>{detail.plate}</DrawerTitle>
+                <DrawerTitle>{detail.name || detail.plate}</DrawerTitle>
               </DrawerHeader>
               <DrawerBody>
                 <Stack gap={4}>
-                  <DetailRow label="Modelo" value={`${detail.brand} ${detail.model}`} />
+                  <DetailRow label="Placa" value={detail.plate || "—"} />
+                  <DetailRow
+                    label="Modelo"
+                    value={
+                      [detail.brand, detail.model, detail.year].filter(Boolean).join(" ") || "—"
+                    }
+                  />
                   <DetailRow label="Tipo" value={VEHICLE_TYPE_LABEL[detail.type]} />
-                  <DetailRow label="Capacidade" value={`${detail.capacityKg.toLocaleString("pt-BR")} kg`} />
+                  <DetailRow label="Capacidade" value={capacityLabel(detail.capacityKg)} />
                   <DetailRow label="Motorista" value={driverName(detail.driverId)} />
                   <StatusBadge tone={VEHICLE_STATUS_META[detail.status].tone}>
                     {VEHICLE_STATUS_META[detail.status].label}
@@ -235,7 +242,7 @@ export default function VehiclesPage() {
       <ConfirmDialog
         open={!!deleting}
         onOpenChange={(open) => !open && setDeleting(null)}
-        title={`Excluir veículo ${deleting?.plate}?`}
+        title={`Excluir veículo ${deleting?.name || deleting?.plate}?`}
         description="Esta ação não pode ser desfeita."
         tone="danger"
         confirmLabel="Excluir"
@@ -244,6 +251,26 @@ export default function VehiclesPage() {
       />
     </Stack>
   );
+}
+
+/** Capacidade nao informada nao vira "0 kg": zero significa outra coisa. */
+function capacityLabel(capacityKg: number | null): string {
+  return capacityKg === null ? "—" : `${capacityKg.toLocaleString("pt-BR")} kg`;
+}
+
+/** O cadastro guarda nulo onde o formulario espera ausente. */
+function toFormValues(vehicle: Vehicle): Partial<VehicleFormInput> {
+  return {
+    name: vehicle.name,
+    plate: vehicle.plate,
+    brand: vehicle.brand,
+    model: vehicle.model,
+    year: vehicle.year ?? undefined,
+    type: vehicle.type,
+    capacityKg: vehicle.capacityKg ?? undefined,
+    driverId: vehicle.driverId,
+    status: vehicle.status,
+  };
 }
 
 function DetailRow({ label, value }: { label: string; value: string }) {

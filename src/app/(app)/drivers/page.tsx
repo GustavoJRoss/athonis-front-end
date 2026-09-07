@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/drawer";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Icon, Inline, Stack, Text } from "@/components/ui/primitives";
-import { CNH_CATEGORY_OPTIONS, DRIVER_STATUS_META } from "@/constants/domain";
+import { cnhCategoryDescription, DRIVER_STATUS_META } from "@/constants/domain";
 import { validadeCnh, validadeCnhLabel } from "@/lib/utils/cnh";
 import { formatDateBr } from "@/lib/utils/date";
 import {
@@ -239,8 +239,7 @@ export default function DriversPage() {
                     label="Categoria"
                     value={
                       detail.cnhCategory
-                        ? (CNH_CATEGORY_OPTIONS.find((o) => o.value === detail.cnhCategory)?.label ??
-                          detail.cnhCategory)
+                        ? `${detail.cnhCategory} — ${cnhCategoryDescription(detail.cnhCategory)}`
                         : "—"
                     }
                   />

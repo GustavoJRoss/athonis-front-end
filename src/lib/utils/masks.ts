@@ -114,3 +114,22 @@ export function maskCnh(value: string): string {
 export function isValidCnh(value: string): boolean {
   return onlyDigits(value).length === 11;
 }
+
+// ---------------------------------------------------------------- Placa
+
+/**
+ * Placa brasileira, nos dois formatos que circulam: a antiga (ABC1234) e a
+ * Mercosul (ABC1D23). Sem separador — o hifen da placa antiga nao existe na
+ * Mercosul, e misturar os dois so confunde na hora de conferir.
+ */
+export function maskPlate(value: string): string {
+  return (value ?? "")
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, "")
+    .slice(0, 7);
+}
+
+/** Aceita ABC1234 (antiga) e ABC1D23 (Mercosul). */
+export function isValidPlate(value: string): boolean {
+  return /^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$/.test(maskPlate(value));
+}

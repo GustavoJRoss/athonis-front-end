@@ -16,7 +16,11 @@ import { DialogBody, DialogFooter, DialogForm } from "@/components/ui/dialog";
 import { maskCnh, maskCpf, maskPhone } from "@/lib/utils/masks";
 import { formatDateString, parseDateString } from "@/lib/utils/date";
 import { validadeCnh, validadeCnhLabel } from "@/lib/utils/cnh";
-import { CNH_CATEGORY_OPTIONS, DRIVER_STATUS_META } from "@/constants/domain";
+import {
+  CNH_CATEGORY_OPTIONS,
+  cnhCategoryDescription,
+  DRIVER_STATUS_META,
+} from "@/constants/domain";
 
 export type DriverFormProps = {
   defaultValues?: Partial<DriverFormInput>;
@@ -150,6 +154,7 @@ export function DriverForm({
                     label="Categoria"
                     placeholder="Selecione"
                     error={errors.cnhCategory?.message}
+                    description={cnhCategoryDescription(field.value)}
                     options={CNH_CATEGORY_OPTIONS}
                     value={field.value ? [field.value] : []}
                     onValueChange={(value) => field.onChange(value[0] ?? null)}

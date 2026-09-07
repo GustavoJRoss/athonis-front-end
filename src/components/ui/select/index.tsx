@@ -23,6 +23,12 @@ import { Icon } from "@/components/ui/primitives/icon";
 export type SelectOption = {
   value: string;
   label: string;
+  /**
+   * Segunda linha da opção, para quando o rótulo sozinho não basta — uma
+   * categoria de CNH, por exemplo, é uma letra que ninguém decora.
+   * Não aparece no gatilho: lá fica só o rótulo.
+   */
+  description?: string;
   disabled?: boolean;
 };
 
@@ -66,7 +72,11 @@ export function Select({
   const filteredOptions = useMemo(() => {
     if (!searchable || !search.trim()) return options;
     const query = search.trim().toLowerCase();
-    return options.filter((option) => option.label.toLowerCase().includes(query));
+    return options.filter(
+      (option) =>
+        option.label.toLowerCase().includes(query) ||
+        (option.description?.toLowerCase().includes(query) ?? false),
+    );
   }, [options, search, searchable]);
 
   const collection = useMemo(
@@ -120,7 +130,9 @@ export function Select({
       </SelectControl>
       <Portal>
         <SelectPositioner>
-          <SelectContent className="z-50 max-h-72 w-[var(--reference-width)] overflow-auto rounded-lg border border-border bg-surface p-1 shadow-float">
+          {/* Nunca menor que o gatilho, mas livre para crescer ate o conteudo
+              caber — descricao espremida em coluna estreita nao se le. */}
+          <SelectContent className="z-50 max-h-72 w-max min-w-[var(--reference-width)] max-w-[min(30rem,calc(100vw-2rem))] overflow-auto rounded-lg border border-border bg-surface p-1 shadow-float">
             {searchable && (
               <div className="sticky top-0 z-10 bg-surface p-1">
                 <input
@@ -142,14 +154,20 @@ export function Select({
                   key={option.value}
                   item={option}
                   className={cn(
-                    "flex cursor-pointer items-center justify-between gap-2 rounded-md px-3 py-2 text-body-sm text-foreground",
+                    "flex cursor-pointer items-center justify-between gap-3 rounded-md px-3 py-2 text-body-sm text-foreground",
+                    option.description && "py-2.5",
                     "data-[highlighted]:bg-surface-hover",
                     "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
                   )}
                 >
-                  <SelectItemText>{option.label}</SelectItemText>
+                  <span className="flex min-w-0 flex-col gap-0.5">
+                    <SelectItemText>{option.label}</SelectItemText>
+                    {option.description && (
+                      <span className="text-caption text-muted">{option.description}</span>
+                    )}
+                  </span>
                   <SelectItemIndicator>
-                    <Icon icon={Check} size="xs" className="text-primary" />
+                    <Icon icon={Check} size="xs" className="shrink-0 text-primary" />
                   </SelectItemIndicator>
                 </SelectItem>
               ))
