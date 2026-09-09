@@ -56,6 +56,10 @@ export const routesApi = {
   list: async (predicate?: (item: Route) => boolean) =>
     filtered(await actions.listRoutes(), predicate),
   remove: (id: string) => actions.deleteRoute(id),
+  start: (id: string) => actions.startRoute(id),
+  complete: (id: string) => actions.completeRoute(id),
+  cancel: (id: string) => actions.cancelRoute(id),
+  deliverStop: (routeId: string, orderId: string) => actions.deliverRouteStop(routeId, orderId),
   optimize: (orderIds: string[]) => actions.optimizeRoutes(orderIds),
   validate: (orderIds: string[]) => actions.validateOrdersForRoute(orderIds),
 };

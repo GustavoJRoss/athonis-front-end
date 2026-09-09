@@ -14,7 +14,7 @@ import {
   mapCustomer,
   mapDriver,
   mapOrder,
-  mapRoutes,
+  mapRoute,
   mapVehicle,
   toApiClient,
   toApiCompany,
@@ -25,7 +25,7 @@ import {
   type ApiCompany,
   type ApiDriver,
   type ApiOrder,
-  type ApiRouteHistory,
+  type ApiRoute,
   type ApiVehicle,
 } from "./mappers";
 import type { Company, Customer, Driver, Order, Route, Vehicle } from "@/types/domain";
@@ -197,16 +197,48 @@ export async function deleteOrder(id: string): Promise<void> {
 
 export async function listRoutes(): Promise<Route[]> {
   return request(async (api) => {
-    const { data } = await api.get<ApiRouteHistory[]>("/optimized-routes-history");
-    return (Array.isArray(data) ? data : []).flatMap(mapRoutes);
+    const { data } = await api.get<ApiRoute[]>("/routes");
+    return (Array.isArray(data) ? data : []).map(mapRoute);
   });
 }
 
 export async function deleteRoute(id: string): Promise<void> {
-  // Uma execução com várias rotas gera ids como "12.1" e "12.2"; o registro
-  // no histórico é o número antes do ponto.
-  const historyId = id.split(".")[0];
-  await request(async (api) => api.delete(`/optimized-routes-history/${historyId}`));
+  await request(async (api) => api.delete(`/routes/${id}`));
+}
+
+/** Rota sai para a rua: pedidos, motorista e veículo entram em trânsito. */
+export async function startRoute(id: string): Promise<Route> {
+  return request(async (api) => {
+    const { data } = await api.post<ApiRoute>(`/routes/${id}/start`);
+    return mapRoute(data);
+  });
+}
+
+/** Encerra a rota, dando como entregues as paradas ainda em aberto. */
+export async function completeRoute(id: string): Promise<Route> {
+  return request(async (api) => {
+    const { data } = await api.post<ApiRoute>(`/routes/${id}/complete`);
+    return mapRoute(data);
+  });
+}
+
+/** Devolve os pedidos para a fila, mantendo o registro da rota. */
+export async function cancelRoute(id: string): Promise<Route> {
+  return request(async (api) => {
+    const { data } = await api.post<ApiRoute>(`/routes/${id}/cancel`);
+    return mapRoute(data);
+  });
+}
+
+/**
+ * Baixa de uma parada. É o que o aplicativo do entregador vai chamar a cada
+ * entrega; quando é a última, a rota se encerra sozinha.
+ */
+export async function deliverRouteStop(routeId: string, orderId: string): Promise<Route> {
+  return request(async (api) => {
+    const { data } = await api.post<ApiRoute>(`/routes/${routeId}/orders/${orderId}/deliver`);
+    return mapRoute(data);
+  });
 }
 
 /** Verifica quais pedidos podem ser roteirizados, com o motivo de cada exclusão. */

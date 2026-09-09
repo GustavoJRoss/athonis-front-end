@@ -48,6 +48,39 @@ export function useDeleteRoute() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => routesApi.remove(id),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: QUERY_KEY }),
+    onSuccess: () => {
+      // Apagar a rota devolve os pedidos para a fila.
+      queryClient.invalidateQueries({ queryKey: QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
+    },
   });
+}
+
+/**
+ * As transições da rota mexem em pedido, motorista e veículo ao mesmo tempo,
+ * então invalidamos as quatro listas: deixar qualquer uma delas velha faz a
+ * tela mostrar um motorista disponível que acabou de sair para a rua.
+ */
+function useRouteTransition(mutationFn: (id: string) => Promise<unknown>) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn,
+    onSuccess: () => {
+      for (const key of [QUERY_KEY, ["orders"], ["drivers"], ["vehicles"]]) {
+        queryClient.invalidateQueries({ queryKey: key });
+      }
+    },
+  });
+}
+
+export function useStartRoute() {
+  return useRouteTransition((id) => routesApi.start(id));
+}
+
+export function useCompleteRoute() {
+  return useRouteTransition((id) => routesApi.complete(id));
+}
+
+export function useCancelRoute() {
+  return useRouteTransition((id) => routesApi.cancel(id));
 }

@@ -392,125 +392,76 @@ export function toApiOrder(input: OrderFormInput) {
 
 // ------------------------------------------------------------------- Rota
 
-export type ApiRouteHistory = {
-  id: number;
-  created_at: string;
-  order_ids: number[] | string;
-  total_routes: number;
-  total_orders: number;
-  status: string;
-  notes?: string | null;
-  optimization_result?: {
-    mode?: "google" | "simulated";
-    simulated?: boolean;
-    routes?: Array<{
-      vehicleId?: number;
-      vehicleName?: string;
-      driverId?: number;
-      driverName?: string;
-      totalDistance?: number;
-      totalDuration?: number;
-      mode?: "google" | "simulated";
-      stops?: Array<{
-        orderId: number;
-        clientName?: string;
-        address?: string;
-        coordinates?: { latitude: number; longitude: number };
-      }>;
-    }>;
-  } | string;
+export type ApiRouteOrder = {
+  order_id: number;
+  title: string;
+  status: OrderStatus;
+  stop_sequence?: number | null;
+  delivery_street?: string | null;
+  delivery_number?: string | null;
+  delivery_city?: string | null;
+  delivery_latitude?: number | null;
+  delivery_longitude?: number | null;
+  client?: { name?: string | null } | null;
 };
 
-/** O histórico guarda o estado da otimização; a UI fala em ciclo da rota. */
-function mapRouteStatus(status: string): RouteStatus {
-  switch (status) {
-    case "success":
-    case "simulated":
-      return "planned";
-    case "failed":
-      return "cancelled";
-    default:
-      return "planned";
-  }
-}
-
-type RawStop = {
-  orderId: number;
-  clientName?: string;
-  address?: string;
-  coordinates?: { latitude: number; longitude: number };
-};
-
-type RawRoute = {
-  vehicleId?: number;
-  vehicleName?: string;
-  driverId?: number;
-  driverName?: string;
-  totalDistance?: number;
-  totalDuration?: number;
-  mode?: "google" | "simulated";
-  stops?: RawStop[];
+export type ApiRoute = {
+  route_id: number;
+  history_id?: number | null;
+  driver_id?: number | null;
+  driver?: { name?: string | null } | null;
+  vehicle_id?: number | null;
+  vehicle?: { name?: string | null; plate?: string | null } | null;
+  status: RouteStatus;
+  planned_date?: string | null;
+  total_distance_m?: number | null;
+  total_duration_min?: number | null;
+  simulated?: boolean;
+  region?: string | null;
+  started_at?: string | null;
+  finished_at?: string | null;
+  orders: ApiRouteOrder[];
 };
 
 /**
- * Uma execução de otimização produz uma rota por dupla veículo+motorista.
- * Cada uma vira um item próprio na lista, com suas paradas e seus pedidos —
- * caso contrário a tela mostrava as paradas da primeira rota ao lado dos
- * pedidos de todas elas.
+ * A rota agora é um registro próprio no backend, com as paradas na ordem de
+ * entrega. Antes a tela recriava a rota fatiando o JSON do histórico de
+ * otimização, o que a deixava sem identidade: não dava para iniciar, concluir
+ * nem apagar uma sem mexer nas irmãs geradas na mesma execução.
  */
-export function mapRoutes(history: ApiRouteHistory): Route[] {
-  const result =
-    typeof history.optimization_result === "string"
-      ? safeParse(history.optimization_result)
-      : history.optimization_result;
+export function mapRoute(route: ApiRoute): Route {
+  const orders = [...(route.orders ?? [])].sort(
+    (a, b) => (a.stop_sequence ?? 0) - (b.stop_sequence ?? 0),
+  );
 
-  const rawRoutes: RawRoute[] = result?.routes ?? [];
+  const stops: RouteStop[] = orders.map((order, index) => ({
+    id: toStringId(order.order_id),
+    label:
+      order.client?.name ||
+      order.title ||
+      [order.delivery_street, order.delivery_number].filter(Boolean).join(", ") ||
+      `Parada ${index + 1}`,
+    lat: order.delivery_latitude ?? 0,
+    lng: order.delivery_longitude ?? 0,
+    sequence: order.stop_sequence ?? index + 1,
+    // Baixa individual da parada — é o que o app do entregador marca.
+    completed: order.status === "delivered",
+  }));
 
-  // Execução que não gerou rota nenhuma não é uma rota: não entra na lista.
-  if (rawRoutes.length === 0) {
-    return [];
-  }
-
-  const resultSimulated = result?.simulated === true;
-
-  return rawRoutes.map((rawRoute, routeIndex) => {
-    const rawStops = rawRoute.stops ?? [];
-
-    const stops: RouteStop[] = rawStops.map((stop, index) => ({
-      id: String(stop.orderId),
-      label: stop.clientName || stop.address || `Parada ${index + 1}`,
-      lat: stop.coordinates?.latitude ?? 0,
-      lng: stop.coordinates?.longitude ?? 0,
-      sequence: index + 1,
-      completed: false,
-    }));
-
-    const suffix = rawRoutes.length > 1 ? `.${routeIndex + 1}` : "";
-
-    return {
-      id: `${history.id}${suffix}`,
-      name: `Rota #${history.id}${suffix}`,
-      driverId: toNullableId(rawRoute.driverId),
-      driverName: rawRoute.driverName ?? "",
-      vehicleId: toNullableId(rawRoute.vehicleId),
-      vehicleName: rawRoute.vehicleName ?? "",
-      // Só os pedidos desta rota, não os de toda a execução.
-      orderIds: rawStops.map((stop) => String(stop.orderId)),
-      status: mapRouteStatus(history.status),
-      stops,
-      startedAt: history.created_at ?? null,
-      region: rawStops[0]?.address?.split(", ").slice(-2)[0] ?? "—",
-      totalDistanceKm: rawRoute.totalDistance ? rawRoute.totalDistance / 1000 : 0,
-      totalDurationMin: rawRoute.totalDuration ?? 0,
-      simulated: resultSimulated || rawRoute.mode === "simulated",
-    };
-  });
-}
-
-function safeParse(value: string) {
-  try {
-    return JSON.parse(value);
-  } catch {
-    return undefined;
-  }
+  return {
+    id: toStringId(route.route_id),
+    name: `Rota #${route.route_id}`,
+    driverId: toNullableId(route.driver_id),
+    driverName: route.driver?.name ?? "",
+    vehicleId: toNullableId(route.vehicle_id),
+    vehicleName: [route.vehicle?.name, route.vehicle?.plate].filter(Boolean).join(" — "),
+    orderIds: orders.map((order) => toStringId(order.order_id)),
+    status: route.status ?? "planned",
+    stops,
+    startedAt: route.started_at ?? null,
+    region: route.region || orders[0]?.delivery_city || "—",
+    totalDistanceKm: (route.total_distance_m ?? 0) / 1000,
+    totalDurationMin: route.total_duration_min ?? 0,
+    simulated: route.simulated ?? false,
+  };
 }

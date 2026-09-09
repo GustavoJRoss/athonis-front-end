@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { AlertTriangle, Route as RouteIconLucide, Trash2 } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Play, Route as RouteIconLucide, Trash2 } from "lucide-react";
 import { PageHeader } from "@/components/ui/page-header";
 import { SearchInput } from "@/components/ui/search-input";
 import { Button } from "@/components/ui/button";
@@ -11,8 +11,14 @@ import { EmptyState, ErrorState, LoadingState } from "@/components/ui/state";
 import { DialogContent, DialogHeader, DialogRoot, DialogTitle } from "@/components/ui/dialog";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Box, Grid, Icon, Inline, Stack, Text } from "@/components/ui/primitives";
-import { ROUTE_STATUS_META } from "@/constants/domain";
-import { useDeleteRoute, useOptimizeRoutes, useRoutes } from "@/features/routes/hooks";
+import { ORDER_STATUS_META, ROUTE_STATUS_META } from "@/constants/domain";
+import {
+  useCompleteRoute,
+  useDeleteRoute,
+  useOptimizeRoutes,
+  useRoutes,
+  useStartRoute,
+} from "@/features/routes/hooks";
 import { useDrivers } from "@/features/drivers/hooks";
 import { useVehicles } from "@/features/vehicles/hooks";
 import { useOrders } from "@/features/orders/hooks";
@@ -39,6 +45,8 @@ export default function RoutesPage() {
   const { data: orders } = useOrders();
   const optimizeMutation = useOptimizeRoutes();
   const deleteMutation = useDeleteRoute();
+  const startMutation = useStartRoute();
+  const completeMutation = useCompleteRoute();
   const [unassigned, setUnassigned] = useState<UnassignedOrder[]>([]);
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -102,6 +110,36 @@ export default function RoutesPage() {
     }
   }
 
+  async function handleStart(route: Route) {
+    try {
+      await startMutation.mutateAsync(route.id);
+      toaster.success({
+        title: "Rota iniciada",
+        description: "Pedidos, motorista e veículo passaram para em trânsito.",
+      });
+    } catch (error) {
+      toaster.error({
+        title: "Não foi possível iniciar a rota",
+        description: error instanceof Error ? error.message : "Tente novamente.",
+      });
+    }
+  }
+
+  async function handleComplete(route: Route) {
+    try {
+      await completeMutation.mutateAsync(route.id);
+      toaster.success({
+        title: "Rota concluída",
+        description: "As entregas em aberto foram baixadas e a equipe está livre.",
+      });
+    } catch (error) {
+      toaster.error({
+        title: "Não foi possível concluir a rota",
+        description: error instanceof Error ? error.message : "Tente novamente.",
+      });
+    }
+  }
+
   async function handleDelete() {
     if (!deleting) return;
     try {
@@ -109,8 +147,11 @@ export default function RoutesPage() {
       toaster.success({ title: "Rota removida" });
       if (selectedId === deleting.id) setSelectedId(null);
       setDeleting(null);
-    } catch {
-      toaster.error({ title: "Não foi possível remover a rota", description: "Tente novamente." });
+    } catch (error) {
+      toaster.error({
+        title: "Não foi possível remover a rota",
+        description: error instanceof Error ? error.message : "Tente novamente.",
+      });
     }
   }
 
@@ -197,18 +238,45 @@ export default function RoutesPage() {
                         {selectedRoute.region}
                       </Text>
                     </Stack>
-                    <Inline gap={2}>
+                    <Inline gap={2} align="center">
                       <StatusBadge tone={ROUTE_STATUS_META[selectedRoute.status].tone}>
                         {ROUTE_STATUS_META[selectedRoute.status].label}
                       </StatusBadge>
-                      <Button
-                        size="sm"
-                        variant="tertiary"
-                        aria-label="Excluir rota"
-                        onClick={() => setDeleting(selectedRoute)}
-                      >
-                        <Icon icon={Trash2} size="sm" />
-                      </Button>
+
+                      {selectedRoute.status === "planned" && (
+                        <Button
+                          size="sm"
+                          variant="primary"
+                          loading={startMutation.isPending}
+                          onClick={() => handleStart(selectedRoute)}
+                        >
+                          <Icon icon={Play} size="sm" /> Iniciar
+                        </Button>
+                      )}
+
+                      {selectedRoute.status === "active" && (
+                        <Button
+                          size="sm"
+                          variant="primary"
+                          loading={completeMutation.isPending}
+                          onClick={() => handleComplete(selectedRoute)}
+                        >
+                          <Icon icon={CheckCircle2} size="sm" /> Concluir
+                        </Button>
+                      )}
+
+                      {/* Rota em andamento ou já concluída não se apaga: os
+                          pedidos dela têm entrega registrada. */}
+                      {selectedRoute.status === "planned" && (
+                        <Button
+                          size="sm"
+                          variant="tertiary"
+                          aria-label="Excluir rota"
+                          onClick={() => setDeleting(selectedRoute)}
+                        >
+                          <Icon icon={Trash2} size="sm" />
+                        </Button>
+                      )}
                     </Inline>
                   </Inline>
 
@@ -241,22 +309,50 @@ export default function RoutesPage() {
 
                   <Stack gap={2}>
                     <Text size="label" weight="medium">
-                      Pedidos associados ({selectedRoute.orderIds.length})
+                      Paradas ({selectedRoute.stops.length})
                     </Text>
                     <Stack gap={1.5}>
-                      {selectedRoute.orderIds.map((orderId) => {
-                        const order = orders?.find((item) => item.id === orderId);
-                        if (!order) return null;
+                      {/* Na ordem de entrega, com o estado de cada parada: é o
+                          que o app do entregador vai baixar uma a uma. */}
+                      {selectedRoute.stops.map((stop) => {
+                        const order = orders?.find((item) => item.id === stop.id);
                         return (
-                          <Inline key={orderId} justify="between" className="rounded-md border border-border-subtle px-3 py-2">
-                            <Text size="body-sm">{order.id} — {order.destination}</Text>
-                            <StatusBadge tone={ROUTE_STATUS_META[selectedRoute.status].tone}>
-                              {deliveryWindowLabel(order.deliveryWindow)}
-                            </StatusBadge>
+                          <Inline
+                            key={stop.id}
+                            justify="between"
+                            gap={3}
+                            className="rounded-md border border-border-subtle px-3 py-2"
+                          >
+                            <Inline gap={2} align="center" className="min-w-0">
+                              <Text size="body-sm" color="muted">
+                                {stop.sequence}.
+                              </Text>
+                              <Text size="body-sm" className="truncate">
+                                {order?.destination ?? stop.label}
+                              </Text>
+                            </Inline>
+                            <Inline gap={2} align="center" className="shrink-0">
+                              {order && (
+                                <Text size="caption" color="muted">
+                                  {deliveryWindowLabel(order.deliveryWindow)}
+                                </Text>
+                              )}
+                              <StatusBadge
+                                tone={
+                                  stop.completed
+                                    ? "success"
+                                    : ORDER_STATUS_META[order?.status ?? "pending"].tone
+                                }
+                              >
+                                {stop.completed
+                                  ? "Entregue"
+                                  : ORDER_STATUS_META[order?.status ?? "pending"].label}
+                              </StatusBadge>
+                            </Inline>
                           </Inline>
                         );
                       })}
-                      {selectedRoute.orderIds.length === 0 && (
+                      {selectedRoute.stops.length === 0 && (
                         <Text size="body-sm" color="muted">
                           Nenhum pedido associado a esta rota.
                         </Text>
