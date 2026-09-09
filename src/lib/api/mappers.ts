@@ -133,8 +133,10 @@ export function toApiCompany(input: CompanyFormInput) {
     depot_city: orNull(input.depotCity),
     depot_state: input.depotState ? input.depotState.toUpperCase() : null,
     depot_zip_code: orNull(onlyDigits(input.depotZipCode ?? "")),
-    depot_latitude: input.depotLatitude ?? null,
-    depot_longitude: input.depotLongitude ?? null,
+    // Ausente significa "resolva pelo endereço"; null apagaria a coordenada.
+    // Só vão preenchidas quando alguém usa a entrada manual.
+    depot_latitude: input.depotLatitude ?? undefined,
+    depot_longitude: input.depotLongitude ?? undefined,
     cost_per_km: input.costPerKm,
     cost_per_hour: input.costPerHour,
     stop_duration_minutes: input.stopDurationMinutes,
@@ -195,16 +197,18 @@ export function mapCustomer(client: ApiClient): Customer {
 export function toApiClient(input: CustomerFormInput) {
   return {
     name: input.name,
-    document: input.document,
+    // Documento, telefone e CEP vão só com dígitos: a pontuação é forma de
+    // exibir, e guardar as duas versões deixa o dado em dois formatos.
+    document: onlyDigits(input.document),
     type: input.type,
     email: input.email || undefined,
-    phone: input.phone || undefined,
+    phone: onlyDigits(input.phone) || undefined,
     street: input.street,
     number: input.number,
     neighborhood: input.district,
     city: input.city,
     state: input.state.toUpperCase(),
-    zip_code: input.zipCode,
+    zip_code: onlyDigits(input.zipCode),
     complement: input.complement || undefined,
     status: input.status,
   };

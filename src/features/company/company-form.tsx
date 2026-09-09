@@ -1,16 +1,17 @@
 "use client";
 
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
-import { AlertTriangle, Save } from "lucide-react";
+import { AlertTriangle, MapPin, Save } from "lucide-react";
 import { companyFormSchema, type CompanyFormInput } from "@/lib/validation/company";
 import { Input } from "@/components/ui/input";
 import { MaskedInput } from "@/components/ui/input/masked-input";
 import { Select, type SelectOption } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Tabs } from "@/components/ui/tabs";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Box, Grid, Icon, Inline, Stack, Text } from "@/components/ui/primitives";
 import type { Company } from "@/types/domain";
 import { maskCep, maskCnpj, maskPhone } from "@/lib/utils/masks";
@@ -47,8 +48,11 @@ function toFormValues(company: Company): z.input<typeof companyFormSchema> {
     depotCity: company.depotCity,
     depotState: company.depotState,
     depotZipCode: company.depotZipCode,
-    depotLatitude: company.depotLatitude,
-    depotLongitude: company.depotLongitude,
+    // Não pré-carregadas de propósito: vazio significa "resolva pelo
+    // endereço". Reenviar o valor atual a cada salvamento impediria o
+    // recálculo quando o endereço mudasse.
+    depotLatitude: undefined,
+    depotLongitude: undefined,
     costPerKm: company.costPerKm,
     costPerHour: company.costPerHour,
     stopDurationMinutes: company.stopDurationMinutes,
@@ -81,6 +85,9 @@ export function CompanyForm({ company, onSubmit, loading = false, canEdit = true
     resolver: zodResolver(companyFormSchema),
     defaultValues: toFormValues(company),
   });
+
+  // Fechado por padrão: o caminho normal é o endereço resolver sozinho.
+  const [coordenadasManuais, setCoordenadasManuais] = useState(false);
 
   const depotZipCode = watch("depotZipCode");
 
@@ -169,14 +176,36 @@ export function CompanyForm({ company, onSubmit, loading = false, canEdit = true
 
   const depot = (
     <Stack gap={4}>
-      {!company.hasDepotCoordinates && (
+      {company.hasDepotCoordinates ? (
+        <Box surface="surface-muted" border="default" radius="md" padding={3}>
+          <Inline gap={2} align="start">
+            <Icon icon={MapPin} size="sm" className="text-primary" />
+            <Stack gap={0.5}>
+              <Text size="body-sm">
+                Ponto de partida das rotas: {company.depotLatitude?.toFixed(6)},{" "}
+                {company.depotLongitude?.toFixed(6)}
+              </Text>
+              <Text size="caption" color="muted">
+                Localizado a partir do endereço abaixo. Ao mudar o endereço, o ponto é
+                recalculado quando você salvar.
+              </Text>
+            </Stack>
+          </Inline>
+        </Box>
+      ) : (
         <Box surface="surface-muted" border="default" radius="md" padding={3}>
           <Inline gap={2} align="start">
             <Icon icon={AlertTriangle} size="sm" className="text-warning" />
-            <Text size="body-sm">
-              Sem as coordenadas do depósito, toda rota parte de um ponto padrão em São Paulo.
-              Preencha latitude e longitude para que a otimização use o seu endereço real.
-            </Text>
+            <Stack gap={0.5}>
+              <Text size="body-sm">
+                Não foi possível localizar o endereço do depósito no mapa, então toda rota parte
+                de um ponto padrão em São Paulo.
+              </Text>
+              <Text size="caption" color="muted">
+                Confira o endereço e salve de novo. Se ele estiver certo e o ponto continuar sem
+                ser encontrado, informe as coordenadas manualmente.
+              </Text>
+            </Stack>
           </Inline>
         </Box>
       )}
@@ -229,25 +258,47 @@ export function CompanyForm({ company, onSubmit, loading = false, canEdit = true
             />
           )}
         />
-        <Input
-          label="Latitude"
-          type="number"
-          step="0.0000001"
-          disabled={!canEdit}
-          description="Ponto de partida das rotas"
-          error={errors.depotLatitude?.message}
-          {...register("depotLatitude")}
-        />
-        <Input
-          label="Longitude"
-          type="number"
-          step="0.0000001"
-          disabled={!canEdit}
-          description="Ponto de partida das rotas"
-          error={errors.depotLongitude?.message}
-          {...register("depotLongitude")}
-        />
       </Grid>
+
+      {/*
+        As coordenadas saem do endereço, não da digitação: latitude e longitude
+        escritas à mão erram em silêncio, e a rota inteira parte do lugar errado
+        sem nada avisar. Os campos ficam como saída de emergência, fechados.
+      */}
+      {canEdit && (
+        <Stack gap={3}>
+          <Inline gap={2} align="center">
+            <Checkbox
+              checked={coordenadasManuais}
+              onCheckedChange={(checked) => setCoordenadasManuais(checked === true)}
+              label="Informar as coordenadas manualmente"
+            />
+          </Inline>
+
+          {coordenadasManuais && (
+            <Grid columns={2} gap={4}>
+              <Input
+                label="Latitude"
+                type="number"
+                step="0.0000001"
+                placeholder="-26.4851"
+                description="Use só se o endereço não for localizado"
+                error={errors.depotLatitude?.message}
+                {...register("depotLatitude")}
+              />
+              <Input
+                label="Longitude"
+                type="number"
+                step="0.0000001"
+                placeholder="-49.0669"
+                description="Use só se o endereço não for localizado"
+                error={errors.depotLongitude?.message}
+                {...register("depotLongitude")}
+              />
+            </Grid>
+          )}
+        </Stack>
+      )}
     </Stack>
   );
 
