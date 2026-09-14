@@ -19,3 +19,17 @@ body {
 [data-scope="date-picker"][data-part="positioner"] {
   --z-index: var(--z-floating) !important;
 }
+
+/* Marquee em CSS puro para a faixa de logos da landing — evita depender de Swiper. */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 28s linear infinite;
+}

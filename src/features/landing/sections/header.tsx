@@ -1,24 +1,53 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Container, Inline, Text } from "@/components/ui/primitives";
+import { Container, Inline } from "@/components/ui/primitives";
+import { cn } from "@/lib/utils/cn";
 
 const NAV_LINKS = [
+  { label: "Como funciona", href: "#route-journey" },
   { label: "Plataforma", href: "#features" },
-  { label: "Como funciona", href: "#solution" },
-  { label: "Indicadores", href: "#product-preview" },
+  { label: "Prévia", href: "#product-showcase" },
 ];
 
 export function LandingHeader() {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    function handleScroll() {
+      setScrolled(window.scrollY > 24);
+    }
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <header className="sticky top-0 z-30 border-b border-border-subtle bg-surface/90 backdrop-blur">
+    <header
+      className={cn(
+        "sticky top-0 z-30 border-b transition-colors duration-300",
+        scrolled
+          ? "border-border-subtle bg-surface/85 backdrop-blur"
+          : "border-transparent bg-transparent",
+      )}
+    >
       <Container width="default">
         <Inline justify="between" className="h-16">
-          <Text weight="semibold" className="text-heading-4 text-foreground">
+          <Link
+            href="#top"
+            className="text-heading-4 text-foreground font-semibold"
+          >
             ATHONIS
-          </Text>
+          </Link>
           <Inline gap={6} className="hidden md:flex">
             {NAV_LINKS.map((link) => (
-              <Link key={link.href} href={link.href} className="text-body-sm text-muted hover:text-foreground">
+              <Link
+                key={link.href}
+                href={link.href}
+                className="text-body-sm text-muted hover:text-foreground"
+              >
                 {link.label}
               </Link>
             ))}

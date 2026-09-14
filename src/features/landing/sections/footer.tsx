@@ -1,14 +1,20 @@
 import Link from "next/link";
-import { Container, Grid, Inline, Separator, Stack, Text } from "@/components/ui/primitives";
+import {
+  Container,
+  Grid,
+  Inline,
+  Separator,
+  Stack,
+  Text,
+} from "@/components/ui/primitives";
 
 const COLUMNS = [
   {
     title: "Produto",
     links: [
-      { label: "Pedidos", href: "#features" },
-      { label: "Rotas", href: "#features" },
-      { label: "Indicadores", href: "#features" },
-      { label: "Motoristas e veículos", href: "#features" },
+      { label: "Como funciona", href: "#route-journey" },
+      { label: "Funcionalidades", href: "#features" },
+      { label: "Prévia do sistema", href: "#product-showcase" },
     ],
   },
   {
@@ -39,7 +45,7 @@ const COLUMNS = [
 
 export function Footer() {
   return (
-    <footer className="border-t border-border-subtle bg-surface">
+    <footer className="border-border-subtle bg-surface border-t">
       <Container width="default" className="py-14">
         <Grid columns={4} gap={8} className="grid-cols-2 lg:grid-cols-4">
           {COLUMNS.map((column) => (
@@ -49,7 +55,11 @@ export function Footer() {
               </Text>
               <Stack gap={2}>
                 {column.links.map((link) => (
-                  <Link key={link.label} href={link.href} className="text-body-sm text-muted hover:text-foreground">
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    className="text-body-sm text-muted hover:text-foreground"
+                  >
                     {link.label}
                   </Link>
                 ))}
@@ -65,10 +75,16 @@ export function Footer() {
             © {new Date().getFullYear()} ATHONIS. Todos os direitos reservados.
           </Text>
           <Inline gap={4}>
-            <Link href="#" className="text-body-sm text-muted hover:text-foreground">
+            <Link
+              href="#"
+              className="text-body-sm text-muted hover:text-foreground"
+            >
               Termos
             </Link>
-            <Link href="#" className="text-body-sm text-muted hover:text-foreground">
+            <Link
+              href="#"
+              className="text-body-sm text-muted hover:text-foreground"
+            >
               Privacidade
             </Link>
           </Inline>

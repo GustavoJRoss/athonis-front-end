@@ -8,6 +8,7 @@ const SIZE_PX = {
   md: 20,
   lg: 24,
   xl: 32,
+  "2xl": 48,
 } as const;
 export type IconSize = keyof typeof SIZE_PX;
 

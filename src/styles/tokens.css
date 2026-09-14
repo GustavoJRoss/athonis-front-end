@@ -132,6 +132,10 @@
   --text-display--line-height: 1.1;
   --text-display--font-weight: 700;
 
+  --text-display-lg: clamp(2.75rem, 6vw, 5.5rem);
+  --text-display-lg--line-height: 1.05;
+  --text-display-lg--font-weight: 800;
+
   --text-heading-1: 2.25rem;
   --text-heading-1--line-height: 1.2;
   --text-heading-1--font-weight: 700;
@@ -169,6 +173,7 @@
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
   --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
   --radius-full: 9999px;
 
   /*
@@ -178,8 +183,10 @@
    * botão, input ou qualquer elemento estático de layout — elevação nesses
    * casos vem de `border`/`surface`, não de shadow.
    */
-  --shadow-float: 0 4px 16px -2px rgb(0 0 0 / 0.12), 0 2px 6px -2px rgb(0 0 0 / 0.08);
-  --shadow-overlay: 0 16px 40px -8px rgb(0 0 0 / 0.24), 0 4px 12px -4px rgb(0 0 0 / 0.12);
+  --shadow-float:
+    0 4px 16px -2px rgb(0 0 0 / 0.12), 0 2px 6px -2px rgb(0 0 0 / 0.08);
+  --shadow-overlay:
+    0 16px 40px -8px rgb(0 0 0 / 0.24), 0 4px 12px -4px rgb(0 0 0 / 0.12);
 
   /*
    * --- Camadas (z-index) ---
@@ -188,6 +195,6 @@
    * parecia não responder ao clique.
    */
   --z-backdrop: 40;
-  --z-overlay: 50;  /* dialog, drawer */
+  --z-overlay: 50; /* dialog, drawer */
   --z-floating: 60; /* select, menu, popover, tooltip abertos sobre um overlay */
 }
