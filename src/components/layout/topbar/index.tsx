@@ -42,11 +42,11 @@ export function Topbar({
   return (
     <header
       className={cn(
-        "border-border-subtle bg-surface flex h-14 shrink-0 items-center gap-4 border-b px-4",
+        "border-border-subtle bg-primary/5 flex h-14 shrink-0 items-center justify-between gap-4 border-b px-4",
         className,
       )}
     >
-      <div className="flex items-center gap-3">
+      <div className="flex w-full items-center gap-3">
         <button
           type="button"
           onClick={onOpenMobileSidebar}
@@ -63,14 +63,14 @@ export function Topbar({
       <button
         type="button"
         onClick={onOpenCommandMenu}
-        className="border-border bg-background text-body-sm text-muted hover:border-primary/50 flex max-w-sm flex-1 items-center gap-2 rounded-md border px-3 py-1.5 transition-colors"
+        className="border-border bg-background text-body-sm text-muted hover:border-primary/50 flex min-w-sm flex-1 items-center gap-2 rounded-md border px-3 py-1.5 transition-colors"
       >
         <Icon icon={Search} size="sm" />
         <span className="flex-1 text-left">Buscar...</span>
         <span className="text-caption">⌘K</span>
       </button>
 
-      <div className="ml-auto flex items-center gap-2">
+      <div className="flex w-full items-center justify-end gap-2">
         <PopoverRoot positioning={{ placement: "bottom-end" }}>
           <PopoverTrigger asChild>
             <button

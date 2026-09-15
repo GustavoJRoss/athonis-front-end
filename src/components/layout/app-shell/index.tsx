@@ -1,12 +1,16 @@
 "use client";
 
-import { useMemo, useState, type ReactNode } from "react";
+import { useMemo, useRef, useState, type ReactNode } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Package, Route as RouteIcon, Search, UserPlus } from "lucide-react";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Topbar } from "@/components/layout/topbar";
 import { CommandMenu, type CommandItem } from "@/components/ui/command-menu";
-import { DrawerContent, DrawerRoot, getDrawerSwipeDirection } from "@/components/ui/drawer";
+import {
+  DrawerContent,
+  DrawerRoot,
+  getDrawerSwipeDirection,
+} from "@/components/ui/drawer";
 import type { MenuAction } from "@/components/ui/dropdown-menu";
 import { NAV_ITEMS } from "@/constants/navigation";
 import { logout } from "@/lib/auth/authentication";
@@ -33,6 +37,7 @@ export function AppShell({
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [commandOpen, setCommandOpen] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const pathname = usePathname();
   const { data: orders } = useOrders();
@@ -40,7 +45,10 @@ export function AppShell({
     (item) => pathname === item.href || pathname?.startsWith(`${item.href}/`),
   );
   const breadcrumb = activeNavItem
-    ? [{ label: companyName, href: "/dashboard" }, { label: activeNavItem.label }]
+    ? [
+        { label: companyName, href: "/dashboard" },
+        { label: activeNavItem.label },
+      ]
     : undefined;
 
   async function handleUserMenuSelect(value: string) {
@@ -57,11 +65,41 @@ export function AppShell({
 
   const commandItems = useMemo<CommandItem[]>(() => {
     const quickActions: CommandItem[] = [
-      { id: "action-new-order", label: "Criar pedido", group: "Ações rápidas", icon: Package, onSelect: () => router.push("/orders?new=1") },
-      { id: "action-new-route", label: "Criar rota", group: "Ações rápidas", icon: RouteIcon, onSelect: () => router.push("/routes?new=1") },
-      { id: "action-new-customer", label: "Adicionar cliente", group: "Ações rápidas", icon: UserPlus, onSelect: () => router.push("/customers?new=1") },
-      { id: "action-new-driver", label: "Adicionar motorista", group: "Ações rápidas", icon: UserPlus, onSelect: () => router.push("/drivers?new=1") },
-      { id: "action-new-vehicle", label: "Adicionar veículo", group: "Ações rápidas", icon: UserPlus, onSelect: () => router.push("/vehicles?new=1") },
+      {
+        id: "action-new-order",
+        label: "Criar pedido",
+        group: "Ações rápidas",
+        icon: Package,
+        onSelect: () => router.push("/orders?new=1"),
+      },
+      {
+        id: "action-new-route",
+        label: "Criar rota",
+        group: "Ações rápidas",
+        icon: RouteIcon,
+        onSelect: () => router.push("/routes?new=1"),
+      },
+      {
+        id: "action-new-customer",
+        label: "Adicionar cliente",
+        group: "Ações rápidas",
+        icon: UserPlus,
+        onSelect: () => router.push("/customers?new=1"),
+      },
+      {
+        id: "action-new-driver",
+        label: "Adicionar motorista",
+        group: "Ações rápidas",
+        icon: UserPlus,
+        onSelect: () => router.push("/drivers?new=1"),
+      },
+      {
+        id: "action-new-vehicle",
+        label: "Adicionar veículo",
+        group: "Ações rápidas",
+        icon: UserPlus,
+        onSelect: () => router.push("/vehicles?new=1"),
+      },
     ];
 
     const navItems: CommandItem[] = NAV_ITEMS.map((item) => ({
@@ -72,19 +110,21 @@ export function AppShell({
       onSelect: () => router.push(item.href),
     }));
 
-    const orderItems: CommandItem[] = (orders ?? []).slice(0, 30).map((order) => ({
-      id: `order-${order.id}`,
-      label: `${order.id} — ${order.destination}`,
-      group: "Pesquisar pedido",
-      icon: Search,
-      onSelect: () => router.push(`/orders?highlight=${order.id}`),
-    }));
+    const orderItems: CommandItem[] = (orders ?? [])
+      .slice(0, 30)
+      .map((order) => ({
+        id: `order-${order.id}`,
+        label: `${order.id} — ${order.destination}`,
+        group: "Pesquisar pedido",
+        icon: Search,
+        onSelect: () => router.push(`/orders?highlight=${order.id}`),
+      }));
 
     return [...quickActions, ...navItems, ...orderItems];
   }, [orders, router]);
 
   return (
-    <div className="flex h-dvh overflow-hidden bg-background">
+    <div className="bg-background flex h-dvh overflow-hidden">
       <Sidebar
         brandName={companyName}
         collapsed={collapsed}
@@ -98,7 +138,11 @@ export function AppShell({
         swipeDirection={getDrawerSwipeDirection("left")}
       >
         <DrawerContent side="left" className="max-w-72 p-0">
-          <Sidebar brandName={companyName} showToggle={false} onNavigate={() => setMobileOpen(false)} />
+          <Sidebar
+            brandName={companyName}
+            showToggle={false}
+            onNavigate={() => setMobileOpen(false)}
+          />
         </DrawerContent>
       </DrawerRoot>
 
@@ -112,10 +156,19 @@ export function AppShell({
           userMenuItems={userMenuItems}
           onUserMenuSelect={handleUserMenuSelect}
         />
-        <main className="flex-1 overflow-y-auto p-6">{children}</main>
-      </div>
+        {/* Sem padding aqui de propósito — é nele que o CommandMenu é portado
+            (`inset-0` precisa colar nas bordas, sem a folga do p-6 do main). */}
+        <div ref={contentRef} className="relative flex-1 overflow-hidden">
+          <main className="h-full overflow-y-auto p-6">{children}</main>
 
-      <CommandMenu open={commandOpen} onOpenChange={setCommandOpen} items={commandItems} />
+          <CommandMenu
+            open={commandOpen}
+            onOpenChange={setCommandOpen}
+            items={commandItems}
+            portalContainer={contentRef}
+          />
+        </div>
+      </div>
     </div>
   );
 }

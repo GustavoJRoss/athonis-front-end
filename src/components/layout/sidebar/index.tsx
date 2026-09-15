@@ -5,7 +5,11 @@ import { usePathname } from "next/navigation";
 import { ChevronsLeft, ChevronsRight } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { Icon, Text } from "@/components/ui/primitives";
-import { TooltipContent, TooltipRoot, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  TooltipContent,
+  TooltipRoot,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { NAV_ITEMS } from "@/constants/navigation";
 
 export type SidebarProps = {
@@ -31,30 +35,36 @@ export function Sidebar({
   return (
     <aside
       className={cn(
-        "flex h-full flex-col border-r border-border-subtle bg-surface transition-[width] duration-150",
+        "border-border-subtle text-background flex h-full flex-col border-r bg-blue-950 transition-[width] duration-150",
         collapsed ? "w-16" : "w-64",
         className,
       )}
     >
-      <div className={cn("flex h-14 shrink-0 items-center border-b border-border-subtle px-4", collapsed && "justify-center px-0")}>
-        <Text weight="semibold" className="text-heading-4 text-foreground">
+      <div
+        className={cn(
+          "border-border-subtle flex h-14 shrink-0 items-center border-b px-4",
+          collapsed && "justify-center px-0",
+        )}
+      >
+        <Text weight="semibold" className="text-heading-4 text-background">
           {collapsed ? (brandName.trim()[0] ?? "A").toUpperCase() : brandName}
         </Text>
       </div>
 
       <nav className="flex flex-1 flex-col gap-1 overflow-y-auto p-2">
         {NAV_ITEMS.map((item) => {
-          const active = pathname === item.href || pathname?.startsWith(`${item.href}/`);
+          const active =
+            pathname === item.href || pathname?.startsWith(`${item.href}/`);
           const link = (
             <Link
               href={item.href}
               onClick={onNavigate}
               className={cn(
-                "flex items-center gap-3 rounded-md px-3 py-2 text-body-sm font-medium transition-colors",
+                "text-body-sm flex items-center gap-3 rounded-md px-3 py-2 font-medium transition-colors",
                 collapsed && "justify-center px-0",
                 active
-                  ? "bg-primary/10 text-primary"
-                  : "text-muted hover:bg-surface-hover hover:text-foreground",
+                  ? "bg-primary/20 text-background"
+                  : "text-background hover:bg-background/5",
               )}
             >
               <Icon icon={item.icon} size="sm" />
@@ -76,12 +86,12 @@ export function Sidebar({
       </nav>
 
       {showToggle && (
-        <div className="shrink-0 border-t border-border-subtle p-2">
+        <div className="border-border-subtle shrink-0 border-t p-2">
           <button
             type="button"
             onClick={onToggleCollapsed}
             aria-label={collapsed ? "Expandir menu" : "Recolher menu"}
-            className="flex w-full items-center justify-center rounded-md p-2 text-muted transition-colors hover:bg-surface-hover hover:text-foreground"
+            className="text-background hover:bg-background/15 flex w-full items-center justify-center rounded-md p-2 transition-colors"
           >
             <Icon icon={collapsed ? ChevronsRight : ChevronsLeft} size="sm" />
           </button>
