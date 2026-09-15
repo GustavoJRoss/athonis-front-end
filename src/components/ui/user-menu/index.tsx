@@ -1,10 +1,20 @@
 "use client";
 
-import { MenuContent, MenuPositioner, MenuRoot, MenuSeparator, MenuTrigger, Portal } from "@ark-ui/react";
+import {
+  MenuContent,
+  MenuPositioner,
+  MenuRoot,
+  MenuSeparator,
+  MenuTrigger,
+  Portal,
+} from "@ark-ui/react";
 import { cn } from "@/lib/utils/cn";
-import { Text } from "@/components/ui/primitives";
+import { Inline, Text } from "@/components/ui/primitives";
 import { Avatar } from "@/components/ui/avatar";
-import { renderMenuItems, type MenuAction } from "@/components/ui/dropdown-menu";
+import {
+  renderMenuItems,
+  type MenuAction,
+} from "@/components/ui/dropdown-menu";
 
 export type UserMenuProps = {
   name: string;
@@ -15,7 +25,14 @@ export type UserMenuProps = {
   className?: string;
 };
 
-export function UserMenu({ name, email, avatarSrc, items, onSelect, className }: UserMenuProps) {
+export function UserMenu({
+  name,
+  email,
+  avatarSrc,
+  items,
+  onSelect,
+  className,
+}: UserMenuProps) {
   return (
     <MenuRoot onSelect={(details) => onSelect?.(details.value)}>
       <MenuTrigger asChild>
@@ -23,7 +40,7 @@ export function UserMenu({ name, email, avatarSrc, items, onSelect, className }:
           type="button"
           aria-label={`Menu da conta de ${name}`}
           className={cn(
-            "flex items-center gap-2 rounded-md p-1 transition-colors hover:bg-surface-hover",
+            "hover:bg-surface-hover flex items-center gap-2 rounded-md p-1 transition-colors",
             className,
           )}
         >
@@ -32,18 +49,20 @@ export function UserMenu({ name, email, avatarSrc, items, onSelect, className }:
       </MenuTrigger>
       <Portal>
         <MenuPositioner>
-          <MenuContent className="z-50 min-w-56 rounded-lg border border-border bg-surface p-1 shadow-float outline-none">
-            <div className="flex flex-col gap-0.5 px-2.5 py-2">
-              <Text size="body-sm" weight="medium">
-                {name}
-              </Text>
-              {email && (
-                <Text size="caption" color="muted">
-                  {email}
+          <MenuContent className="border-border bg-surface shadow-float z-50 min-w-56 rounded-lg border p-1 outline-none">
+            <Inline gap={0}>
+              <Avatar name={name} src={avatarSrc} size="sm" className="ml-2" />
+              <div className="flex flex-col gap-0.5 px-2.5 py-2">
+                <Text size="body-sm" weight="medium">
+                  {name}
                 </Text>
-              )}
-            </div>
-            <MenuSeparator className="my-1 h-px bg-border-subtle" />
+                {email && (
+                  <Text size="caption" color="muted">
+                    {email}
+                  </Text>
+                )}
+              </div>
+            </Inline>
             {renderMenuItems(items)}
           </MenuContent>
         </MenuPositioner>

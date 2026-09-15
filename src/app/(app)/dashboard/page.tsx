@@ -5,6 +5,7 @@ import {
   AlertTriangle,
   CheckCircle2,
   Clock,
+  LayoutDashboardIcon,
   Package,
   Route as RouteIcon,
   TrendingUp,
@@ -29,7 +30,12 @@ import { PageHeader } from "@/components/ui/page-header";
 import { MetricCard } from "@/components/ui/metric-card";
 import { ErrorState, LoadingState } from "@/components/ui/state";
 import { Box, Grid, Stack } from "@/components/ui/primitives";
-import { ChartCard, ChartTooltip, CHART_COLOR, CHART_SERIES_PALETTE } from "@/components/charts";
+import {
+  ChartCard,
+  ChartTooltip,
+  CHART_COLOR,
+  CHART_SERIES_PALETTE,
+} from "@/components/charts";
 import { ORDER_STATUS_META } from "@/constants/domain";
 import { useDashboardData } from "@/features/dashboard/hooks";
 
@@ -48,15 +54,32 @@ export default function DashboardPage() {
     if (!data) return null;
     const { orders, routes, drivers } = data;
 
-    const ordersToday = orders.filter((order) => order.date === todayIso()).length;
-    const delivered = orders.filter((order) => order.status === "delivered").length;
+    const ordersToday = orders.filter(
+      (order) => order.date === todayIso(),
+    ).length;
+    const delivered = orders.filter(
+      (order) => order.status === "delivered",
+    ).length;
     const pending = orders.filter((order) => order.status === "pending").length;
     const delayed = orders.filter((order) => order.status === "delayed").length;
-    const activeRoutes = routes.filter((route) => route.status === "active").length;
-    const activeDrivers = drivers.filter((driver) => driver.status !== "unavailable").length;
-    const deliveryRate = orders.length > 0 ? Math.round((delivered / orders.length) * 100) : 0;
+    const activeRoutes = routes.filter(
+      (route) => route.status === "active",
+    ).length;
+    const activeDrivers = drivers.filter(
+      (driver) => driver.status !== "unavailable",
+    ).length;
+    const deliveryRate =
+      orders.length > 0 ? Math.round((delivered / orders.length) * 100) : 0;
 
-    return { ordersToday, delivered, pending, delayed, activeRoutes, activeDrivers, deliveryRate };
+    return {
+      ordersToday,
+      delivered,
+      pending,
+      delayed,
+      activeRoutes,
+      activeDrivers,
+      deliveryRate,
+    };
   }, [data]);
 
   const ordersTrend = useMemo(() => {
@@ -70,14 +93,19 @@ export default function DashboardPage() {
       return `${date.getFullYear()}-${month}-${day}`;
     });
     return days.map((day) => ({
-      day: new Date(`${day}T00:00:00`).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }),
+      day: new Date(`${day}T00:00:00`).toLocaleDateString("pt-BR", {
+        day: "2-digit",
+        month: "2-digit",
+      }),
       pedidos: data.orders.filter((order) => order.date === day).length,
     }));
   }, [data]);
 
   const statusDistribution = useMemo(() => {
     if (!data) return [];
-    return (Object.keys(ORDER_STATUS_META) as Array<keyof typeof ORDER_STATUS_META>)
+    return (
+      Object.keys(ORDER_STATUS_META) as Array<keyof typeof ORDER_STATUS_META>
+    )
       .map((status) => ({
         name: ORDER_STATUS_META[status].label,
         value: data.orders.filter((order) => order.status === status).length,
@@ -111,7 +139,11 @@ export default function DashboardPage() {
   if (isLoading) {
     return (
       <Stack gap={6}>
-        <PageHeader title="Dashboard" description="Indicadores e visão geral da operação" />
+        <PageHeader
+          icon={LayoutDashboardIcon}
+          title="Dashboard"
+          description="Indicadores e visão geral da operação"
+        />
         <Box surface="surface" border="default" radius="lg">
           <LoadingState title="Carregando indicadores..." />
         </Box>
@@ -122,11 +154,19 @@ export default function DashboardPage() {
   if (isError || !metrics) {
     return (
       <Stack gap={6}>
-        <PageHeader title="Dashboard" description="Indicadores e visão geral da operação" />
+        <PageHeader
+          title="Dashboard"
+          icon={LayoutDashboardIcon}
+          description="Indicadores e visão geral da operação"
+        />
         <Box surface="surface" border="default" radius="lg">
           <ErrorState
             action={
-              <button type="button" onClick={() => refetch()} className="text-body-sm font-medium text-primary hover:underline">
+              <button
+                type="button"
+                onClick={() => refetch()}
+                className="text-body-sm text-primary font-medium hover:underline"
+              >
                 Tentar novamente
               </button>
             }
@@ -138,20 +178,51 @@ export default function DashboardPage() {
 
   return (
     <Stack gap={6}>
-      <PageHeader title="Dashboard" description="Indicadores e visão geral da operação" />
+      <PageHeader
+        title="Dashboard"
+        icon={LayoutDashboardIcon}
+        description="Indicadores e visão geral da operação"
+      />
 
       <Grid columns={4} gap={4} className="grid-cols-2 lg:grid-cols-4">
-        <MetricCard label="Pedidos hoje" value={String(metrics.ordersToday)} icon={Package} />
-        <MetricCard label="Entregas concluídas" value={String(metrics.delivered)} icon={CheckCircle2} />
-        <MetricCard label="Entregas pendentes" value={String(metrics.pending)} icon={Clock} />
-        <MetricCard label="Entregas atrasadas" value={String(metrics.delayed)} icon={AlertTriangle} />
-        <MetricCard label="Rotas ativas" value={String(metrics.activeRoutes)} icon={RouteIcon} />
-        <MetricCard label="Motoristas ativos" value={String(metrics.activeDrivers)} icon={Users} />
+        <MetricCard
+          label="Pedidos hoje"
+          value={String(metrics.ordersToday)}
+          icon={Package}
+        />
+        <MetricCard
+          label="Entregas concluídas"
+          value={String(metrics.delivered)}
+          icon={CheckCircle2}
+        />
+        <MetricCard
+          label="Entregas pendentes"
+          value={String(metrics.pending)}
+          icon={Clock}
+        />
+        <MetricCard
+          label="Entregas atrasadas"
+          value={String(metrics.delayed)}
+          icon={AlertTriangle}
+        />
+        <MetricCard
+          label="Rotas ativas"
+          value={String(metrics.activeRoutes)}
+          icon={RouteIcon}
+        />
+        <MetricCard
+          label="Motoristas ativos"
+          value={String(metrics.activeDrivers)}
+          icon={Users}
+        />
         <MetricCard
           label="Taxa de entrega"
           value={`${metrics.deliveryRate}%`}
           icon={TrendingUp}
-          trend={{ direction: metrics.deliveryRate >= 70 ? "up" : "down", label: "no período" }}
+          trend={{
+            direction: metrics.deliveryRate >= 70 ? "up" : "down",
+            label: "no período",
+          }}
         />
       </Grid>
 
@@ -165,10 +236,28 @@ export default function DashboardPage() {
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={ordersTrend}>
               <CartesianGrid vertical={false} stroke={CHART_COLOR.border} />
-              <XAxis dataKey="day" tick={{ fill: CHART_COLOR.muted, fontSize: 12 }} axisLine={{ stroke: CHART_COLOR.border }} tickLine={false} />
-              <YAxis allowDecimals={false} tick={{ fill: CHART_COLOR.muted, fontSize: 12 }} axisLine={false} tickLine={false} width={28} />
+              <XAxis
+                dataKey="day"
+                tick={{ fill: CHART_COLOR.muted, fontSize: 12 }}
+                axisLine={{ stroke: CHART_COLOR.border }}
+                tickLine={false}
+              />
+              <YAxis
+                allowDecimals={false}
+                tick={{ fill: CHART_COLOR.muted, fontSize: 12 }}
+                axisLine={false}
+                tickLine={false}
+                width={28}
+              />
               <Tooltip content={<ChartTooltip />} />
-              <Area type="monotone" dataKey="pedidos" stroke={CHART_COLOR.primary} fill={CHART_COLOR.primary} fillOpacity={0.15} strokeWidth={2} />
+              <Area
+                type="monotone"
+                dataKey="pedidos"
+                stroke={CHART_COLOR.primary}
+                fill={CHART_COLOR.primary}
+                fillOpacity={0.15}
+                strokeWidth={2}
+              />
             </AreaChart>
           </ResponsiveContainer>
         </ChartCard>
@@ -187,9 +276,21 @@ export default function DashboardPage() {
                 height={32}
                 wrapperStyle={{ fontSize: 12, color: CHART_COLOR.muted }}
               />
-              <Pie data={statusDistribution} dataKey="value" nameKey="name" innerRadius={50} outerRadius={80} paddingAngle={2}>
+              <Pie
+                data={statusDistribution}
+                dataKey="value"
+                nameKey="name"
+                innerRadius={50}
+                outerRadius={80}
+                paddingAngle={2}
+              >
                 {statusDistribution.map((entry, index) => (
-                  <Cell key={entry.name} fill={CHART_SERIES_PALETTE[index % CHART_SERIES_PALETTE.length]} />
+                  <Cell
+                    key={entry.name}
+                    fill={
+                      CHART_SERIES_PALETTE[index % CHART_SERIES_PALETTE.length]
+                    }
+                  />
                 ))}
               </Pie>
             </PieChart>
@@ -205,10 +306,25 @@ export default function DashboardPage() {
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={driverPerformance}>
               <CartesianGrid vertical={false} stroke={CHART_COLOR.border} />
-              <XAxis dataKey="name" tick={{ fill: CHART_COLOR.muted, fontSize: 12 }} axisLine={{ stroke: CHART_COLOR.border }} tickLine={false} />
-              <YAxis allowDecimals={false} tick={{ fill: CHART_COLOR.muted, fontSize: 12 }} axisLine={false} tickLine={false} width={32} />
+              <XAxis
+                dataKey="name"
+                tick={{ fill: CHART_COLOR.muted, fontSize: 12 }}
+                axisLine={{ stroke: CHART_COLOR.border }}
+                tickLine={false}
+              />
+              <YAxis
+                allowDecimals={false}
+                tick={{ fill: CHART_COLOR.muted, fontSize: 12 }}
+                axisLine={false}
+                tickLine={false}
+                width={32}
+              />
               <Tooltip content={<ChartTooltip />} />
-              <Bar dataKey="performance" fill={CHART_COLOR.success} radius={[6, 6, 0, 0]} />
+              <Bar
+                dataKey="performance"
+                fill={CHART_COLOR.success}
+                radius={[6, 6, 0, 0]}
+              />
             </BarChart>
           </ResponsiveContainer>
         </ChartCard>
@@ -220,12 +336,33 @@ export default function DashboardPage() {
           emptyMessage="Nenhum pedido cadastrado"
         >
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={deliveriesByState} layout="vertical" margin={{ left: 8 }}>
+            <BarChart
+              data={deliveriesByState}
+              layout="vertical"
+              margin={{ left: 8 }}
+            >
               <CartesianGrid horizontal={false} stroke={CHART_COLOR.border} />
-              <XAxis type="number" allowDecimals={false} tick={{ fill: CHART_COLOR.muted, fontSize: 12 }} axisLine={false} tickLine={false} />
-              <YAxis type="category" dataKey="state" tick={{ fill: CHART_COLOR.muted, fontSize: 12 }} axisLine={false} tickLine={false} width={32} />
+              <XAxis
+                type="number"
+                allowDecimals={false}
+                tick={{ fill: CHART_COLOR.muted, fontSize: 12 }}
+                axisLine={false}
+                tickLine={false}
+              />
+              <YAxis
+                type="category"
+                dataKey="state"
+                tick={{ fill: CHART_COLOR.muted, fontSize: 12 }}
+                axisLine={false}
+                tickLine={false}
+                width={32}
+              />
               <Tooltip content={<ChartTooltip />} />
-              <Bar dataKey="pedidos" fill={CHART_COLOR.info} radius={[0, 6, 6, 0]} />
+              <Bar
+                dataKey="pedidos"
+                fill={CHART_COLOR.info}
+                radius={[0, 6, 6, 0]}
+              />
             </BarChart>
           </ResponsiveContainer>
         </ChartCard>

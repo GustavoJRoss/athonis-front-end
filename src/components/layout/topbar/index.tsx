@@ -1,10 +1,14 @@
 "use client";
 
-import { Bell, Menu, Search } from "lucide-react";
+import { Bell, LogOutIcon, Menu, Search, SettingsIcon } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { Icon, Text } from "@/components/ui/primitives";
 import { Breadcrumb, type BreadcrumbItem } from "@/components/ui/breadcrumb";
-import { PopoverContent, PopoverRoot, PopoverTrigger } from "@/components/ui/popover";
+import {
+  PopoverContent,
+  PopoverRoot,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { UserMenu } from "@/components/ui/user-menu";
 import type { MenuAction } from "@/components/ui/dropdown-menu";
 
@@ -20,9 +24,9 @@ export type TopbarProps = {
 };
 
 const DEFAULT_USER_MENU_ITEMS: MenuAction[] = [
-  { value: "settings", label: "Configurações" },
+  { value: "settings", label: "Configurações", icon: SettingsIcon },
   { separator: true },
-  { value: "logout", label: "Sair" },
+  { value: "logout", label: "Sair", icon: LogOutIcon },
 ];
 
 export function Topbar({
@@ -38,7 +42,7 @@ export function Topbar({
   return (
     <header
       className={cn(
-        "flex h-14 shrink-0 items-center gap-4 border-b border-border-subtle bg-surface px-4",
+        "border-border-subtle bg-surface flex h-14 shrink-0 items-center gap-4 border-b px-4",
         className,
       )}
     >
@@ -47,7 +51,7 @@ export function Topbar({
           type="button"
           onClick={onOpenMobileSidebar}
           aria-label="Abrir menu"
-          className="flex size-9 items-center justify-center rounded-md text-muted hover:bg-surface-hover lg:hidden"
+          className="text-muted hover:bg-surface-hover flex size-9 items-center justify-center rounded-md lg:hidden"
         >
           <Icon icon={Menu} size="sm" />
         </button>
@@ -59,7 +63,7 @@ export function Topbar({
       <button
         type="button"
         onClick={onOpenCommandMenu}
-        className="flex max-w-sm flex-1 items-center gap-2 rounded-md border border-border bg-background px-3 py-1.5 text-body-sm text-muted transition-colors hover:border-primary/50"
+        className="border-border bg-background text-body-sm text-muted hover:border-primary/50 flex max-w-sm flex-1 items-center gap-2 rounded-md border px-3 py-1.5 transition-colors"
       >
         <Icon icon={Search} size="sm" />
         <span className="flex-1 text-left">Buscar...</span>
@@ -72,10 +76,10 @@ export function Topbar({
             <button
               type="button"
               aria-label="Notificações"
-              className="relative flex size-9 items-center justify-center rounded-md text-muted hover:bg-surface-hover hover:text-foreground"
+              className="text-muted hover:bg-surface-hover hover:text-foreground relative flex size-9 items-center justify-center rounded-md"
             >
               <Icon icon={Bell} size="sm" />
-              <span className="absolute top-2 right-2 size-1.5 rounded-full bg-danger" />
+              <span className="bg-danger absolute top-2 right-2 size-1.5 rounded-full" />
             </button>
           </PopoverTrigger>
           <PopoverContent className="w-72">

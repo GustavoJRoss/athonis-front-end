@@ -1,9 +1,16 @@
 "use client";
 
-import { Building2, Info } from "lucide-react";
+import { Building2, Info, SettingsIcon } from "lucide-react";
 import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState, LoadingState } from "@/components/ui/state";
-import { Box, Grid, Icon, Inline, Stack, Text } from "@/components/ui/primitives";
+import {
+  Box,
+  Grid,
+  Icon,
+  Inline,
+  Stack,
+  Text,
+} from "@/components/ui/primitives";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { maskCnpj } from "@/lib/utils/masks";
 import { toaster } from "@/components/ui/toast";
@@ -20,12 +27,16 @@ export default function SettingsPage() {
       await updateMutation.mutateAsync(values);
       toaster.success({
         title: "Empresa atualizada",
-        description: "As novas configurações valem a partir da próxima roteirização.",
+        description:
+          "As novas configurações valem a partir da próxima roteirização.",
       });
     } catch (submitError) {
       toaster.error({
         title: "Não foi possível salvar",
-        description: submitError instanceof Error ? submitError.message : "Tente novamente.",
+        description:
+          submitError instanceof Error
+            ? submitError.message
+            : "Tente novamente.",
       });
     }
   }
@@ -34,6 +45,7 @@ export default function SettingsPage() {
     <Stack gap={6}>
       <PageHeader
         title="Configurações"
+        icon={SettingsIcon}
         description="Dados da empresa, depósito e parâmetros de operação"
       />
 
@@ -50,7 +62,7 @@ export default function SettingsPage() {
               <button
                 type="button"
                 onClick={() => refetch()}
-                className="text-body-sm font-medium text-primary hover:underline"
+                className="text-body-sm text-primary font-medium hover:underline"
               >
                 Tentar novamente
               </button>
@@ -68,8 +80,8 @@ export default function SettingsPage() {
                     {company.tradeName || company.corporateName}
                   </Text>
                   <Text size="body-sm" color="muted">
-                    CNPJ {maskCnpj(company.document) || "não informado"} · identificador do
-                    tenant: {company.idCompany}
+                    CNPJ {maskCnpj(company.document) || "não informado"} ·
+                    identificador do tenant: {company.idCompany}
                   </Text>
                 </Stack>
               </Inline>
@@ -83,10 +95,11 @@ export default function SettingsPage() {
             <Inline gap={2} align="start">
               <Icon icon={Info} size="sm" className="text-muted" />
               <Text size="body-sm" color="muted">
-                Você edita os dados da sua empresa por aqui. Criar uma empresa nova, com outro
-                identificador, é feito no banco de dados por quem administra o sistema
-                (<code>scripts/create-company.js</code>) — assim um administrador não cria
-                tenants pela aplicação.
+                Você edita os dados da sua empresa por aqui. Criar uma empresa
+                nova, com outro identificador, é feito no banco de dados por
+                quem administra o sistema (
+                <code>scripts/create-company.js</code>) — assim um administrador
+                não cria tenants pela aplicação.
               </Text>
             </Inline>
           </Box>
@@ -130,7 +143,15 @@ export default function SettingsPage() {
   );
 }
 
-function SummaryStat({ label, value, hint }: { label: string; value: string; hint: string }) {
+function SummaryStat({
+  label,
+  value,
+  hint,
+}: {
+  label: string;
+  value: string;
+  hint: string;
+}) {
   return (
     <Box surface="surface" border="default" radius="lg" padding={4}>
       <Stack gap={1}>

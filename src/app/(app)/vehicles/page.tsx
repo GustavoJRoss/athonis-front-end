@@ -2,13 +2,22 @@
 
 import { useCallback, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, TruckIcon } from "lucide-react";
 import { PageHeader } from "@/components/ui/page-header";
 import { SearchInput } from "@/components/ui/search-input";
 import { Button } from "@/components/ui/button";
-import { DataTable, ListEmpty, type DataTableColumn } from "@/components/tables";
+import {
+  DataTable,
+  ListEmpty,
+  type DataTableColumn,
+} from "@/components/tables";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { DialogContent, DialogHeader, DialogRoot, DialogTitle } from "@/components/ui/dialog";
+import {
+  DialogContent,
+  DialogHeader,
+  DialogRoot,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   DrawerBody,
   DrawerContent,
@@ -44,13 +53,16 @@ export default function VehiclesPage() {
   const updateMutation = useUpdateVehicle();
   const deleteMutation = useDeleteVehicle();
 
-  const [formOpen, setFormOpen] = useState(() => searchParams.get("new") === "1");
+  const [formOpen, setFormOpen] = useState(
+    () => searchParams.get("new") === "1",
+  );
   const [editing, setEditing] = useState<Vehicle | null>(null);
   const [deleting, setDeleting] = useState<Vehicle | null>(null);
   const [detail, setDetail] = useState<Vehicle | null>(null);
 
   const driverName = useCallback(
-    (id: string | null) => drivers?.find((driver) => driver.id === id)?.name ?? "—",
+    (id: string | null) =>
+      drivers?.find((driver) => driver.id === id)?.name ?? "—",
     [drivers],
   );
 
@@ -64,14 +76,21 @@ export default function VehiclesPage() {
           <Stack gap={0}>
             <Text weight="medium">{vehicle.name || vehicle.plate}</Text>
             <Text size="caption" color="muted">
-              {[vehicle.plate, [vehicle.brand, vehicle.model].filter(Boolean).join(" ")]
+              {[
+                vehicle.plate,
+                [vehicle.brand, vehicle.model].filter(Boolean).join(" "),
+              ]
                 .filter(Boolean)
                 .join(" · ")}
             </Text>
           </Stack>
         ),
       },
-      { id: "type", header: "Tipo", cell: (vehicle) => VEHICLE_TYPE_LABEL[vehicle.type] },
+      {
+        id: "type",
+        header: "Tipo",
+        cell: (vehicle) => VEHICLE_TYPE_LABEL[vehicle.type],
+      },
       {
         id: "capacityKg",
         header: "Capacidade",
@@ -79,7 +98,11 @@ export default function VehiclesPage() {
         sortAccessor: (vehicle) => vehicle.capacityKg ?? 0,
         cell: (vehicle) => capacityLabel(vehicle.capacityKg),
       },
-      { id: "driver", header: "Motorista", cell: (vehicle) => driverName(vehicle.driverId) },
+      {
+        id: "driver",
+        header: "Motorista",
+        cell: (vehicle) => driverName(vehicle.driverId),
+      },
       {
         id: "status",
         header: "Status",
@@ -117,7 +140,8 @@ export default function VehiclesPage() {
     } catch (error) {
       toaster.error({
         title: "Não foi possível salvar o veículo",
-        description: error instanceof Error ? error.message : "Tente novamente.",
+        description:
+          error instanceof Error ? error.message : "Tente novamente.",
       });
     }
   }
@@ -131,7 +155,8 @@ export default function VehiclesPage() {
     } catch (error) {
       toaster.error({
         title: "Não foi possível remover o veículo",
-        description: error instanceof Error ? error.message : "Tente novamente.",
+        description:
+          error instanceof Error ? error.message : "Tente novamente.",
       });
     }
   }
@@ -141,6 +166,7 @@ export default function VehiclesPage() {
       <PageHeader
         title="Veículos"
         description="Frota e disponibilidade de veículos"
+        icon={TruckIcon}
         actions={
           <Button variant="primary" onClick={openCreate}>
             <Icon icon={Plus} size="sm" /> Novo veículo
@@ -195,12 +221,15 @@ export default function VehiclesPage() {
         open={formOpen}
         onOpenChange={(details) => {
           setFormOpen(details.open);
-          if (!details.open && searchParams.get("new")) router.replace(pathname);
+          if (!details.open && searchParams.get("new"))
+            router.replace(pathname);
         }}
       >
         <DialogContent size="lg">
           <DialogHeader>
-            <DialogTitle>{editing ? "Editar veículo" : "Novo veículo"}</DialogTitle>
+            <DialogTitle>
+              {editing ? "Editar veículo" : "Novo veículo"}
+            </DialogTitle>
           </DialogHeader>
           {/* Desmontar ao fechar: sem isso o formulario reabre com o
               que foi digitado no cadastro anterior. */}
@@ -236,12 +265,23 @@ export default function VehiclesPage() {
                   <DetailRow
                     label="Modelo"
                     value={
-                      [detail.brand, detail.model, detail.year].filter(Boolean).join(" ") || "—"
+                      [detail.brand, detail.model, detail.year]
+                        .filter(Boolean)
+                        .join(" ") || "—"
                     }
                   />
-                  <DetailRow label="Tipo" value={VEHICLE_TYPE_LABEL[detail.type]} />
-                  <DetailRow label="Capacidade" value={capacityLabel(detail.capacityKg)} />
-                  <DetailRow label="Motorista" value={driverName(detail.driverId)} />
+                  <DetailRow
+                    label="Tipo"
+                    value={VEHICLE_TYPE_LABEL[detail.type]}
+                  />
+                  <DetailRow
+                    label="Capacidade"
+                    value={capacityLabel(detail.capacityKg)}
+                  />
+                  <DetailRow
+                    label="Motorista"
+                    value={driverName(detail.driverId)}
+                  />
                   <StatusBadge tone={VEHICLE_STATUS_META[detail.status].tone}>
                     {VEHICLE_STATUS_META[detail.status].label}
                   </StatusBadge>

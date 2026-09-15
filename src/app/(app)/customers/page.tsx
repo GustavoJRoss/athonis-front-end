@@ -2,11 +2,15 @@
 
 import { useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, UsersIcon } from "lucide-react";
 import { PageHeader } from "@/components/ui/page-header";
 import { SearchInput } from "@/components/ui/search-input";
 import { Button } from "@/components/ui/button";
-import { DataTable, ListEmpty, type DataTableColumn } from "@/components/tables";
+import {
+  DataTable,
+  ListEmpty,
+  type DataTableColumn,
+} from "@/components/tables";
 import { StatusBadge } from "@/components/ui/status-badge";
 import {
   DialogContent,
@@ -48,7 +52,9 @@ export default function CustomersPage() {
   const updateMutation = useUpdateCustomer();
   const deleteMutation = useDeleteCustomer();
 
-  const [formOpen, setFormOpen] = useState(() => searchParams.get("new") === "1");
+  const [formOpen, setFormOpen] = useState(
+    () => searchParams.get("new") === "1",
+  );
   const [editing, setEditing] = useState<Customer | null>(null);
   const [deleting, setDeleting] = useState<Customer | null>(null);
   const [detail, setDetail] = useState<Customer | null>(null);
@@ -74,7 +80,11 @@ export default function CustomersPage() {
         sortAccessor: (customer) => customer.city,
         cell: (customer) => `${customer.city}/${customer.state}`,
       },
-      { id: "phone", header: "Telefone", cell: (customer) => maskPhone(customer.phone) || "—" },
+      {
+        id: "phone",
+        header: "Telefone",
+        cell: (customer) => maskPhone(customer.phone) || "—",
+      },
       {
         id: "orderCount",
         header: "Pedidos",
@@ -133,7 +143,8 @@ export default function CustomersPage() {
     } catch (error) {
       toaster.error({
         title: "Não foi possível salvar o cliente",
-        description: error instanceof Error ? error.message : "Tente novamente.",
+        description:
+          error instanceof Error ? error.message : "Tente novamente.",
       });
     }
   }
@@ -147,7 +158,8 @@ export default function CustomersPage() {
     } catch (error) {
       toaster.error({
         title: "Não foi possível remover o cliente",
-        description: error instanceof Error ? error.message : "Tente novamente.",
+        description:
+          error instanceof Error ? error.message : "Tente novamente.",
       });
     }
   }
@@ -156,6 +168,7 @@ export default function CustomersPage() {
     <Stack gap={6}>
       <PageHeader
         title="Clientes"
+        icon={UsersIcon}
         description="Cadastro e histórico de clientes"
         actions={
           <Button variant="primary" onClick={openCreate}>
@@ -164,7 +177,12 @@ export default function CustomersPage() {
         }
       />
 
-      <SearchInput value={search} onValueChange={setSearch} placeholder="Buscar por nome, documento ou cidade..." className="max-w-sm" />
+      <SearchInput
+        value={search}
+        onValueChange={setSearch}
+        placeholder="Buscar por nome, documento ou cidade..."
+        className="max-w-sm"
+      />
 
       <DataTable
         emptyState={
@@ -203,12 +221,15 @@ export default function CustomersPage() {
         open={formOpen}
         onOpenChange={(details) => {
           setFormOpen(details.open);
-          if (!details.open && searchParams.get("new")) router.replace(pathname);
+          if (!details.open && searchParams.get("new"))
+            router.replace(pathname);
         }}
       >
         <DialogContent size="2xl">
           <DialogHeader>
-            <DialogTitle>{editing ? "Editar cliente" : "Novo cliente"}</DialogTitle>
+            <DialogTitle>
+              {editing ? "Editar cliente" : "Novo cliente"}
+            </DialogTitle>
           </DialogHeader>
           {/* Desmontar ao fechar: sem isso o formulario reabre com o
               que foi digitado no cadastro anterior. */}
@@ -242,12 +263,17 @@ export default function CustomersPage() {
                     label={detail.type === "F" ? "CPF" : "CNPJ"}
                     value={maskDocument(detail.document, detail.type)}
                   />
-                  <DetailRow label="Telefone" value={maskPhone(detail.phone) || "—"} />
+                  <DetailRow
+                    label="Telefone"
+                    value={maskPhone(detail.phone) || "—"}
+                  />
                   <DetailRow label="Email" value={detail.email} />
                   <DetailRow
                     label="Endereço"
                     value={[
-                      [detail.address, detail.complement].filter(Boolean).join(" - "),
+                      [detail.address, detail.complement]
+                        .filter(Boolean)
+                        .join(" - "),
                       detail.district,
                       `${detail.city}/${detail.state}`,
                       maskCep(detail.zipCode),
@@ -255,16 +281,27 @@ export default function CustomersPage() {
                       .filter(Boolean)
                       .join(" — ")}
                   />
-                  <DetailRow label="Pedidos realizados" value={String(detail.orderCount)} />
+                  <DetailRow
+                    label="Pedidos realizados"
+                    value={String(detail.orderCount)}
+                  />
                   <DetailRow
                     label="Último pedido"
-                    value={detail.lastOrderDate ? new Date(detail.lastOrderDate).toLocaleDateString("pt-BR") : "—"}
+                    value={
+                      detail.lastOrderDate
+                        ? new Date(detail.lastOrderDate).toLocaleDateString(
+                            "pt-BR",
+                          )
+                        : "—"
+                    }
                   />
                   <Inline gap={2}>
                     <Text size="body-sm" color="muted">
                       Status:
                     </Text>
-                    <StatusBadge tone={CUSTOMER_STATUS_META[detail.status].tone}>
+                    <StatusBadge
+                      tone={CUSTOMER_STATUS_META[detail.status].tone}
+                    >
                       {CUSTOMER_STATUS_META[detail.status].label}
                     </StatusBadge>
                   </Inline>

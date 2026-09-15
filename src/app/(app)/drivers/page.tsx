@@ -2,13 +2,22 @@
 
 import { useCallback, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, UserRoundIcon } from "lucide-react";
 import { PageHeader } from "@/components/ui/page-header";
 import { SearchInput } from "@/components/ui/search-input";
 import { Button } from "@/components/ui/button";
-import { DataTable, ListEmpty, type DataTableColumn } from "@/components/tables";
+import {
+  DataTable,
+  ListEmpty,
+  type DataTableColumn,
+} from "@/components/tables";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { DialogContent, DialogHeader, DialogRoot, DialogTitle } from "@/components/ui/dialog";
+import {
+  DialogContent,
+  DialogHeader,
+  DialogRoot,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   DrawerBody,
   DrawerContent,
@@ -47,7 +56,9 @@ export default function DriversPage() {
   const updateMutation = useUpdateDriver();
   const deleteMutation = useDeleteDriver();
 
-  const [formOpen, setFormOpen] = useState(() => searchParams.get("new") === "1");
+  const [formOpen, setFormOpen] = useState(
+    () => searchParams.get("new") === "1",
+  );
   const [editing, setEditing] = useState<Driver | null>(null);
   const [deleting, setDeleting] = useState<Driver | null>(null);
   const [detail, setDetail] = useState<Driver | null>(null);
@@ -56,8 +67,9 @@ export default function DriversPage() {
   // driverId casaria dois identificadores sem relação (motorista 1 x veículo 1).
   const vehiclePlate = useCallback(
     (driverId: string | null) =>
-      vehicles?.find((vehicle) => vehicle.driverId !== null && vehicle.driverId === driverId)
-        ?.plate ?? "—",
+      vehicles?.find(
+        (vehicle) => vehicle.driverId !== null && vehicle.driverId === driverId,
+      )?.plate ?? "—",
     [vehicles],
   );
 
@@ -81,7 +93,11 @@ export default function DriversPage() {
         header: "Habilitação",
         cell: (driver) => <CnhCell driver={driver} />,
       },
-      { id: "vehicle", header: "Veículo", cell: (driver) => vehiclePlate(driver.id) },
+      {
+        id: "vehicle",
+        header: "Veículo",
+        cell: (driver) => vehiclePlate(driver.id),
+      },
       {
         id: "deliveryCount",
         header: "Entregas",
@@ -133,7 +149,8 @@ export default function DriversPage() {
     } catch (error) {
       toaster.error({
         title: "Não foi possível salvar o motorista",
-        description: error instanceof Error ? error.message : "Tente novamente.",
+        description:
+          error instanceof Error ? error.message : "Tente novamente.",
       });
     }
   }
@@ -147,7 +164,8 @@ export default function DriversPage() {
     } catch (error) {
       toaster.error({
         title: "Não foi possível remover o motorista",
-        description: error instanceof Error ? error.message : "Tente novamente.",
+        description:
+          error instanceof Error ? error.message : "Tente novamente.",
       });
     }
   }
@@ -156,6 +174,7 @@ export default function DriversPage() {
     <Stack gap={6}>
       <PageHeader
         title="Motoristas"
+        icon={UserRoundIcon}
         description="Cadastro e performance dos motoristas"
         actions={
           <Button variant="primary" onClick={openCreate}>
@@ -211,12 +230,15 @@ export default function DriversPage() {
         open={formOpen}
         onOpenChange={(details) => {
           setFormOpen(details.open);
-          if (!details.open && searchParams.get("new")) router.replace(pathname);
+          if (!details.open && searchParams.get("new"))
+            router.replace(pathname);
         }}
       >
         <DialogContent size="lg">
           <DialogHeader>
-            <DialogTitle>{editing ? "Editar motorista" : "Novo motorista"}</DialogTitle>
+            <DialogTitle>
+              {editing ? "Editar motorista" : "Novo motorista"}
+            </DialogTitle>
           </DialogHeader>
           {/* Desmontar ao fechar: sem isso o formulario reabre com o
               que foi digitado no cadastro anterior. */}
@@ -228,7 +250,9 @@ export default function DriversPage() {
               onSubmit={handleSubmit}
               onCancel={closeForm}
               loading={createMutation.isPending || updateMutation.isPending}
-              submitLabel={editing ? "Salvar alterações" : "Cadastrar motorista"}
+              submitLabel={
+                editing ? "Salvar alterações" : "Cadastrar motorista"
+              }
             />
           )}
         </DialogContent>
@@ -247,7 +271,10 @@ export default function DriversPage() {
               </DrawerHeader>
               <DrawerBody>
                 <Stack gap={4}>
-                  <DetailRow label="CPF" value={maskCpf(detail.document) || "—"} />
+                  <DetailRow
+                    label="CPF"
+                    value={maskCpf(detail.document) || "—"}
+                  />
                   <DetailRow label="CNH" value={maskCnh(detail.cnh) || "—"} />
                   <DetailRow
                     label="Categoria"
@@ -262,14 +289,25 @@ export default function DriversPage() {
                       Validade da CNH
                     </Text>
                     <Inline gap={2} align="center">
-                      <Text size="body-sm">{formatDateBr(detail.cnhExpiration)}</Text>
+                      <Text size="body-sm">
+                        {formatDateBr(detail.cnhExpiration)}
+                      </Text>
                       <CnhValidadeBadge expiration={detail.cnhExpiration} />
                     </Inline>
                   </Stack>
-                  <DetailRow label="Telefone" value={maskPhone(detail.phone) || "—"} />
+                  <DetailRow
+                    label="Telefone"
+                    value={maskPhone(detail.phone) || "—"}
+                  />
                   <DetailRow label="Veículo" value={vehiclePlate(detail.id)} />
-                  <DetailRow label="Entregas realizadas" value={String(detail.deliveryCount)} />
-                  <DetailRow label="Performance" value={`${detail.performance}%`} />
+                  <DetailRow
+                    label="Entregas realizadas"
+                    value={String(detail.deliveryCount)}
+                  />
+                  <DetailRow
+                    label="Performance"
+                    value={`${detail.performance}%`}
+                  />
                   <Inline gap={2}>
                     <Text size="body-sm" color="muted">
                       Status:
@@ -333,7 +371,9 @@ function CnhValidadeBadge({ expiration }: { expiration: string | null }) {
   if (!label) return null;
 
   return (
-    <StatusBadge tone={validade.estado === "vencida" ? "danger" : "warning"}>{label}</StatusBadge>
+    <StatusBadge tone={validade.estado === "vencida" ? "danger" : "warning"}>
+      {label}
+    </StatusBadge>
   );
 }
 

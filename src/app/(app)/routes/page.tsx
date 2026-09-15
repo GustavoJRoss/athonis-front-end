@@ -2,15 +2,34 @@
 
 import { useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { AlertTriangle, CheckCircle2, Play, Route as RouteIconLucide, Trash2 } from "lucide-react";
+import {
+  AlertTriangle,
+  CheckCircle2,
+  Play,
+  RouteIcon,
+  Route as RouteIconLucide,
+  Trash2,
+} from "lucide-react";
 import { PageHeader } from "@/components/ui/page-header";
 import { SearchInput } from "@/components/ui/search-input";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { EmptyState, ErrorState, LoadingState } from "@/components/ui/state";
-import { DialogContent, DialogHeader, DialogRoot, DialogTitle } from "@/components/ui/dialog";
+import {
+  DialogContent,
+  DialogHeader,
+  DialogRoot,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
-import { Box, Grid, Icon, Inline, Stack, Text } from "@/components/ui/primitives";
+import {
+  Box,
+  Grid,
+  Icon,
+  Inline,
+  Stack,
+  Text,
+} from "@/components/ui/primitives";
 import { ORDER_STATUS_META, ROUTE_STATUS_META } from "@/constants/domain";
 import {
   useCompleteRoute,
@@ -50,11 +69,14 @@ export default function RoutesPage() {
   const [unassigned, setUnassigned] = useState<UnassignedOrder[]>([]);
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [formOpen, setFormOpen] = useState(() => searchParams.get("new") === "1");
+  const [formOpen, setFormOpen] = useState(
+    () => searchParams.get("new") === "1",
+  );
   const [deleting, setDeleting] = useState<Route | null>(null);
 
   const effectiveSelectedId = selectedId ?? routes?.[0]?.id ?? null;
-  const selectedRoute = routes?.find((route) => route.id === effectiveSelectedId) ?? null;
+  const selectedRoute =
+    routes?.find((route) => route.id === effectiveSelectedId) ?? null;
 
   function driverName(route: Route) {
     if (route.driverName) return route.driverName;
@@ -105,7 +127,8 @@ export default function RoutesPage() {
     } catch (error) {
       toaster.error({
         title: "Não foi possível gerar a rota",
-        description: error instanceof Error ? error.message : "Tente novamente.",
+        description:
+          error instanceof Error ? error.message : "Tente novamente.",
       });
     }
   }
@@ -120,7 +143,8 @@ export default function RoutesPage() {
     } catch (error) {
       toaster.error({
         title: "Não foi possível iniciar a rota",
-        description: error instanceof Error ? error.message : "Tente novamente.",
+        description:
+          error instanceof Error ? error.message : "Tente novamente.",
       });
     }
   }
@@ -130,12 +154,14 @@ export default function RoutesPage() {
       await completeMutation.mutateAsync(route.id);
       toaster.success({
         title: "Rota concluída",
-        description: "As entregas em aberto foram baixadas e a equipe está livre.",
+        description:
+          "As entregas em aberto foram baixadas e a equipe está livre.",
       });
     } catch (error) {
       toaster.error({
         title: "Não foi possível concluir a rota",
-        description: error instanceof Error ? error.message : "Tente novamente.",
+        description:
+          error instanceof Error ? error.message : "Tente novamente.",
       });
     }
   }
@@ -150,7 +176,8 @@ export default function RoutesPage() {
     } catch (error) {
       toaster.error({
         title: "Não foi possível remover a rota",
-        description: error instanceof Error ? error.message : "Tente novamente.",
+        description:
+          error instanceof Error ? error.message : "Tente novamente.",
       });
     }
   }
@@ -159,6 +186,7 @@ export default function RoutesPage() {
     <Stack gap={6} className="flex h-full min-h-0 flex-col">
       <PageHeader
         title="Rotas"
+        icon={RouteIcon}
         description="Planejamento e acompanhamento de rotas"
         actions={
           <Button variant="primary" onClick={() => setFormOpen(true)}>
@@ -175,7 +203,11 @@ export default function RoutesPage() {
         <Box surface="surface" border="default" radius="lg">
           <ErrorState
             action={
-              <button type="button" onClick={() => refetch()} className="text-body-sm font-medium text-primary hover:underline">
+              <button
+                type="button"
+                onClick={() => refetch()}
+                className="text-body-sm text-primary font-medium hover:underline"
+              >
                 Tentar novamente
               </button>
             }
@@ -189,9 +221,17 @@ export default function RoutesPage() {
           />
         </Box>
       ) : (
-        <Grid columns={1} gap={4} className="min-h-0 flex-1 lg:grid-cols-[360px_1fr]">
+        <Grid
+          columns={1}
+          gap={4}
+          className="min-h-0 flex-1 lg:grid-cols-[360px_1fr]"
+        >
           <Stack gap={3} className="min-h-0">
-            <SearchInput value={search} onValueChange={setSearch} placeholder="Buscar rota ou região..." />
+            <SearchInput
+              value={search}
+              onValueChange={setSearch}
+              placeholder="Buscar rota ou região..."
+            />
             <Stack gap={2} className="max-h-[560px] overflow-y-auto pr-1">
               {routes.map((route) => (
                 <button
@@ -222,8 +262,15 @@ export default function RoutesPage() {
           </Stack>
 
           <Stack gap={4} className="min-h-0">
-            <Box surface="surface" border="default" radius="lg" className="h-72 overflow-hidden lg:h-80">
-              {selectedRoute && <RouteMap points={selectedRoute.stops} className="h-full" />}
+            <Box
+              surface="surface"
+              border="default"
+              radius="lg"
+              className="h-72 overflow-hidden lg:h-80"
+            >
+              {selectedRoute && (
+                <RouteMap points={selectedRoute.stops} className="h-full" />
+              )}
             </Box>
 
             {selectedRoute && (
@@ -239,7 +286,9 @@ export default function RoutesPage() {
                       </Text>
                     </Stack>
                     <Inline gap={2} align="center">
-                      <StatusBadge tone={ROUTE_STATUS_META[selectedRoute.status].tone}>
+                      <StatusBadge
+                        tone={ROUTE_STATUS_META[selectedRoute.status].tone}
+                      >
                         {ROUTE_STATUS_META[selectedRoute.status].label}
                       </StatusBadge>
 
@@ -281,21 +330,40 @@ export default function RoutesPage() {
                   </Inline>
 
                   {selectedRoute.simulated && (
-                    <Box surface="surface-muted" border="default" radius="md" padding={3}>
+                    <Box
+                      surface="surface-muted"
+                      border="default"
+                      radius="md"
+                      padding={3}
+                    >
                       <Inline gap={2} align="center">
-                        <Icon icon={AlertTriangle} size="sm" className="text-warning" />
+                        <Icon
+                          icon={AlertTriangle}
+                          size="sm"
+                          className="text-warning"
+                        />
                         <Text size="body-sm">
-                          Rota <strong>simulada</strong>: gerada sem a API de otimização do Google.
-                          Distâncias e horários são estimativas e não devem ser usados para despacho.
+                          Rota <strong>simulada</strong>: gerada sem a API de
+                          otimização do Google. Distâncias e horários são
+                          estimativas e não devem ser usados para despacho.
                         </Text>
                       </Inline>
                     </Box>
                   )}
 
                   <Grid columns={3} gap={4}>
-                    <DetailStat label="Motorista" value={driverName(selectedRoute)} />
-                    <DetailStat label="Veículo" value={vehiclePlate(selectedRoute)} />
-                    <DetailStat label="Paradas" value={String(selectedRoute.stops.length)} />
+                    <DetailStat
+                      label="Motorista"
+                      value={driverName(selectedRoute)}
+                    />
+                    <DetailStat
+                      label="Veículo"
+                      value={vehiclePlate(selectedRoute)}
+                    />
+                    <DetailStat
+                      label="Paradas"
+                      value={String(selectedRoute.stops.length)}
+                    />
                     <DetailStat
                       label="Distância"
                       value={`${selectedRoute.totalDistanceKm.toFixed(1)} km`}
@@ -304,7 +372,10 @@ export default function RoutesPage() {
                       label="Duração"
                       value={`${selectedRoute.totalDurationMin} min`}
                     />
-                    <DetailStat label="Pedidos" value={String(selectedRoute.orderIds.length)} />
+                    <DetailStat
+                      label="Pedidos"
+                      value={String(selectedRoute.orderIds.length)}
+                    />
                   </Grid>
 
                   <Stack gap={2}>
@@ -315,13 +386,15 @@ export default function RoutesPage() {
                       {/* Na ordem de entrega, com o estado de cada parada: é o
                           que o app do entregador vai baixar uma a uma. */}
                       {selectedRoute.stops.map((stop) => {
-                        const order = orders?.find((item) => item.id === stop.id);
+                        const order = orders?.find(
+                          (item) => item.id === stop.id,
+                        );
                         return (
                           <Inline
                             key={stop.id}
                             justify="between"
                             gap={3}
-                            className="rounded-md border border-border-subtle px-3 py-2"
+                            className="border-border-subtle rounded-md border px-3 py-2"
                           >
                             <Inline gap={2} align="center" className="min-w-0">
                               <Text size="body-sm" color="muted">
@@ -341,12 +414,16 @@ export default function RoutesPage() {
                                 tone={
                                   stop.completed
                                     ? "success"
-                                    : ORDER_STATUS_META[order?.status ?? "pending"].tone
+                                    : ORDER_STATUS_META[
+                                        order?.status ?? "pending"
+                                      ].tone
                                 }
                               >
                                 {stop.completed
                                   ? "Entregue"
-                                  : ORDER_STATUS_META[order?.status ?? "pending"].label}
+                                  : ORDER_STATUS_META[
+                                      order?.status ?? "pending"
+                                    ].label}
                               </StatusBadge>
                             </Inline>
                           </Inline>
@@ -370,7 +447,8 @@ export default function RoutesPage() {
         open={formOpen}
         onOpenChange={(details) => {
           setFormOpen(details.open);
-          if (!details.open && searchParams.get("new")) router.replace(pathname);
+          if (!details.open && searchParams.get("new"))
+            router.replace(pathname);
         }}
       >
         <DialogContent size="lg">
