@@ -15,11 +15,7 @@ export function AuthHeader() {
   const reducedMotion = usePrefersReducedMotion();
 
   function handleBack() {
-    if (window.history.length > 1) {
-      router.back();
-    } else {
-      router.push("/");
-    }
+    router.push("/");
   }
 
   useGSAP(
