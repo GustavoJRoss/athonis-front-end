@@ -87,6 +87,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
             // min-w-0: sem isso o input não encolhe abaixo da largura padrão
             // do navegador (~20 caracteres) e estoura a coluna do grid.
             "h-full min-w-0 flex-1 bg-transparent text-body text-foreground outline-none placeholder:text-muted",
+            // navegadores forçam um background no autofill (ex: sugestão de endereço do
+            // Google); sobrescrevemos com box-shadow inset, já que background-color não
+            // consegue vencer o estilo interno do autofill.
+            "autofill:[-webkit-text-fill-color:var(--color-foreground)] autofill:[box-shadow:0_0_0_1000px_var(--color-surface)_inset] autofill:[caret-color:var(--color-foreground)]",
             className,
           )}
           {...rest}

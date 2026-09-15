@@ -8,7 +8,6 @@ import {
   MenuItemText,
   MenuPositioner,
   MenuRoot,
-  MenuSeparator,
   MenuTrigger,
   Portal,
 } from "@ark-ui/react";
@@ -23,29 +22,25 @@ export type MenuActionItem = {
   disabled?: boolean;
 };
 export type MenuSeparatorItem = { separator: true };
-export type MenuAction = MenuActionItem | MenuSeparatorItem;
+export type MenuAction = MenuActionItem;
 
 export function renderMenuItems(items: MenuAction[]) {
-  return items.map((item, index) =>
-    "separator" in item ? (
-      <></>
-    ) : (
-      <MenuItem
-        key={item.value}
-        value={item.value}
-        disabled={item.disabled}
-        className={cn(
-          "text-body-sm text-foreground flex cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 transition-colors",
-          "data-[highlighted]:bg-surface-hover",
-          "data-[disabled]:pointer-events-none data-[disabled]:opacity-40",
-          item.danger && "text-danger data-[highlighted]:bg-danger/10",
-        )}
-      >
-        {item.icon && <Icon icon={item.icon} size="sm" />}
-        <MenuItemText>{item.label}</MenuItemText>
-      </MenuItem>
-    ),
-  );
+  return items.map((item) => (
+    <MenuItem
+      key={item.value}
+      value={item.value}
+      disabled={item.disabled}
+      className={cn(
+        "text-body-sm text-foreground flex cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 transition-colors",
+        "data-highlighted:bg-surface-hover",
+        "data-disabled:pointer-events-none data-disabled:opacity-40",
+        item.danger && "text-danger data-highlighted:bg-danger/10",
+      )}
+    >
+      {item.icon && <Icon icon={item.icon} size="sm" />}
+      <MenuItemText>{item.label}</MenuItemText>
+    </MenuItem>
+  ));
 }
 
 export type DropdownMenuProps = {

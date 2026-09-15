@@ -34,7 +34,7 @@ export function AppShell({
   userMenuItems,
   onUserMenuSelect,
 }: AppShellProps) {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [commandOpen, setCommandOpen] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);

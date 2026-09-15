@@ -58,7 +58,11 @@ import {
   PopoverTitle,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { TooltipContent, TooltipRoot, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  TooltipContent,
+  TooltipRoot,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { SearchInput } from "@/components/ui/search-input";
 import { FilterBar, FilterChip } from "@/components/ui/filter-bar";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -77,15 +81,45 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { FormField, FormSection } from "@/components/ui/form-field";
 import { DataTable, type DataTableColumn } from "@/components/tables";
 
-type DemoOrder = { id: string; customer: string; status: "pending" | "delivered"; total: string };
+type DemoOrder = {
+  id: string;
+  customer: string;
+  status: "pending" | "delivered";
+  total: string;
+};
 const DEMO_ORDERS: DemoOrder[] = [
-  { id: "PED-1001", customer: "Distribuidora Aurora Ltda", status: "delivered", total: "R$ 3.240,00" },
-  { id: "PED-1002", customer: "Mercado Bom Preço", status: "pending", total: "R$ 890,50" },
-  { id: "PED-1003", customer: "Comércio Vitória Sul", status: "pending", total: "R$ 1.520,00" },
+  {
+    id: "PED-1001",
+    customer: "Distribuidora Aurora Ltda",
+    status: "delivered",
+    total: "R$ 3.240,00",
+  },
+  {
+    id: "PED-1002",
+    customer: "Mercado Bom Preço",
+    status: "pending",
+    total: "R$ 890,50",
+  },
+  {
+    id: "PED-1003",
+    customer: "Comércio Vitória Sul",
+    status: "pending",
+    total: "R$ 1.520,00",
+  },
 ];
 const DEMO_COLUMNS: DataTableColumn<DemoOrder>[] = [
-  { id: "id", header: "Pedido", cell: (row) => row.id, sortAccessor: (row) => row.id },
-  { id: "customer", header: "Cliente", cell: (row) => row.customer, sortAccessor: (row) => row.customer },
+  {
+    id: "id",
+    header: "Pedido",
+    cell: (row) => row.id,
+    sortAccessor: (row) => row.id,
+  },
+  {
+    id: "customer",
+    header: "Cliente",
+    cell: (row) => row.customer,
+    sortAccessor: (row) => row.customer,
+  },
   {
     id: "status",
     header: "Status",
@@ -98,7 +132,13 @@ const DEMO_COLUMNS: DataTableColumn<DemoOrder>[] = [
   { id: "total", header: "Total", align: "right", cell: (row) => row.total },
 ];
 
-const VARIANTS: ButtonVariant[] = ["primary", "secondary", "tertiary", "ghost", "destructive"];
+const VARIANTS: ButtonVariant[] = [
+  "primary",
+  "secondary",
+  "tertiary",
+  "ghost",
+  "destructive",
+];
 
 function DemoSection({
   title,
@@ -185,13 +225,28 @@ export default function ComponentsDemoPage() {
                   </Box>
                 </Inline>
                 <Grid columns={3} gap={3}>
-                  <Box surface="background" border="subtle" radius="md" padding={3}>
+                  <Box
+                    surface="background"
+                    border="subtle"
+                    radius="md"
+                    padding={3}
+                  >
                     <Text size="body-sm">Grid 1</Text>
                   </Box>
-                  <Box surface="background" border="subtle" radius="md" padding={3}>
+                  <Box
+                    surface="background"
+                    border="subtle"
+                    radius="md"
+                    padding={3}
+                  >
                     <Text size="body-sm">Grid 2</Text>
                   </Box>
-                  <Box surface="background" border="subtle" radius="md" padding={3}>
+                  <Box
+                    surface="background"
+                    border="subtle"
+                    radius="md"
+                    padding={3}
+                  >
                     <Text size="body-sm">Grid 3</Text>
                   </Box>
                 </Grid>
@@ -217,7 +272,11 @@ export default function ComponentsDemoPage() {
             <Stack gap={4}>
               {VARIANTS.map((variant) => (
                 <Inline key={variant} gap={3} wrap>
-                  <Text size="body-sm" color="muted" className="w-20 capitalize">
+                  <Text
+                    size="body-sm"
+                    color="muted"
+                    className="w-20 capitalize"
+                  >
                     {variant}
                   </Text>
                   <Button variant={variant} size="sm">
@@ -248,15 +307,27 @@ export default function ComponentsDemoPage() {
                 description="Usamos para contato sobre o pedido"
                 placeholder="voce@empresa.com"
               />
-              <Input label="Busca" placeholder="Buscar pedidos..." prefix={<Icon icon={PackageSearch} size="sm" />} />
-              <Input label="Com erro" defaultValue="valor inválido" error="Este campo é obrigatório" />
+              <Input
+                label="Busca"
+                placeholder="Buscar pedidos..."
+                prefix={<Icon icon={PackageSearch} size="sm" />}
+              />
+              <Input
+                label="Com erro"
+                defaultValue="valor inválido"
+                error="Este campo é obrigatório"
+              />
               <Input label="Desabilitado" placeholder="Não editável" disabled />
               <Input label="Carregando" placeholder="Validando..." loading />
             </Grid>
           </DemoSection>
 
           <DemoSection title="Textarea">
-            <Textarea label="Observações" description="Detalhes adicionais do pedido" placeholder="Escreva aqui..." />
+            <Textarea
+              label="Observações"
+              description="Detalhes adicionais do pedido"
+              placeholder="Escreva aqui..."
+            />
           </DemoSection>
 
           <DemoSection title="Select">
@@ -283,15 +354,29 @@ export default function ComponentsDemoPage() {
                   { value: "3", label: "João Pedro Almeida" },
                 ]}
               />
-              <Select label="Carregando" placeholder="Buscando..." loading options={[]} />
-              <Select label="Desabilitado" placeholder="Indisponível" disabled options={[]} />
+              <Select
+                label="Carregando"
+                placeholder="Buscando..."
+                loading
+                options={[]}
+              />
+              <Select
+                label="Desabilitado"
+                placeholder="Indisponível"
+                disabled
+                options={[]}
+              />
             </Grid>
           </DemoSection>
 
           <DemoSection title="Checkbox / Radio / Switch">
             <Stack gap={4}>
               <Inline gap={6} wrap>
-                <Checkbox label="Aceito os termos" checked={checked} onCheckedChange={setChecked} />
+                <Checkbox
+                  label="Aceito os termos"
+                  checked={checked}
+                  onCheckedChange={setChecked}
+                />
                 <Checkbox label="Indeterminado" checked="indeterminate" />
                 <Checkbox label="Desabilitado" disabled />
               </Inline>
@@ -307,7 +392,11 @@ export default function ComponentsDemoPage() {
                 ]}
               />
               <Inline gap={6}>
-                <Switch label="Notificações ativas" checked={switchOn} onCheckedChange={setSwitchOn} />
+                <Switch
+                  label="Notificações ativas"
+                  checked={switchOn}
+                  onCheckedChange={setSwitchOn}
+                />
                 <Switch label="Carregando" loading defaultChecked />
                 <Switch label="Desabilitado" disabled />
               </Inline>
@@ -316,14 +405,21 @@ export default function ComponentsDemoPage() {
 
           <DemoSection title="DatePicker">
             <Grid columns={2} gap={4}>
-              <DatePicker label="Data de entrega" value={date} onValueChange={setDate} />
+              <DatePicker
+                label="Data de entrega"
+                value={date}
+                onValueChange={setDate}
+              />
               <DatePicker label="Desabilitado" disabled />
             </Grid>
           </DemoSection>
 
           <DemoSection title="Dialog">
             <Inline gap={3}>
-              <DialogRoot open={dialogOpen} onOpenChange={(d) => setDialogOpen(d.open)}>
+              <DialogRoot
+                open={dialogOpen}
+                onOpenChange={(d) => setDialogOpen(d.open)}
+              >
                 <DialogTrigger asChild>
                   <Button variant="secondary">Abrir dialog</Button>
                 </DialogTrigger>
@@ -340,7 +436,10 @@ export default function ComponentsDemoPage() {
                     </Text>
                   </DialogBody>
                   <DialogFooter>
-                    <Button variant="ghost" onClick={() => setDialogOpen(false)}>
+                    <Button
+                      variant="ghost"
+                      onClick={() => setDialogOpen(false)}
+                    >
                       Cancelar
                     </Button>
                     <Button
@@ -375,7 +474,9 @@ export default function ComponentsDemoPage() {
                 <DrawerContent side="right">
                   <DrawerHeader>
                     <DrawerTitle>Filtros</DrawerTitle>
-                    <DrawerDescription>Refine a listagem por status e período.</DrawerDescription>
+                    <DrawerDescription>
+                      Refine a listagem por status e período.
+                    </DrawerDescription>
                   </DrawerHeader>
                   <DrawerBody>
                     <Text size="body-sm" color="muted">
@@ -383,10 +484,16 @@ export default function ComponentsDemoPage() {
                     </Text>
                   </DrawerBody>
                   <DrawerFooter>
-                    <Button variant="ghost" onClick={() => setDrawerOpen(false)}>
+                    <Button
+                      variant="ghost"
+                      onClick={() => setDrawerOpen(false)}
+                    >
                       Limpar
                     </Button>
-                    <Button variant="primary" onClick={() => setDrawerOpen(false)}>
+                    <Button
+                      variant="primary"
+                      onClick={() => setDrawerOpen(false)}
+                    >
                       Aplicar
                     </Button>
                   </DrawerFooter>
@@ -405,7 +512,9 @@ export default function ComponentsDemoPage() {
                 </PopoverTrigger>
                 <PopoverContent>
                   <PopoverTitle>Configurações rápidas</PopoverTitle>
-                  <PopoverDescription>Ajustes desta visualização.</PopoverDescription>
+                  <PopoverDescription>
+                    Ajustes desta visualização.
+                  </PopoverDescription>
                 </PopoverContent>
               </PopoverRoot>
 
@@ -414,12 +523,14 @@ export default function ComponentsDemoPage() {
                   <button
                     type="button"
                     aria-label="Informação"
-                    className="flex size-8 items-center justify-center rounded-full border border-border text-muted hover:bg-surface-hover"
+                    className="border-border text-muted hover:bg-surface-hover flex size-8 items-center justify-center rounded-full border"
                   >
                     <Icon icon={Info} size="sm" />
                   </button>
                 </TooltipTrigger>
-                <TooltipContent>Tooltip com informação adicional</TooltipContent>
+                <TooltipContent>
+                  Tooltip com informação adicional
+                </TooltipContent>
               </TooltipRoot>
             </Inline>
           </DemoSection>
@@ -433,14 +544,24 @@ export default function ComponentsDemoPage() {
               <PageHeader
                 title="Pedidos"
                 description="Gerencie os pedidos em andamento"
-                breadcrumb={<Breadcrumb items={[{ label: "Dashboard", href: "#" }, { label: "Pedidos" }]} />}
+                breadcrumb={
+                  <Breadcrumb
+                    items={[
+                      { label: "Dashboard", href: "#" },
+                      { label: "Pedidos" },
+                    ]}
+                  />
+                }
                 actions={
                   <Button variant="primary" size="sm">
                     <Icon icon={Plus} size="sm" /> Novo pedido
                   </Button>
                 }
               />
-              <SectionHeader title="Itens recentes" description="Últimas atualizações" />
+              <SectionHeader
+                title="Itens recentes"
+                description="Últimas atualizações"
+              />
             </Stack>
           </DemoSection>
 
@@ -457,15 +578,28 @@ export default function ComponentsDemoPage() {
 
           <DemoSection title="MetricCard">
             <Grid columns={3} gap={4}>
-              <MetricCard label="Pedidos hoje" value="128" icon={Package} trend={{ direction: "up", label: "+12% vs ontem" }} />
-              <MetricCard label="Entregas atrasadas" value="4" trend={{ direction: "down", label: "-2 vs ontem" }} />
+              <MetricCard
+                label="Pedidos hoje"
+                value="128"
+                icon={Package}
+                trend={{ direction: "up", label: "+12% vs ontem" }}
+              />
+              <MetricCard
+                label="Entregas atrasadas"
+                value="4"
+                trend={{ direction: "down", label: "-2 vs ontem" }}
+              />
               <MetricCard label="Rotas ativas" value="—" loading />
             </Grid>
           </DemoSection>
 
           <DemoSection title="SearchInput / FilterBar">
             <Stack gap={3}>
-              <SearchInput value={search} onValueChange={setSearch} placeholder="Buscar pedidos..." />
+              <SearchInput
+                value={search}
+                onValueChange={setSearch}
+                placeholder="Buscar pedidos..."
+              />
               <FilterBar onClear={() => {}}>
                 <FilterChip label="Status: Pendente" onRemove={() => {}} />
                 <FilterChip label="Motorista: Carlos" onRemove={() => {}} />
@@ -476,7 +610,10 @@ export default function ComponentsDemoPage() {
           <DemoSection title="Empty / Error / Loading State">
             <Grid columns={3} gap={4}>
               <Box surface="surface-muted" radius="lg">
-                <EmptyState title="Nenhum pedido" description="Crie o primeiro pedido para começar." />
+                <EmptyState
+                  title="Nenhum pedido"
+                  description="Crie o primeiro pedido para começar."
+                />
               </Box>
               <Box surface="surface-muted" radius="lg">
                 <ErrorState />
@@ -488,7 +625,12 @@ export default function ComponentsDemoPage() {
           </DemoSection>
 
           <DemoSection title="Pagination">
-            <Pagination count={95} pageSize={10} page={paginationPage} onPageChange={setPaginationPage} />
+            <Pagination
+              count={95}
+              pageSize={10}
+              page={paginationPage}
+              onPageChange={setPaginationPage}
+            />
           </DemoSection>
 
           <DemoSection title="Tabs">
@@ -496,9 +638,33 @@ export default function ComponentsDemoPage() {
               value={tab}
               onValueChange={setTab}
               items={[
-                { value: "overview", label: "Visão geral", content: <Text size="body-sm" color="muted">Conteúdo da aba Visão geral</Text> },
-                { value: "history", label: "Histórico", content: <Text size="body-sm" color="muted">Conteúdo da aba Histórico</Text> },
-                { value: "settings", label: "Configurações", content: <Text size="body-sm" color="muted">Conteúdo da aba Configurações</Text> },
+                {
+                  value: "overview",
+                  label: "Visão geral",
+                  content: (
+                    <Text size="body-sm" color="muted">
+                      Conteúdo da aba Visão geral
+                    </Text>
+                  ),
+                },
+                {
+                  value: "history",
+                  label: "Histórico",
+                  content: (
+                    <Text size="body-sm" color="muted">
+                      Conteúdo da aba Histórico
+                    </Text>
+                  ),
+                },
+                {
+                  value: "settings",
+                  label: "Configurações",
+                  content: (
+                    <Text size="body-sm" color="muted">
+                      Conteúdo da aba Configurações
+                    </Text>
+                  ),
+                },
               ]}
             />
           </DemoSection>
@@ -510,8 +676,12 @@ export default function ComponentsDemoPage() {
                 items={[
                   { value: "edit", label: "Editar" },
                   { value: "duplicate", label: "Duplicar" },
-                  { separator: true },
-                  { value: "delete", label: "Excluir", danger: true, icon: Trash2 },
+                  {
+                    value: "delete",
+                    label: "Excluir",
+                    danger: true,
+                    icon: Trash2,
+                  },
                 ]}
               />
               <Avatar name="Fernanda Souza" size="md" />
@@ -521,7 +691,6 @@ export default function ComponentsDemoPage() {
                 items={[
                   { value: "profile", label: "Meu perfil" },
                   { value: "settings", label: "Configurações" },
-                  { separator: true },
                   { value: "logout", label: "Sair" },
                 ]}
               />
@@ -530,16 +699,40 @@ export default function ComponentsDemoPage() {
 
           <DemoSection title="Toast">
             <Inline gap={3} wrap>
-              <Button variant="secondary" onClick={() => toaster.success({ title: "Pedido criado", description: "PED-1042 foi criado com sucesso." })}>
+              <Button
+                variant="secondary"
+                onClick={() =>
+                  toaster.success({
+                    title: "Pedido criado",
+                    description: "PED-1042 foi criado com sucesso.",
+                  })
+                }
+              >
                 Success
               </Button>
-              <Button variant="secondary" onClick={() => toaster.error({ title: "Falha ao salvar", description: "Tente novamente em instantes." })}>
+              <Button
+                variant="secondary"
+                onClick={() =>
+                  toaster.error({
+                    title: "Falha ao salvar",
+                    description: "Tente novamente em instantes.",
+                  })
+                }
+              >
                 Error
               </Button>
-              <Button variant="secondary" onClick={() => toaster.warning({ title: "Estoque baixo" })}>
+              <Button
+                variant="secondary"
+                onClick={() => toaster.warning({ title: "Estoque baixo" })}
+              >
                 Warning
               </Button>
-              <Button variant="secondary" onClick={() => toaster.info({ title: "Nova versão disponível" })}>
+              <Button
+                variant="secondary"
+                onClick={() =>
+                  toaster.info({ title: "Nova versão disponível" })
+                }
+              >
                 Info
               </Button>
             </Inline>
@@ -568,16 +761,41 @@ export default function ComponentsDemoPage() {
               open={commandOpen}
               onOpenChange={setCommandOpen}
               items={[
-                { id: "new-order", label: "Criar pedido", group: "Ações rápidas", icon: Plus, onSelect: () => {} },
-                { id: "new-driver", label: "Adicionar motorista", group: "Ações rápidas", icon: UserPlus, onSelect: () => {} },
-                { id: "orders", label: "Ir para Pedidos", group: "Navegação", onSelect: () => {} },
-                { id: "routes", label: "Ir para Rotas", group: "Navegação", onSelect: () => {} },
+                {
+                  id: "new-order",
+                  label: "Criar pedido",
+                  group: "Ações rápidas",
+                  icon: Plus,
+                  onSelect: () => {},
+                },
+                {
+                  id: "new-driver",
+                  label: "Adicionar motorista",
+                  group: "Ações rápidas",
+                  icon: UserPlus,
+                  onSelect: () => {},
+                },
+                {
+                  id: "orders",
+                  label: "Ir para Pedidos",
+                  group: "Navegação",
+                  onSelect: () => {},
+                },
+                {
+                  id: "routes",
+                  label: "Ir para Rotas",
+                  group: "Navegação",
+                  onSelect: () => {},
+                },
               ]}
             />
           </DemoSection>
 
           <DemoSection title="FormField / FormSection">
-            <FormSection title="Dados do cliente" description="Informações usadas na entrega">
+            <FormSection
+              title="Dados do cliente"
+              description="Informações usadas na entrega"
+            >
               <FormField label="Nome fantasia" required>
                 <Input placeholder="Ex: Distribuidora Aurora" />
               </FormField>
@@ -600,7 +818,12 @@ export default function ComponentsDemoPage() {
               )}
               rowActions={() => [
                 { value: "view", label: "Ver detalhes" },
-                { value: "delete", label: "Excluir", danger: true, icon: Trash2 },
+                {
+                  value: "delete",
+                  label: "Excluir",
+                  danger: true,
+                  icon: Trash2,
+                },
               ]}
             />
           </DemoSection>
