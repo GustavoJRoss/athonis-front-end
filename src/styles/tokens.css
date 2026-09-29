@@ -10,7 +10,8 @@
  * prefixo `color-`; o bloco `@theme inline` só faz o mapeamento para o
  * namespace que o Tailwind usa para gerar `bg-*`/`text-*`/`border-*`. Isso
  * evita self-reference (`--color-x: var(--color-x)`) e mantém a troca de
- * tema reativa via `prefers-color-scheme`.
+ * tema reativa via o atributo `data-theme` em `<html>` (ver
+ * `src/hooks/use-theme.ts` e o script inline em `src/app/layout.tsx`).
  */
 
 :root {
@@ -51,43 +52,41 @@
   --muted: #6b7280;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0d0f13;
-    --foreground: #edeef1;
+[data-theme="dark"] {
+  --background: #0d0f13;
+  --foreground: #edeef1;
 
-    --surface: #16191f;
-    --surface-muted: #1c2028;
-    --surface-hover: #232833;
-    --surface-active: #2a303d;
+  --surface: #16191f;
+  --surface-muted: #1c2028;
+  --surface-hover: #232833;
+  --surface-active: #2a303d;
 
-    --border: #2a303d;
-    --border-subtle: #1f2430;
+  --border: #2a303d;
+  --border-subtle: #1f2430;
 
-    --primary: #5b82f2;
-    --primary-hover: #7a9bf5;
-    --primary-active: #a0b8f8;
-    --primary-foreground: #0d0f13;
+  --primary: #5b82f2;
+  --primary-hover: #7a9bf5;
+  --primary-active: #a0b8f8;
+  --primary-foreground: #0d0f13;
 
-    --secondary: #232833;
-    --secondary-hover: #2a303d;
-    --secondary-active: #333a49;
-    --secondary-foreground: #edeef1;
+  --secondary: #232833;
+  --secondary-hover: #2a303d;
+  --secondary-active: #333a49;
+  --secondary-foreground: #edeef1;
 
-    --success: #34b784;
-    --success-foreground: #04140d;
+  --success: #34b784;
+  --success-foreground: #04140d;
 
-    --warning: #f0a942;
-    --warning-foreground: #1c1300;
+  --warning: #f0a942;
+  --warning-foreground: #1c1300;
 
-    --danger: #f0605a;
-    --danger-foreground: #1c0504;
+  --danger: #f0605a;
+  --danger-foreground: #1c0504;
 
-    --info: #4bb4ec;
-    --info-foreground: #04141c;
+  --info: #4bb4ec;
+  --info-foreground: #04141c;
 
-    --muted: #8b93a3;
-  }
+  --muted: #8b93a3;
 }
 
 @theme inline {

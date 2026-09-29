@@ -9,6 +9,7 @@ import {
   PopoverRoot,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { ThemeMenu } from "@/components/ui/theme-menu";
 import { UserMenu } from "@/components/ui/user-menu";
 import type { MenuAction } from "@/components/ui/dropdown-menu";
 
@@ -91,6 +92,8 @@ export function Topbar({
             </Text>
           </PopoverContent>
         </PopoverRoot>
+
+        <ThemeMenu />
 
         <UserMenu
           name={userName}

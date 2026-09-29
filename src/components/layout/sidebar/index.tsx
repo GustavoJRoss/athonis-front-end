@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronsLeft, ChevronsRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { Icon, Text } from "@/components/ui/primitives";
 import {
@@ -35,7 +35,7 @@ export function Sidebar({
   return (
     <aside
       className={cn(
-        "border-border-subtle text-background flex h-full flex-col border-r bg-blue-950 transition-[width] duration-150",
+        "border-border-subtle relative flex h-full flex-col border-r bg-blue-950 text-white transition-[width] duration-150",
         collapsed ? "w-16" : "w-64",
         className,
       )}
@@ -46,7 +46,7 @@ export function Sidebar({
           collapsed && "justify-center px-0",
         )}
       >
-        <Text weight="semibold" className="text-heading-4 text-background">
+        <Text weight="semibold" className="text-heading-4 text-white">
           {collapsed ? (brandName.trim()[0] ?? "A").toUpperCase() : brandName}
         </Text>
       </div>
@@ -63,8 +63,8 @@ export function Sidebar({
                 "text-body-sm flex items-center gap-3 rounded-md px-3 py-2 font-medium transition-colors",
                 collapsed && "justify-center px-0",
                 active
-                  ? "bg-primary/20 text-background"
-                  : "text-background hover:bg-background/5",
+                  ? "bg-primary/20 text-white"
+                  : "text-white hover:bg-white/5",
               )}
             >
               <Icon icon={item.icon} size="sm" />
@@ -86,16 +86,14 @@ export function Sidebar({
       </nav>
 
       {showToggle && (
-        <div className="border-border-subtle shrink-0 border-t p-2">
-          <button
-            type="button"
-            onClick={onToggleCollapsed}
-            aria-label={collapsed ? "Expandir menu" : "Recolher menu"}
-            className="text-background hover:bg-background/15 flex w-full items-center justify-center rounded-md p-2 transition-colors"
-          >
-            <Icon icon={collapsed ? ChevronsRight : ChevronsLeft} size="sm" />
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={onToggleCollapsed}
+          aria-label={collapsed ? "Expandir menu" : "Recolher menu"}
+          className="border-border bg-surface text-muted hover:bg-surface-hover hover:text-foreground shadow-float absolute top-1/2 -right-3 z-10 flex size-6 -translate-y-1/2 items-center justify-center rounded-full border transition-colors"
+        >
+          <Icon icon={collapsed ? ChevronRight : ChevronLeft} size="xs" />
+        </button>
       )}
     </aside>
   );

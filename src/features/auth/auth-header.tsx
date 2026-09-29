@@ -6,6 +6,7 @@ import { ArrowLeft } from "lucide-react";
 import { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Container, Icon, Inline, Text } from "@/components/ui/primitives";
+import { ThemeMenu } from "@/components/ui/theme-menu";
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
 import { gsap } from "@/lib/gsap/register";
 
@@ -41,10 +42,18 @@ export function AuthHeader() {
           <Text weight="semibold" className="text-heading-4 text-foreground">
             ATHONIS
           </Text>
-          <Button type="button" variant="ghost" size="sm" onClick={handleBack}>
-            <Icon icon={ArrowLeft} size="sm" />
-            Voltar
-          </Button>
+          <Inline gap={2} align="center">
+            <ThemeMenu />
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={handleBack}
+            >
+              <Icon icon={ArrowLeft} size="sm" />
+              Voltar
+            </Button>
+          </Inline>
         </Inline>
       </Container>
     </header>

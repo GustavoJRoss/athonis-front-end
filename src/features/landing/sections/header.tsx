@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Container, Inline } from "@/components/ui/primitives";
+import { ThemeMenu } from "@/components/ui/theme-menu";
 import { cn } from "@/lib/utils/cn";
 
 const NAV_LINKS = [
@@ -52,7 +53,8 @@ export function LandingHeader() {
               </Link>
             ))}
           </Inline>
-          <Inline gap={3}>
+          <Inline gap={3} align="center">
+            <ThemeMenu />
             <Link href="/login">
               <Button variant="ghost" size="sm">
                 Entrar
