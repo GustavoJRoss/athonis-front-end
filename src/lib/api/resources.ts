@@ -9,7 +9,15 @@
  */
 
 import * as actions from "./actions";
-import type { Company, Customer, Driver, Order, Route, Vehicle } from "@/types/domain";
+import type {
+  Company,
+  Customer,
+  Driver,
+  Order,
+  OrderImportResult,
+  Route,
+  Vehicle,
+} from "@/types/domain";
 import type { CustomerFormInput } from "@/lib/validation/customer";
 import type { DriverFormInput } from "@/lib/validation/driver";
 import type { OrderFormInput } from "@/lib/validation/order";
@@ -50,6 +58,7 @@ export const ordersApi = {
   create: (input: OrderFormInput) => actions.createOrder(input),
   update: (id: string, input: OrderFormInput) => actions.updateOrder(id, input),
   remove: (id: string) => actions.deleteOrder(id),
+  import: (formData: FormData): Promise<OrderImportResult> => actions.importOrders(formData),
 };
 
 export const routesApi = {

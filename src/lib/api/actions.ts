@@ -9,6 +9,7 @@
 
 import { createAuthenticatedApiClient } from "./client";
 import { toApiErrorMessage } from "./errors";
+import { getSessionToken } from "@/lib/auth/session";
 import {
   mapCompany,
   mapCustomer,
@@ -28,7 +29,15 @@ import {
   type ApiRoute,
   type ApiVehicle,
 } from "./mappers";
-import type { Company, Customer, Driver, Order, Route, Vehicle } from "@/types/domain";
+import type {
+  Company,
+  Customer,
+  Driver,
+  Order,
+  OrderImportResult,
+  Route,
+  Vehicle,
+} from "@/types/domain";
 import type { CustomerFormInput } from "@/lib/validation/customer";
 import type { DriverFormInput } from "@/lib/validation/driver";
 import type { OrderFormInput } from "@/lib/validation/order";
@@ -191,6 +200,42 @@ export async function updateOrder(id: string, input: OrderFormInput): Promise<Or
 
 export async function deleteOrder(id: string): Promise<void> {
   await request(async (api) => api.delete(`/orders/${id}`));
+}
+
+/**
+ * Importação em massa via CSV. O arquivo chega como `FormData` (montado no
+ * cliente com `new FormData()`), que o Server Action aceita nativamente.
+ *
+ * Vai por `fetch` nativo, não pelo axios: o adapter Node do axios não está
+ * serializando corretamente o multipart dentro do runtime do `next dev`
+ * (o backend recebia a requisição sem o arquivo), enquanto `fetch` com
+ * `FormData` funciona normalmente.
+ */
+export async function importOrders(formData: FormData): Promise<OrderImportResult> {
+  const file = formData.get("file");
+  if (!(file instanceof File)) {
+    throw new Error("Nenhum arquivo foi enviado");
+  }
+
+  const token = await getSessionToken();
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+
+  const uploadForm = new FormData();
+  uploadForm.append("file", file, file.name);
+
+  const response = await fetch(`${apiUrl}/order-imports/upload`, {
+    method: "POST",
+    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+    body: uploadForm,
+  });
+
+  const data = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    throw new Error(toApiErrorMessage({ response: { status: response.status, data } }));
+  }
+
+  return data as OrderImportResult;
 }
 
 // ----------------------------------------------------------------- Rotas

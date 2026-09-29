@@ -169,3 +169,33 @@ export type Company = {
   /** Falso enquanto não há coordenadas: as rotas partem de um ponto padrão. */
   hasDepotCoordinates: boolean;
 };
+
+// -------------------------------------------------------- Importação de pedidos
+
+export type OrderImportSuccess = {
+  linha: number;
+  order_id: number;
+  title: string;
+};
+
+export type OrderImportFailure = {
+  linha: number;
+  dados: Record<string, unknown>;
+  erros: string[];
+};
+
+export type OrderImportStatus = "SUCESSO_TOTAL" | "SUCESSO_PARCIAL" | "FALHA_TOTAL";
+
+/** Espelha o `ImportResultDto` do backend — nomes em português mantidos de propósito. */
+export type OrderImportResult = {
+  totalLinhas: number;
+  quantidadeSucessos: number;
+  quantidadeFalhas: number;
+  sucessos: OrderImportSuccess[];
+  falhas: OrderImportFailure[];
+  arquivoOriginal: string;
+  arquivoRejeicao?: string;
+  tempoProcessamento: number;
+  status: OrderImportStatus;
+  mensagem: string;
+};

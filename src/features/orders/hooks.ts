@@ -45,3 +45,16 @@ export function useDeleteOrder() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: QUERY_KEY }),
   });
 }
+
+export function useImportOrders() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (formData: FormData) => ordersApi.import(formData),
+    onSuccess: (result) => {
+      // Só há pedidos novos para mostrar se algo foi de fato importado.
+      if (result.quantidadeSucessos > 0) {
+        queryClient.invalidateQueries({ queryKey: QUERY_KEY });
+      }
+    },
+  });
+}

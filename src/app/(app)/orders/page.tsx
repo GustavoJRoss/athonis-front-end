@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { PackageIcon, Plus, Trash2 } from "lucide-react";
+import { PackageIcon, Plus, Trash2, Upload } from "lucide-react";
 import { PageHeader } from "@/components/ui/page-header";
 import { SearchInput } from "@/components/ui/search-input";
 import { Button } from "@/components/ui/button";
@@ -40,6 +40,7 @@ import { useDrivers } from "@/features/drivers/hooks";
 import { useVehicles } from "@/features/vehicles/hooks";
 import { deliveryWindowLabel } from "@/lib/utils/delivery-window";
 import { OrderForm } from "@/features/orders/order-form";
+import { OrderImportDialog } from "@/features/orders/order-import-dialog";
 import { toaster } from "@/components/ui/toast";
 import type { OrderFormInput } from "@/lib/validation/order";
 import type { Order } from "@/types/domain";
@@ -66,6 +67,7 @@ export default function OrdersPage() {
   const [formOpen, setFormOpen] = useState(
     () => searchParams.get("new") === "1",
   );
+  const [importOpen, setImportOpen] = useState(false);
   const [editing, setEditing] = useState<Order | null>(null);
   const [deleting, setDeleting] = useState<Order | null>(null);
   const [explicitDetail, setExplicitDetail] = useState<
@@ -203,9 +205,14 @@ export default function OrdersPage() {
         description="Gerencie os pedidos em andamento"
         icon={PackageIcon}
         actions={
-          <Button variant="primary" onClick={openCreate}>
-            <Icon icon={Plus} size="sm" /> Novo pedido
-          </Button>
+          <Inline gap={2}>
+            <Button variant="secondary" onClick={() => setImportOpen(true)}>
+              <Icon icon={Upload} size="sm" /> Importar planilha
+            </Button>
+            <Button variant="primary" onClick={openCreate}>
+              <Icon icon={Plus} size="sm" /> Novo pedido
+            </Button>
+          </Inline>
         }
       />
 
@@ -328,6 +335,8 @@ export default function OrdersPage() {
           )}
         </DrawerContent>
       </DrawerRoot>
+
+      <OrderImportDialog open={importOpen} onOpenChange={setImportOpen} />
 
       <ConfirmDialog
         open={!!deleting}
