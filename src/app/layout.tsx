@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { ToasterProvider } from "@/components/ui/toaster";
-import "antd/dist/reset.css";
+import { Providers } from "./providers";
 import "./globals.css";
-import { AntdProvider } from "../components/providers/AntdProvider";
-import { LayoutRootPage } from "../components/layout/LayoutRootPage";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,23 +14,30 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Athonis",
-  description: "Gerenciamento de rotas e pedidos",
+  title: "ATHONIS — Gestão de logística e entregas",
+  description:
+    "Plataforma de gestão de pedidos, rotas, motoristas e indicadores logísticos.",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+const THEME_INIT_SCRIPT = `(function(){try{var s=localStorage.getItem("theme")||"system";var r=s==="system"?(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"):s;document.documentElement.setAttribute("data-theme",r)}catch(e){}})()`;
+
+export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <ToasterProvider>
-          <AntdProvider>{children}</AntdProvider>
-        </ToasterProvider>
+    <html
+      lang="pt-BR"
+      data-theme="light"
+      suppressHydrationWarning
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+    >
+      <head>
+        <script
+          type={typeof window === "undefined" ? "text/javascript" : "text/plain"}
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }}
+        />
+      </head>
+      <body className="flex min-h-full flex-col bg-background text-foreground">
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

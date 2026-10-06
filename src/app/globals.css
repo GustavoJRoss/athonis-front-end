@@ -1,46 +1,35 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@import "../styles/tokens.css";
 
-/* Scrollbar minimalista - Webkit (Chrome, Safari, Edge) */
-::-webkit-scrollbar {
-  width: 8px;
-  max-height: 8px;
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
 }
 
-::-webkit-scrollbar-track {
-  background: transparent;
+/*
+ * Ark UI posiciona as camadas flutuantes com `z-index: var(--z-index)` inline
+ * (padrão 50) — o mesmo nível do dialog. Elevamos os flutuantes para que um
+ * select aberto dentro de um dialog fique visível.
+ */
+[data-scope="select"][data-part="positioner"],
+[data-scope="combobox"][data-part="positioner"],
+[data-scope="menu"][data-part="positioner"],
+[data-scope="popover"][data-part="positioner"],
+[data-scope="tooltip"][data-part="positioner"],
+[data-scope="date-picker"][data-part="positioner"] {
+  --z-index: var(--z-floating) !important;
 }
 
-::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 4px;
-  transition: background 0.2s ease;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.3);
-}
-
-/* Dark mode */
-@media (prefers-color-scheme: dark) {
-  ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
+/* Marquee em CSS puro para a faixa de logos da landing — evita depender de Swiper. */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
   }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.3);
+  to {
+    transform: translateX(-50%);
   }
 }
 
-/* Firefox */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
-}
-
-@media (prefers-color-scheme: dark) {
-  * {
-    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
-  }
+.animate-marquee {
+  animation: marquee 28s linear infinite;
 }

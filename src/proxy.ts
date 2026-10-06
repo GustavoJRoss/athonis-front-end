@@ -1,52 +1,48 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
-import { validateToken } from "./lib/auth/utils";
+import { NextResponse, type NextRequest } from "next/server";
+import { SESSION_COOKIE } from "@/lib/auth/session";
+import { decodeJwtPayload, isJwtExpired } from "@/lib/auth/jwt";
 
-// Remova o 'default' aqui
-export async function proxy(request: NextRequest) {
-  const token = request.cookies.get("auth_token")?.value;
+const PROTECTED_PREFIXES = [
+  "/dashboard",
+  "/orders",
+  "/routes",
+  "/customers",
+  "/drivers",
+  "/vehicles",
+  "/analytics",
+  "/settings",
+];
+
+const PUBLIC_ONLY_PATHS = ["/login"];
+
+function isProtectedPath(pathname: string) {
+  return PROTECTED_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
+}
+
+/** Checagem otimista via cookie (claims não verificadas) — a verificação real é do backend. */
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const token = request.cookies.get(SESSION_COOKIE)?.value;
+  const payload = token ? decodeJwtPayload(token) : null;
+  const hasValidSession = !!token && !isJwtExpired(payload as { exp?: number } | null);
 
-  const isProtectedRoute =
-    pathname.startsWith("/client") ||
-    pathname.startsWith("/home") ||
-    pathname.startsWith("/orders") ||
-    pathname.startsWith("/drivers") ||
-    pathname.startsWith("/vehicles") ||
-    pathname.startsWith("/routes");
-
-  if (isProtectedRoute) {
-    if (!token) {
-      return NextResponse.redirect(new URL("/login", request.url));
+  if (isProtectedPath(pathname) && !hasValidSession) {
+    const loginUrl = new URL("/login", request.url);
+    if (pathname !== "/login") {
+      loginUrl.searchParams.set("redirect", pathname);
     }
-
-    const { valid } = await validateToken(token);
-    console.log({ valid });
-    if (!valid) {
-      const response = NextResponse.redirect(new URL("/login", request.url));
-      response.cookies.delete("auth_token");
-      return response;
-    }
+    const response = NextResponse.redirect(loginUrl);
+    if (token) response.cookies.delete(SESSION_COOKIE);
+    return response;
   }
 
-  if (pathname === "/login" && token) {
-    const { valid } = await validateToken(token);
-    if (valid) {
-      return NextResponse.redirect(new URL("/home", request.url));
-    }
+  if (PUBLIC_ONLY_PATHS.includes(pathname) && hasValidSession) {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: [
-    "/client/:path*",
-    "/home/:path*",
-    "/login",
-    "/drivers/:path*",
-    "/vehicles/:path*",
-    "/orders/:path*",
-    "/routes/:path*",
-  ],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|.*\\.svg$).*)"],
 };

@@ -1,8 +1,4 @@
-node_modules
-dist
-build
-coverage
 .next
-.out
-.env
-.env.*
+node_modules
+public
+package-lock.json
