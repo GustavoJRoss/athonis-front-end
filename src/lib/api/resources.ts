@@ -13,6 +13,7 @@ import type {
   Company,
   Customer,
   Driver,
+  DriverAccess,
   Order,
   OrderImportResult,
   Route,
@@ -77,4 +78,22 @@ export const routesApi = {
 export const companyApi = {
   get: (): Promise<Company> => actions.getCompany(),
   update: (input: CompanyFormInput): Promise<Company> => actions.updateCompany(input),
+};
+
+/** Login do motorista no aplicativo de entregas. Só o admin administra. */
+export const driverAccessApi = {
+  get: (driverId: string): Promise<DriverAccess> => actions.getDriverAccess(driverId),
+  grant: (driverId: string, input: { email: string; password: string }): Promise<DriverAccess> =>
+    actions.grantDriverAccess(driverId, input),
+  revoke: (driverId: string): Promise<void> => actions.revokeDriverAccess(driverId),
+};
+
+/** Indicadores de execução em campo, calculados pelo backend. */
+export const fieldAnalyticsApi = {
+  overview: (range: actions.AnalyticsRange) => actions.getFieldOverview(range),
+  drivers: (range: actions.AnalyticsRange) => actions.getFieldDrivers(range),
+  regions: (range: actions.AnalyticsRange) => actions.getFieldRegions(range),
+  occurrences: (range: actions.AnalyticsRange) => actions.getFieldOccurrences(range),
+  routes: (range: actions.AnalyticsRange) => actions.getFieldRoutes(range),
+  comparison: (routeId: string) => actions.getRouteComparison(routeId),
 };

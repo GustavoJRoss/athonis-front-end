@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Plus, Trash2, UserRoundIcon } from "lucide-react";
+import { Plus, Smartphone, Trash2, UserRoundIcon } from "lucide-react";
 import { PageHeader } from "@/components/ui/page-header";
 import { SearchInput } from "@/components/ui/search-input";
 import { Button } from "@/components/ui/button";
@@ -40,6 +40,7 @@ import {
 } from "@/features/drivers/hooks";
 import { useVehicles } from "@/features/vehicles/hooks";
 import { DriverForm } from "@/features/drivers/driver-form";
+import { DriverAccessDialog } from "@/features/drivers/driver-access-dialog";
 import { toaster } from "@/components/ui/toast";
 import type { DriverFormInput } from "@/lib/validation/driver";
 import type { Driver } from "@/types/domain";
@@ -62,6 +63,7 @@ export default function DriversPage() {
   const [editing, setEditing] = useState<Driver | null>(null);
   const [deleting, setDeleting] = useState<Driver | null>(null);
   const [detail, setDetail] = useState<Driver | null>(null);
+  const [accessOf, setAccessOf] = useState<Driver | null>(null);
 
   // O vínculo é o veículo apontar para o motorista. Comparar vehicle.id com
   // driverId casaria dois identificadores sem relação (motorista 1 x veículo 1).
@@ -214,6 +216,7 @@ export default function DriversPage() {
         rowActions={() => [
           { value: "view", label: "Ver detalhes" },
           { value: "edit", label: "Editar" },
+          { value: "access", label: "Acesso ao aplicativo", icon: Smartphone },
           { value: "delete", label: "Excluir", danger: true, icon: Trash2 },
         ]}
         onRowActionSelect={(driver, action) => {
@@ -222,6 +225,7 @@ export default function DriversPage() {
             setEditing(driver);
             setFormOpen(true);
           }
+          if (action === "access") setAccessOf(driver);
           if (action === "delete") setDeleting(driver);
         }}
       />
@@ -322,6 +326,8 @@ export default function DriversPage() {
           )}
         </DrawerContent>
       </DrawerRoot>
+
+      <DriverAccessDialog driver={accessOf} onClose={() => setAccessOf(null)} />
 
       <ConfirmDialog
         open={!!deleting}

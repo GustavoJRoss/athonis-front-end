@@ -11,7 +11,7 @@ export const orderFormSchema = z.object({
   title: z.string().min(2, "Informe o título do pedido").max(100),
   quantity: z.coerce.number().int().min(1, "Informe a quantidade"),
   urgency: z.enum(["low", "normal", "high", "critical"], { error: "Selecione a urgência" }),
-  status: z.enum(["pending", "planned", "in_route", "delivered", "delayed", "cancelled"], { error: "Selecione o status" }),
+  status: z.enum(["pending", "planned", "in_route", "delivered", "failed", "delayed", "cancelled"], { error: "Selecione o status" }),
   // Opcional: nem toda entrega tem valor declarado, e gravar zero afirmaria
   // que a mercadoria não vale nada.
   value: z.preprocess(

@@ -1,6 +1,8 @@
 import type { StatusTone } from "@/components/ui/status-badge";
 import type {
   CnhCategory,
+  DayPeriod,
+  OccurrenceType,
   CustomerStatus,
   DriverStatus,
   OrderStatus,
@@ -17,6 +19,7 @@ export const ORDER_STATUS_META: StatusMeta<OrderStatus> = {
   planned: { label: "Planejado", tone: "info" },
   in_route: { label: "Em rota", tone: "primary" },
   delivered: { label: "Entregue", tone: "success" },
+  failed: { label: "Não entregue", tone: "danger" },
   delayed: { label: "Atrasado", tone: "danger" },
   cancelled: { label: "Cancelado", tone: "muted" },
 };
@@ -86,4 +89,22 @@ export const VEHICLE_TYPE_LABEL: Record<VehicleType, string> = {
   truck: "Caminhão",
   motorcycle: "Moto",
   utility: "Utilitário",
+};
+
+/** Motivos de não entrega registrados pelo entregador no aplicativo. */
+export const OCCURRENCE_LABEL: Record<OccurrenceType, string> = {
+  customer_absent: "Cliente ausente",
+  address_not_found: "Endereço não encontrado",
+  refused: "Recusado pelo cliente",
+  damaged_goods: "Mercadoria avariada",
+  closed_establishment: "Estabelecimento fechado",
+  access_restricted: "Acesso restrito",
+  traffic: "Trânsito ou via bloqueada",
+  other: "Outro motivo",
+};
+
+export const DAY_PERIOD_LABEL: Record<DayPeriod, string> = {
+  morning: "Manhã",
+  afternoon: "Tarde",
+  evening: "Noite",
 };

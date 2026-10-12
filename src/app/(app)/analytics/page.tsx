@@ -46,9 +46,10 @@ import { ORDER_STATUS_META } from "@/constants/domain";
 import { deliveryWindowHours, fullDayHours } from "@/lib/utils/delivery-window";
 import { useCompany } from "@/features/company/hooks";
 import { useAnalyticsData } from "@/features/analytics/hooks";
+import { FieldExecutionPanel } from "@/features/analytics/field-execution";
+import { Tabs } from "@/components/ui/tabs";
 import type { Order } from "@/types/domain";
 
-const TODAY = new Date("2026-08-18T00:00:00");
 
 const PERIOD_OPTIONS: SelectOption[] = [
   { value: "7", label: "Últimos 7 dias" },
@@ -58,14 +59,37 @@ const PERIOD_OPTIONS: SelectOption[] = [
 
 function withinPeriod(date: string, days: string) {
   if (days === "all") return true;
+  // "Hoje" é lido a cada chamada: uma data fixa no código deixaria os
+  // filtros de 7 e 30 dias presos ao dia em que o arquivo foi escrito.
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
   const orderDate = new Date(`${date}T00:00:00`);
   const diffDays = Math.abs(
-    (TODAY.getTime() - orderDate.getTime()) / (1000 * 60 * 60 * 24),
+    (today.getTime() - orderDate.getTime()) / (1000 * 60 * 60 * 24),
   );
   return diffDays <= Number(days);
 }
 
 export default function AnalyticsPage() {
+  return (
+    <Stack gap={6}>
+      <PageHeader
+        title="Indicadores"
+        description="Analytics e performance operacional"
+        icon={BarChart3Icon}
+      />
+      <Tabs
+        items={[
+          { value: "field", label: "Execução em campo", content: <FieldExecutionPanel /> },
+          { value: "orders", label: "Pedidos", content: <OrdersPanel /> },
+        ]}
+      />
+    </Stack>
+  );
+}
+
+/** Indicadores calculados sobre o cadastro de pedidos, como já existiam. */
+function OrdersPanel() {
   const { data, isLoading, isError, refetch } = useAnalyticsData();
 
   const [period, setPeriod] = useState("30");
@@ -266,11 +290,6 @@ export default function AnalyticsPage() {
   if (isLoading) {
     return (
       <Stack gap={6}>
-        <PageHeader
-          title="Indicadores"
-          description="Analytics e performance operacional"
-          icon={BarChart3Icon}
-        />
         <Box surface="surface" border="default" radius="lg">
           <LoadingState title="Carregando indicadores..." />
         </Box>
@@ -281,11 +300,6 @@ export default function AnalyticsPage() {
   if (isError) {
     return (
       <Stack gap={6}>
-        <PageHeader
-          title="Indicadores"
-          description="Analytics e performance operacional"
-          icon={BarChart3Icon}
-        />
         <Box surface="surface" border="default" radius="lg">
           <ErrorState
             action={
@@ -305,12 +319,6 @@ export default function AnalyticsPage() {
 
   return (
     <Stack gap={6}>
-      <PageHeader
-        title="Indicadores"
-        description="Analytics e performance operacional"
-        icon={BarChart3Icon}
-      />
-
       <Box
         surface="surface"
         border="default"

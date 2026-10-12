@@ -33,7 +33,14 @@ import type {
   Company,
   Customer,
   Driver,
+  DriverAccess,
+  FieldDriverStats,
+  FieldOccurrences,
+  FieldOverview,
+  FieldRegionStats,
+  FieldRouteSummary,
   Order,
+  RouteComparison,
   OrderImportResult,
   Route,
   Vehicle,
@@ -321,3 +328,211 @@ export async function optimizeRoutes(orderIds: string[]): Promise<{
     };
   });
 }
+
+// ------------------------------------------------ Acesso ao aplicativo
+
+type ApiDriverAccess = {
+  driver_id: number;
+  has_access: boolean;
+  email: string | null;
+  is_active: boolean;
+  last_login: string | null;
+};
+
+function mapDriverAccess(data: ApiDriverAccess): DriverAccess {
+  return {
+    driverId: String(data.driver_id),
+    hasAccess: data.has_access,
+    email: data.email,
+    isActive: data.is_active,
+    lastLogin: data.last_login,
+  };
+}
+
+export async function getDriverAccess(driverId: string): Promise<DriverAccess> {
+  return request(async (api) => {
+    const { data } = await api.get<ApiDriverAccess>(`/drivers/${driverId}/access`);
+    return mapDriverAccess(data);
+  });
+}
+
+/** Cria o login do motorista ou, se já existir, troca e-mail e senha. */
+export async function grantDriverAccess(
+  driverId: string,
+  input: { email: string; password: string },
+): Promise<DriverAccess> {
+  return request(async (api) => {
+    const { data } = await api.put<ApiDriverAccess>(`/drivers/${driverId}/access`, input);
+    return mapDriverAccess(data);
+  });
+}
+
+export async function revokeDriverAccess(driverId: string): Promise<void> {
+  await request(async (api) => api.delete(`/drivers/${driverId}/access`));
+}
+
+// ---------------------------------------------------- Execução em campo
+
+/** Período em dias (AAAA-MM-DD). Sem valores, o backend usa os últimos 30 dias. */
+export type AnalyticsRange = { from?: string; to?: string };
+
+/* eslint-disable @typescript-eslint/no-explicit-any -- respostas de leitura,
+   convertidas campo a campo logo abaixo */
+
+export async function getFieldOverview(range: AnalyticsRange): Promise<FieldOverview> {
+  return request(async (api) => {
+    const { data } = await api.get<any>("/analytics/overview", { params: range });
+    return {
+      period: data.period,
+      routesTotal: data.routes_total,
+      routesCompleted: data.routes_completed,
+      routesWithTracking: data.routes_with_tracking,
+      stopsTotal: data.stops_total,
+      stopsDelivered: data.stops_delivered,
+      stopsFailed: data.stops_failed,
+      stopsPending: data.stops_pending,
+      completionRate: data.completion_rate,
+      onTimeRate: data.on_time_rate,
+      avgDelayMin: data.avg_delay_min,
+      avgServiceMin: data.avg_service_min,
+      plannedDistanceKm: data.planned_distance_km,
+      actualDistanceKm: data.actual_distance_km,
+      plannedDurationMin: data.planned_duration_min,
+      actualDurationMin: data.actual_duration_min,
+      idleTimeMin: data.idle_time_min,
+      stopsOutOfOrder: data.stops_out_of_order,
+      occurrencesTotal: data.occurrences_total,
+    };
+  });
+}
+
+export async function getFieldDrivers(range: AnalyticsRange): Promise<FieldDriverStats[]> {
+  return request(async (api) => {
+    const { data } = await api.get<any[]>("/analytics/drivers", { params: range });
+    return (data ?? []).map((item) => ({
+      driverId: String(item.driver_id),
+      name: item.name,
+      routes: item.routes,
+      stopsTotal: item.stops_total,
+      stopsDelivered: item.stops_delivered,
+      stopsFailed: item.stops_failed,
+      completionRate: item.completion_rate,
+      avgServiceMin: item.avg_service_min,
+      avgDelayMin: item.avg_delay_min,
+      actualDistanceKm: item.actual_distance_km,
+      stopsOutOfOrder: item.stops_out_of_order,
+    }));
+  });
+}
+
+export async function getFieldRegions(range: AnalyticsRange): Promise<FieldRegionStats[]> {
+  return request(async (api) => {
+    const { data } = await api.get<any[]>("/analytics/regions", { params: range });
+    return (data ?? []).map((item) => ({
+      region: item.region,
+      period: item.period,
+      stops: item.stops,
+      stopsFailed: item.stops_failed,
+      avgServiceMin: item.avg_service_min,
+      avgDelayMin: item.avg_delay_min,
+    }));
+  });
+}
+
+export async function getFieldOccurrences(range: AnalyticsRange): Promise<FieldOccurrences> {
+  return request(async (api) => {
+    const { data } = await api.get<any>("/analytics/occurrences", { params: range });
+    return {
+      total: data.total,
+      byType: data.by_type,
+      recent: (data.recent ?? []).map((item: any) => ({
+        routeId: String(item.route_id),
+        orderId: item.order_id != null ? String(item.order_id) : null,
+        orderTitle: item.order_title,
+        clientName: item.client_name,
+        driverName: item.driver_name,
+        occurrenceType: item.occurrence_type,
+        notes: item.notes,
+        occurredAt: item.occurred_at,
+      })),
+    };
+  });
+}
+
+export async function getFieldRoutes(range: AnalyticsRange): Promise<FieldRouteSummary[]> {
+  return request(async (api) => {
+    const { data } = await api.get<any[]>("/analytics/routes", { params: range });
+    return (data ?? []).map((item) => ({
+      routeId: String(item.route_id),
+      status: item.status,
+      plannedDate: item.planned_date,
+      region: item.region,
+      driverName: item.driver_name,
+      simulated: item.simulated,
+      stopsTotal: item.stops_total,
+      stopsDelivered: item.stops_delivered,
+      stopsFailed: item.stops_failed,
+      plannedDistanceM: item.planned_distance_m,
+      actualDistanceM: item.actual_distance_m,
+      plannedDurationMin: item.planned_duration_min,
+      actualDurationMin: item.actual_duration_min,
+      stopsOutOfOrder: item.stops_out_of_order,
+      hasTracking: item.has_tracking,
+    }));
+  });
+}
+
+export async function getRouteComparison(routeId: string): Promise<RouteComparison> {
+  return request(async (api) => {
+    const { data } = await api.get<any>(`/analytics/routes/${routeId}/comparison`);
+    const summary = data.summary;
+    return {
+      route: {
+        routeId: String(data.route.route_id),
+        status: data.route.status,
+        plannedDate: data.route.planned_date,
+        region: data.route.region,
+        simulated: data.route.simulated,
+        driverName: data.route.driver_name,
+        vehicleName: data.route.vehicle_name,
+        startedAt: data.route.started_at,
+        finishedAt: data.route.finished_at,
+      },
+      summary: summary
+        ? {
+            plannedDistanceM: summary.planned_distance_m,
+            actualDistanceM: summary.actual_distance_m,
+            plannedDurationMin: summary.planned_duration_min,
+            actualDurationMin: summary.actual_duration_min,
+            stopsTotal: summary.stops_total,
+            stopsDelivered: summary.stops_delivered,
+            stopsFailed: summary.stops_failed,
+            stopsOutOfOrder: summary.stops_out_of_order,
+            idleTimeMin: summary.idle_time_min,
+            avgServiceMin: summary.avg_service_min,
+            avgDelayMin: summary.avg_delay_min,
+            pingCount: summary.ping_count,
+          }
+        : null,
+      stops: (data.stops ?? []).map((item: any) => ({
+        orderId: String(item.order_id),
+        title: item.title,
+        clientName: item.client_name,
+        address: item.address,
+        status: item.status,
+        plannedSequence: item.planned_sequence,
+        actualSequence: item.actual_sequence,
+        plannedArrival: item.planned_arrival,
+        actualArrival: item.actual_arrival,
+        completedAt: item.completed_at,
+        delayMin: item.delay_min,
+        serviceMin: item.service_min,
+        occurrenceType: item.occurrence_type,
+        notes: item.notes,
+      })),
+      pathPoints: (data.path ?? []).length,
+    };
+  });
+}
+
+/* eslint-enable @typescript-eslint/no-explicit-any */
