@@ -54,6 +54,13 @@ export type TrackMapProps = {
 const TILE_URL = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 const ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
 
+/**
+ * Enquadramento sem animação. O mapa é montado e desmontado em abas e
+ * dialogs; uma transição ainda em curso no momento de desmontar quebrava o
+ * Leaflet ("Cannot read properties of undefined (reading '_leaflet_pos')").
+ */
+const FIT_OPTIONS = { padding: [32, 32] as [number, number], maxZoom: 16, animate: false };
+
 /** Centro usado enquanto não há nenhum ponto a mostrar (Jaraguá do Sul). */
 const FALLBACK_CENTER: [number, number] = [-26.4851, -49.0669];
 
@@ -78,6 +85,7 @@ export function TrackMap({
   const container = useRef<HTMLDivElement>(null);
   const map = useRef<LeafletMap | null>(null);
   const layer = useRef<LayerGroup | null>(null);
+  const leaflet = useRef<typeof import("leaflet") | null>(null);
   const fitted = useRef<string | undefined>(undefined);
   /** Último enquadramento pedido, para refazê-lo quando o contêiner ganhar tamanho. */
   const bounds = useRef<[number, number][] | null>(null);
@@ -95,6 +103,7 @@ export function TrackMap({
     void import("leaflet").then((L) => {
       if (cancelled || !container.current) return;
 
+      leaflet.current = L;
       if (!map.current) {
         map.current = L.map(container.current, { zoomControl: true, attributionControl: true });
         map.current.setView(FALLBACK_CENTER, 12);
@@ -149,12 +158,16 @@ export function TrackMap({
       }
 
       for (const idle of idleStops) {
+        // Deslocado para cima e à direita do ponto e acima das paradas: uma
+        // parada indevida costuma acontecer colada a um endereço de entrega, e
+        // centralizado ali o aviso ficaria escondido atrás do marcador dela.
         L.marker([idle.lat, idle.lng], {
+          zIndexOffset: 500,
           icon: L.divIcon({
             className: "",
             html: `<div style="width:26px;height:26px;border-radius:50%;background:${color.warning};border:2px solid ${color.surface};display:flex;align-items:center;justify-content:center;color:#1c1300;font:700 14px system-ui">!</div>`,
             iconSize: [26, 26],
-            iconAnchor: [13, 13],
+            iconAnchor: [-6, 32],
           }),
         })
           .bindPopup(balloon(`Parado por ${idle.durationMin} min`, idle.detail ?? "Fora de uma parada de entrega"))
@@ -218,8 +231,8 @@ export function TrackMap({
         ];
         if (all.length > 0) {
           bounds.current = all;
-          map.current.invalidateSize();
-          map.current.fitBounds(L.latLngBounds(all), { padding: [32, 32], maxZoom: 16 });
+          map.current.invalidateSize({ animate: false });
+          map.current.fitBounds(L.latLngBounds(all), FIT_OPTIONS);
           fitted.current = key;
         }
       }
@@ -238,19 +251,20 @@ export function TrackMap({
     if (!element) return;
 
     const observer = new ResizeObserver(() => {
-      if (!map.current || element.clientWidth === 0 || element.clientHeight === 0) return;
-      map.current.invalidateSize();
+      const L = leaflet.current;
+      if (!L || !map.current || element.clientWidth === 0 || element.clientHeight === 0) return;
+      map.current.invalidateSize({ animate: false });
       if (bounds.current) {
-        void import("leaflet").then((L) => {
-          if (!map.current || !bounds.current) return;
-          map.current.fitBounds(L.latLngBounds(bounds.current), { padding: [32, 32], maxZoom: 16 });
-        });
+        map.current.fitBounds(L.latLngBounds(bounds.current), FIT_OPTIONS);
       }
     });
     observer.observe(element);
 
     return () => {
       observer.disconnect();
+      // Para qualquer movimento em curso antes de desmontar: uma animação que
+      // termina depois do `remove()` tenta posicionar camadas que já não existem.
+      map.current?.stop();
       map.current?.remove();
       map.current = null;
       layer.current = null;
