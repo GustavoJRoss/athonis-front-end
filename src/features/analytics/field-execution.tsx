@@ -262,8 +262,8 @@ export function FieldExecutionPanel() {
           <Grid columns={4} gap={4} className="grid-cols-2 lg:grid-cols-4">
             <Compare
               label="Distância"
-              planned={overview.routesWithTracking > 0 ? `${overview.plannedDistanceKm} km` : "—"}
-              actual={overview.routesWithTracking > 0 ? `${overview.actualDistanceKm} km` : "—"}
+              planned={overview.routesWithTracking > 0 ? formatKm(overview.plannedDistanceKm * 1000) : "—"}
+              actual={overview.routesWithTracking > 0 ? formatKm(overview.actualDistanceKm * 1000) : "—"}
             />
             <Compare
               label="Duração das rotas"

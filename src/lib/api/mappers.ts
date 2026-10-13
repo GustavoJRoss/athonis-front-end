@@ -11,6 +11,7 @@ import type {
   Route,
   RouteStop,
   Vehicle,
+  OccurrenceType,
   OrderStatus,
   RouteStatus,
 } from "@/types/domain";
@@ -407,6 +408,9 @@ export type ApiRouteOrder = {
   delivery_latitude?: number | null;
   delivery_longitude?: number | null;
   client?: { name?: string | null } | null;
+  occurrence_type?: OccurrenceType | null;
+  driver_notes?: string | null;
+  closed_at?: string | null;
 };
 
 export type ApiRoute = {
@@ -450,6 +454,10 @@ export function mapRoute(route: ApiRoute): Route {
     sequence: order.stop_sequence ?? index + 1,
     // Baixa individual da parada — é o que o app do entregador marca.
     completed: order.status === "delivered",
+    failed: order.status === "failed",
+    occurrenceType: order.occurrence_type ?? null,
+    driverNotes: order.driver_notes ?? null,
+    closedAt: order.closed_at ?? null,
   }));
 
   return {

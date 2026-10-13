@@ -112,6 +112,14 @@ export type RouteStop = {
   lng: number;
   sequence: number;
   completed: boolean;
+  /** Parada visitada e não entregue. */
+  failed: boolean;
+  /** Motivo informado pelo entregador no aplicativo; null se foi entregue ou está em aberto. */
+  occurrenceType: OccurrenceType | null;
+  /** Observação escrita pelo entregador na entrega ou na ocorrência. */
+  driverNotes: string | null;
+  /** Hora em que o entregador encerrou a parada. */
+  closedAt: string | null;
 };
 
 export type Route = {

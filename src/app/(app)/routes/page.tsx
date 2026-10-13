@@ -30,7 +30,11 @@ import {
   Stack,
   Text,
 } from "@/components/ui/primitives";
-import { ORDER_STATUS_META, ROUTE_STATUS_META } from "@/constants/domain";
+import {
+  OCCURRENCE_LABEL,
+  ORDER_STATUS_META,
+  ROUTE_STATUS_META,
+} from "@/constants/domain";
 import {
   useCompleteRoute,
   useDeleteRoute,
@@ -393,35 +397,64 @@ export default function RoutesPage() {
                           <Inline
                             key={stop.id}
                             justify="between"
+                            align="start"
                             gap={3}
                             className="border-border-subtle rounded-md border px-3 py-2"
                           >
-                            <Inline gap={2} align="center" className="min-w-0">
+                            <Inline gap={2} align="start" className="min-w-0">
                               <Text size="body-sm" color="muted">
                                 {stop.sequence}.
                               </Text>
-                              <Text size="body-sm" className="truncate">
-                                {order?.destination ?? stop.label}
-                              </Text>
+                              <Stack gap={0.5} className="min-w-0">
+                                <Text size="body-sm" className="truncate">
+                                  {order?.destination ?? stop.label}
+                                </Text>
+                                {/* O que o entregador registrou no aplicativo: sem isto a
+                                    tela diria "não entregue" sem dizer por quê. */}
+                                {stop.failed && (
+                                  <Text size="caption" color="danger">
+                                    Motivo:{" "}
+                                    {OCCURRENCE_LABEL[stop.occurrenceType ?? "other"]}
+                                  </Text>
+                                )}
+                                {stop.driverNotes && (
+                                  <Text size="caption" color="muted">
+                                    Entregador: {stop.driverNotes}
+                                  </Text>
+                                )}
+                              </Stack>
                             </Inline>
                             <Inline gap={2} align="center" className="shrink-0">
-                              {order && (
+                              {stop.closedAt ? (
                                 <Text size="caption" color="muted">
-                                  {deliveryWindowLabel(order.deliveryWindow)}
+                                  {new Date(stop.closedAt).toLocaleTimeString("pt-BR", {
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                  })}
                                 </Text>
+                              ) : (
+                                order && (
+                                  <Text size="caption" color="muted">
+                                    {deliveryWindowLabel(order.deliveryWindow)}
+                                  </Text>
+                                )
                               )}
                               <StatusBadge
                                 tone={
                                   stop.completed
                                     ? "success"
-                                    : ORDER_STATUS_META[
+                                    : stop.failed
+                                      ? "danger"
+                                      : ORDER_STATUS_META[
                                         order?.status ?? "pending"
                                       ].tone
                                 }
                               >
                                 {stop.completed
                                   ? "Entregue"
-                                  : ORDER_STATUS_META[
+                                  : stop.failed
+                                    ? "Não entregue"
+                                    : ORDER_STATUS_META[
                                       order?.status ?? "pending"
                                     ].label}
                               </StatusBadge>
