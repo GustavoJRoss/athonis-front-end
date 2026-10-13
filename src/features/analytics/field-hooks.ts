@@ -34,10 +34,26 @@ export function useFieldAnalytics(days: number) {
   });
 }
 
-export function useRouteComparison(routeId: string | null) {
+/**
+ * `refetchMs` serve à rota em andamento: o trajeto cresce enquanto a tela
+ * está aberta. Uma rota encerrada não muda, e não precisa.
+ */
+export function useRouteComparison(routeId: string | null, refetchMs?: number) {
   return useQuery({
     queryKey: ["route-comparison", routeId],
     queryFn: () => fieldAnalyticsApi.comparison(routeId as string),
     enabled: !!routeId,
+    refetchInterval: refetchMs,
+  });
+}
+
+/** Intervalo de atualização da tela ao vivo. O aplicativo envia o rastro em lotes de até um minuto. */
+export const LIVE_REFRESH_MS = 30_000;
+
+export function useLiveRoutes() {
+  return useQuery({
+    queryKey: ["live-routes"],
+    queryFn: () => fieldAnalyticsApi.live(),
+    refetchInterval: LIVE_REFRESH_MS,
   });
 }

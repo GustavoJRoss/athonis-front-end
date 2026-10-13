@@ -96,4 +96,5 @@ export const fieldAnalyticsApi = {
   occurrences: (range: actions.AnalyticsRange) => actions.getFieldOccurrences(range),
   routes: (range: actions.AnalyticsRange) => actions.getFieldRoutes(range),
   comparison: (routeId: string) => actions.getRouteComparison(routeId),
+  live: () => actions.getLiveRoutes(),
 };

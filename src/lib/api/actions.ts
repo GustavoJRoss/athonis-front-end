@@ -39,6 +39,7 @@ import type {
   FieldOverview,
   FieldRegionStats,
   FieldRouteSummary,
+  LiveRoute,
   Order,
   RouteComparison,
   OrderImportResult,
@@ -529,9 +530,58 @@ export async function getRouteComparison(routeId: string): Promise<RouteComparis
         serviceMin: item.service_min,
         occurrenceType: item.occurrence_type,
         notes: item.notes,
+        lat: item.latitude,
+        lng: item.longitude,
+        recordedLat: item.recorded_latitude,
+        recordedLng: item.recorded_longitude,
       })),
-      pathPoints: (data.path ?? []).length,
+      path: (data.path ?? []).map((point: any) => ({
+        lat: point.latitude,
+        lng: point.longitude,
+        recordedAt: point.recorded_at,
+      })),
+      idleStops: (data.idle_stops ?? []).map((stop: any) => ({
+        lat: stop.latitude,
+        lng: stop.longitude,
+        startedAt: stop.started_at,
+        endedAt: stop.ended_at,
+        durationMin: stop.duration_min,
+      })),
+      depot: data.depot ? { lat: data.depot.latitude, lng: data.depot.longitude } : null,
     };
+  });
+}
+
+/** Rotas em andamento agora, com a última posição conhecida de cada entregador. */
+export async function getLiveRoutes(): Promise<LiveRoute[]> {
+  return request(async (api) => {
+    const { data } = await api.get<any[]>("/analytics/live");
+    return (data ?? []).map((item) => ({
+      routeId: String(item.route_id),
+      driverName: item.driver_name,
+      vehicleName: item.vehicle_name,
+      region: item.region,
+      startedAt: item.started_at,
+      stopsTotal: item.stops_total,
+      stopsDelivered: item.stops_delivered,
+      stopsFailed: item.stops_failed,
+      nextStop: item.next_stop
+        ? {
+            orderId: String(item.next_stop.order_id),
+            sequence: item.next_stop.sequence,
+            label: item.next_stop.label,
+            address: item.next_stop.address,
+          }
+        : null,
+      position: item.position
+        ? {
+            lat: item.position.latitude,
+            lng: item.position.longitude,
+            speedMps: item.position.speed_mps,
+            recordedAt: item.position.recorded_at,
+          }
+        : null,
+    }));
   });
 }
 

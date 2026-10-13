@@ -14,6 +14,7 @@ import { Grid, Stack, Text } from "@/components/ui/primitives";
 import { OCCURRENCE_LABEL, ORDER_STATUS_META } from "@/constants/domain";
 import { formatDateBr } from "@/lib/utils/date";
 import type { RouteComparison } from "@/types/domain";
+import { RouteTrack } from "@/features/tracking/route-track";
 import { useRouteComparison } from "./field-hooks";
 import { formatClock, formatKm, formatMinutes, formatSignedMinutes } from "./format";
 
@@ -111,6 +112,8 @@ function Comparison({ data }: { data: RouteComparison }) {
           />
         </Grid>
       )}
+
+      <RouteTrack data={data} className="h-[360px]" />
 
       <div className="border-border overflow-x-auto rounded-lg border">
         <table className="text-body-sm w-full border-collapse">

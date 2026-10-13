@@ -335,6 +335,36 @@ export type RouteComparisonStop = {
   serviceMin: number | null;
   occurrenceType: OccurrenceType | null;
   notes: string | null;
+  /** Endereço da parada. */
+  lat: number | null;
+  lng: number | null;
+  /** Onde o entregador estava ao dar a baixa — pode não ser o endereço. */
+  recordedLat: number | null;
+  recordedLng: number | null;
+};
+
+export type GeoPoint = { lat: number; lng: number };
+
+/** Trecho em que o veículo ficou parado fora de uma parada de entrega. */
+export type IdleStop = GeoPoint & {
+  startedAt: string | null;
+  endedAt: string | null;
+  durationMin: number;
+};
+
+/** Rota em andamento, com a última posição conhecida do entregador. */
+export type LiveRoute = {
+  routeId: string;
+  driverName: string | null;
+  vehicleName: string | null;
+  region: string | null;
+  startedAt: string | null;
+  stopsTotal: number;
+  stopsDelivered: number;
+  stopsFailed: number;
+  nextStop: { orderId: string; sequence: number | null; label: string; address: string } | null;
+  /** Null enquanto o aplicativo não enviou nenhum ponto de GPS desta rota. */
+  position: (GeoPoint & { speedMps: number | null; recordedAt: string | null }) | null;
 };
 
 /** Planejado × executado de uma rota, parada a parada. */
@@ -365,5 +395,9 @@ export type RouteComparison = {
     pingCount: number;
   } | null;
   stops: RouteComparisonStop[];
-  pathPoints: number;
+  /** Trajeto percorrido, na ordem das leituras de GPS. */
+  path: Array<GeoPoint & { recordedAt: string | null }>;
+  idleStops: IdleStop[];
+  /** Depósito, de onde a rota planejada parte; null se a empresa não o cadastrou. */
+  depot: GeoPoint | null;
 };
