@@ -275,6 +275,25 @@ export async function completeRoute(id: string): Promise<Route> {
   });
 }
 
+/**
+ * Cria uma rota planejada com as paradas que uma rota cancelada ainda devia,
+ * na mesma ordem. Sem dia, motorista ou veículo, o backend usa hoje e os da
+ * rota original.
+ */
+export async function duplicateRoute(
+  id: string,
+  input: { plannedDate?: string; driverId?: string; vehicleId?: string },
+): Promise<Route> {
+  return request(async (api) => {
+    const { data } = await api.post<ApiRoute>(`/routes/${id}/duplicate`, {
+      ...(input.plannedDate ? { planned_date: input.plannedDate } : {}),
+      ...(input.driverId ? { driver_id: Number(input.driverId) } : {}),
+      ...(input.vehicleId ? { vehicle_id: Number(input.vehicleId) } : {}),
+    });
+    return mapRoute(data);
+  });
+}
+
 /** Devolve os pedidos para a fila, mantendo o registro da rota. */
 export async function cancelRoute(id: string): Promise<Route> {
   return request(async (api) => {

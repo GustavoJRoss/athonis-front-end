@@ -84,3 +84,22 @@ export function useCompleteRoute() {
 export function useCancelRoute() {
   return useRouteTransition((id) => routesApi.cancel(id));
 }
+
+/** Rota nova a partir das paradas que uma rota cancelada ainda devia. */
+export function useDuplicateRoute() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      id,
+      input,
+    }: {
+      id: string;
+      input: { plannedDate?: string; driverId?: string; vehicleId?: string };
+    }) => routesApi.duplicate(id, input),
+    onSuccess: () => {
+      for (const key of [QUERY_KEY, ["orders"]]) {
+        queryClient.invalidateQueries({ queryKey: key });
+      }
+    },
+  });
+}

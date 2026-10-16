@@ -429,6 +429,8 @@ export type ApiRoute = {
   started_at?: string | null;
   finished_at?: string | null;
   cancel_reason?: string | null;
+  returned_stop_count?: number;
+  duplicated_from_route_id?: number | null;
   orders: ApiRouteOrder[];
 };
 
@@ -477,5 +479,7 @@ export function mapRoute(route: ApiRoute): Route {
     totalDurationMin: route.total_duration_min ?? 0,
     simulated: route.simulated ?? false,
     cancelReason: route.cancel_reason ?? null,
+    returnedStopCount: route.returned_stop_count ?? 0,
+    duplicatedFromRouteId: toNullableId(route.duplicated_from_route_id),
   };
 }

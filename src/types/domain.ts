@@ -144,6 +144,10 @@ export type Route = {
   simulated: boolean;
   /** Motivo informado pelo entregador ao cancelar a rota no aplicativo. */
   cancelReason: string | null;
+  /** Paradas da rota cancelada que continuam livres e podem ir para uma rota duplicada. */
+  returnedStopCount: number;
+  /** Rota cancelada que deu origem a esta, quando ela foi duplicada. */
+  duplicatedFromRouteId: string | null;
 };
 
 /**

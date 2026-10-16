@@ -69,6 +69,8 @@ export const routesApi = {
   start: (id: string) => actions.startRoute(id),
   complete: (id: string) => actions.completeRoute(id),
   cancel: (id: string) => actions.cancelRoute(id),
+  duplicate: (id: string, input: { plannedDate?: string; driverId?: string; vehicleId?: string }) =>
+    actions.duplicateRoute(id, input),
   deliverStop: (routeId: string, orderId: string) => actions.deliverRouteStop(routeId, orderId),
   optimize: (orderIds: string[]) => actions.optimizeRoutes(orderIds),
   validate: (orderIds: string[]) => actions.validateOrdersForRoute(orderIds),

@@ -5,9 +5,10 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   AlertTriangle,
   CheckCircle2,
+  Copy,
   Play,
-  RouteIcon,
   Route as RouteIconLucide,
+  RouteIcon,
   Trash2,
 } from "lucide-react";
 import { PageHeader } from "@/components/ui/page-header";
@@ -49,6 +50,7 @@ import {
   GenerateRouteDialog,
   type UnassignedOrder,
 } from "@/features/routes/generate-route-dialog";
+import { DuplicateRouteDialog } from "@/features/routes/duplicate-route-dialog";
 import { RouteMap } from "@/components/domain/route-map";
 import { toaster } from "@/components/ui/toast";
 import { cn } from "@/lib/utils/cn";
@@ -77,6 +79,7 @@ export default function RoutesPage() {
     () => searchParams.get("new") === "1",
   );
   const [deleting, setDeleting] = useState<Route | null>(null);
+  const [duplicating, setDuplicating] = useState<Route | null>(null);
 
   const effectiveSelectedId = selectedId ?? routes?.[0]?.id ?? null;
   const selectedRoute =
@@ -318,6 +321,17 @@ export default function RoutesPage() {
                         </Button>
                       )}
 
+                      {selectedRoute.status === "cancelled" &&
+                        selectedRoute.returnedStopCount > 0 && (
+                          <Button
+                            size="sm"
+                            variant="primary"
+                            onClick={() => setDuplicating(selectedRoute)}
+                          >
+                            <Icon icon={Copy} size="sm" /> Duplicar
+                          </Button>
+                        )}
+
                       {/* Rota em andamento ou já concluída não se apaga: os
                           pedidos dela têm entrega registrada. */}
                       {selectedRoute.status === "planned" && (
@@ -332,6 +346,13 @@ export default function RoutesPage() {
                       )}
                     </Inline>
                   </Inline>
+
+                  {selectedRoute.duplicatedFromRouteId && (
+                    <Text size="body-sm" color="muted">
+                      Duplicada da Rota #{selectedRoute.duplicatedFromRouteId}, que
+                      havia sido cancelada.
+                    </Text>
+                  )}
 
                   {selectedRoute.status === "cancelled" &&
                     selectedRoute.cancelReason && (
@@ -521,6 +542,12 @@ export default function RoutesPage() {
           />
         </DialogContent>
       </DialogRoot>
+
+      <DuplicateRouteDialog
+        route={duplicating}
+        onClose={() => setDuplicating(null)}
+        onCreated={(created) => setSelectedId(created.id)}
+      />
 
       <ConfirmDialog
         open={!!deleting}
