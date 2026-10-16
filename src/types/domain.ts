@@ -142,6 +142,8 @@ export type Route = {
    * estimativas e não servem para despacho.
    */
   simulated: boolean;
+  /** Motivo informado pelo entregador ao cancelar a rota no aplicativo. */
+  cancelReason: string | null;
 };
 
 /**

@@ -428,6 +428,7 @@ export type ApiRoute = {
   region?: string | null;
   started_at?: string | null;
   finished_at?: string | null;
+  cancel_reason?: string | null;
   orders: ApiRouteOrder[];
 };
 
@@ -475,5 +476,6 @@ export function mapRoute(route: ApiRoute): Route {
     totalDistanceKm: (route.total_distance_m ?? 0) / 1000,
     totalDurationMin: route.total_duration_min ?? 0,
     simulated: route.simulated ?? false,
+    cancelReason: route.cancel_reason ?? null,
   };
 }

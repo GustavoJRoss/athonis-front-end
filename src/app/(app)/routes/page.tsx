@@ -333,6 +333,30 @@ export default function RoutesPage() {
                     </Inline>
                   </Inline>
 
+                  {selectedRoute.status === "cancelled" &&
+                    selectedRoute.cancelReason && (
+                      <Box
+                        surface="surface-muted"
+                        border="default"
+                        radius="md"
+                        padding={3}
+                      >
+                        <Inline gap={2} align="center">
+                          <Icon
+                            icon={AlertTriangle}
+                            size="sm"
+                            className="text-danger"
+                          />
+                          <Text size="body-sm">
+                            Cancelada pelo entregador:{" "}
+                            <strong>{selectedRoute.cancelReason}</strong>. As
+                            paradas que estavam em aberto voltaram para a lista
+                            de pedidos.
+                          </Text>
+                        </Inline>
+                      </Box>
+                    )}
+
                   {selectedRoute.simulated && (
                     <Box
                       surface="surface-muted"
