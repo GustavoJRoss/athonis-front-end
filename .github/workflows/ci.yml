@@ -1,6 +1,6 @@
 # CI/CD do painel do Athonis (Next.js).
 #
-#   - Push / pull request              -> lint, typecheck e build
+#   - Push / pull request              -> lint e build (com typecheck)
 #   - Push na desenvMobile             -> imagem de STAGING + deploy em staging
 #   - Push na master                   -> imagem de PRODUÇÃO (tag main), sem deploy
 #   - Push na infra/hostinger          -> imagem de PRODUÇÃO + deploy em produção
@@ -56,7 +56,8 @@ jobs:
         # resumo, mas não bloqueia o deploy. Remova esta linha quando zerar.
         continue-on-error: true
         run: npm run lint
-      - run: npx tsc --noEmit
+      # O next build também faz o typecheck (e gera tipos como LayoutProps,
+      # por isso um `tsc --noEmit` antes dele falha numa máquina limpa).
       - run: npm run build
         env:
           NEXT_PUBLIC_API_URL: https://api.exemplo.invalid
