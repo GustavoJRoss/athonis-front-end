@@ -3,6 +3,8 @@
 #   - Push / pull request              -> lint, typecheck e build
 #   - Push na desenvMobile             -> imagem de STAGING + deploy em staging
 #   - Push na master                   -> imagem de PRODUÇÃO (tag main), sem deploy
+#   - Push na infra/hostinger          -> imagem de PRODUÇÃO + deploy em produção
+#                                         (provisório, enquanto a branch não é mergeada)
 #   - Release publicada (tag v*)       -> imagem de PRODUÇÃO + deploy em produção
 #   - Manual (Run workflow)            -> imagem + deploy no ambiente escolhido,
 #                                         a partir da branch selecionada
@@ -19,7 +21,7 @@ name: CI
 
 on:
   push:
-    branches: [master, desenvMobile]
+    branches: [master, desenvMobile, infra/hostinger]
   pull_request:
   release:
     types: [published]
@@ -80,6 +82,7 @@ jobs:
             workflow_dispatch:*)              ambiente="${{ inputs.ambiente }}" ;;
             release:*)                        ambiente=production ;;
             push:refs/heads/master)           ambiente=production ;;
+            push:refs/heads/infra/hostinger)  ambiente=production ;;
             *)                                ambiente=staging ;;
           esac
           if [ -z "$BASE_DOMAIN" ]; then
