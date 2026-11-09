@@ -1,0 +1,189 @@
+# CI/CD do painel do Athonis (Next.js).
+#
+#   - Push / pull request              -> lint, typecheck e build
+#   - Push na desenvMobile             -> imagem de STAGING + deploy em staging
+#   - Push na master                   -> imagem de PRODUÇÃO (tag main), sem deploy
+#   - Release publicada (tag v*)       -> imagem de PRODUÇÃO + deploy em produção
+#   - Manual (Run workflow)            -> imagem + deploy no ambiente escolhido,
+#                                         a partir da branch selecionada
+#
+# NEXT_PUBLIC_API_URL entra no build, por isso cada ambiente tem a sua imagem:
+#   staging    -> https://staging-api.<BASE_DOMAIN>   (tags staging, staging-<sha>)
+#   produção   -> https://api.<BASE_DOMAIN>           (tags main, sha-<sha>)
+#
+# O deploy entra na VPS da Hostinger por SSH (usuário deploy, que só roda o
+# deploy.sh do backend). Configuração: veja infra/HOSTINGER.md no repositório
+# AthonisBackend. Variáveis: DEPLOY_TARGET=hostinger, BASE_DOMAIN.
+# Secrets: VPS_HOST, VPS_SSH_KEY, VPS_KNOWN_HOSTS, VPS_PORT (opcional).
+name: CI
+
+on:
+  push:
+    branches: [master, desenvMobile]
+  pull_request:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      ambiente:
+        description: Ambiente
+        type: choice
+        options: [staging, production]
+        default: staging
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  qualidade:
+    name: Lint, typecheck e build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Lint
+        # Ainda há erros de lint antigos no código; o aviso aparece no
+        # resumo, mas não bloqueia o deploy. Remova esta linha quando zerar.
+        continue-on-error: true
+        run: npm run lint
+      - run: npx tsc --noEmit
+      - run: npm run build
+        env:
+          NEXT_PUBLIC_API_URL: https://api.exemplo.invalid
+
+  imagem:
+    name: Imagem Docker (GHCR)
+    needs: qualidade
+    if: ${{ github.event_name != 'pull_request' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      ambiente: ${{ steps.alvo.outputs.ambiente }}
+      tag: ${{ steps.alvo.outputs.tag }}
+    steps:
+      - name: Definir ambiente
+        id: alvo
+        env:
+          BASE_DOMAIN: ${{ vars.BASE_DOMAIN }}
+        run: |
+          case "${{ github.event_name }}:${{ github.ref }}" in
+            workflow_dispatch:*)              ambiente="${{ inputs.ambiente }}" ;;
+            release:*)                        ambiente=production ;;
+            push:refs/heads/master)           ambiente=production ;;
+            *)                                ambiente=staging ;;
+          esac
+          if [ -z "$BASE_DOMAIN" ]; then
+            echo "::error::Defina a variável BASE_DOMAIN do repositório (ex. 1-2-3-4.sslip.io)."; exit 1
+          fi
+          if [ "$ambiente" = production ]; then
+            api="https://api.$BASE_DOMAIN";         tag="sha-${{ github.sha }}"
+          else
+            api="https://staging-api.$BASE_DOMAIN"; tag="staging-${{ github.sha }}"
+          fi
+          echo "ambiente=$ambiente" >> "$GITHUB_OUTPUT"
+          echo "api=$api"           >> "$GITHUB_OUTPUT"
+          echo "tag=$tag"           >> "$GITHUB_OUTPUT"
+          echo "Ambiente: $ambiente | API: $api | tag: $tag"
+
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository_owner }}/athonis-web
+          tags: |
+            type=raw,value=${{ steps.alvo.outputs.tag }}
+            type=raw,value=staging,enable=${{ steps.alvo.outputs.ambiente == 'staging' }}
+            type=raw,value=main,enable=${{ steps.alvo.outputs.ambiente == 'production' }}
+            type=ref,event=tag
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            NEXT_PUBLIC_API_URL=${{ steps.alvo.outputs.api }}
+            APP_VERSION=${{ github.sha }}
+          cache-from: type=gha,scope=${{ steps.alvo.outputs.ambiente }}
+          cache-to: type=gha,mode=max,scope=${{ steps.alvo.outputs.ambiente }}
+
+  deploy:
+    name: Deploy na VPS (Hostinger)
+    needs: imagem
+    # Push na master só gera a imagem; produção sai por release ou manualmente.
+    if: ${{ vars.DEPLOY_TARGET == 'hostinger' && !(github.event_name == 'push' && github.ref == 'refs/heads/master') }}
+    runs-on: ubuntu-latest
+    concurrency:
+      group: deploy-web-${{ needs.imagem.outputs.ambiente }}
+      cancel-in-progress: false
+    environment:
+      name: ${{ needs.imagem.outputs.ambiente }}
+      url: https://${{ needs.imagem.outputs.ambiente == 'production' && 'app' || 'staging-app' }}.${{ vars.BASE_DOMAIN }}
+    env:
+      AMBIENTE: ${{ needs.imagem.outputs.ambiente }}
+      IMAGEM: ${{ needs.imagem.outputs.tag }}
+      VPS_HOST: ${{ secrets.VPS_HOST }}
+      VPS_PORT: ${{ secrets.VPS_PORT || '22' }}
+    steps:
+      - name: Conferir configuração
+        env:
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+          VPS_KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
+        run: |
+          faltando=""
+          [ -n "$VPS_HOST" ]        || faltando="$faltando VPS_HOST"
+          [ -n "$VPS_SSH_KEY" ]     || faltando="$faltando VPS_SSH_KEY"
+          [ -n "$VPS_KNOWN_HOSTS" ] || faltando="$faltando VPS_KNOWN_HOSTS"
+          if [ -n "$faltando" ]; then
+            echo "::error::Configuração da Hostinger incompleta:$faltando (veja infra/HOSTINGER.md no AthonisBackend)."; exit 1
+          fi
+
+      - name: Preparar SSH
+        env:
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+          VPS_KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
+        run: |
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$VPS_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$VPS_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+      - name: Atualizar a VPS (${{ env.AMBIENTE }} <- ${{ env.IMAGEM }})
+        run: |
+          set -o pipefail
+          ssh -i ~/.ssh/deploy_key -p "$VPS_PORT" \
+              -o StrictHostKeyChecking=yes -o BatchMode=yes -o ConnectTimeout=20 \
+              "deploy@$VPS_HOST" "deploy web $AMBIENTE $IMAGEM" | tee saida.log
+          grep -q "DEPLOY_OK" saida.log || { echo "::error::A VPS não confirmou o deploy."; exit 1; }
+
+      - name: Conferir o painel de fora
+        run: |
+          prefixo=app; [ "$AMBIENTE" = production ] || prefixo=staging-app
+          url="https://$prefixo.${{ vars.BASE_DOMAIN }}/"
+          for i in $(seq 1 20); do
+            codigo="$(curl -sS -o /dev/null -w '%{http_code}' "$url" || true)"
+            case "$codigo" in 2*|3*) echo "$url -> $codigo"; exit 0 ;; esac
+            sleep 6
+          done
+          echo "::error::$url não respondeu (último código: $codigo)"; exit 1
+
+      - name: Limpar chave
+        if: always()
+        run: rm -f ~/.ssh/deploy_key
